@@ -9,6 +9,23 @@ Everything beyond pinning and zones is optional and ships **off**: macros (recor
 
 > ⚠ **Honest note on macros and anti-cheat.** Synthetic input can be detected by anti-cheat software and can get accounts banned. OnTop refuses to play macros around watched and known anti-cheat processes and can kill-switch the module, but no guard is perfect and nothing here is retroactive. Use macros for single-player, accessibility and productivity. See `SECURITY.md`.
 
+## Download / which version to use
+
+[![Latest release](https://img.shields.io/github/v/release/Godswrath88/OnTop?label=latest%20release)](https://github.com/Godswrath88/OnTop/releases/latest)
+[![Newest pre-release](https://img.shields.io/github/v/release/Godswrath88/OnTop?include_prereleases&label=newest%20pre-release&color=orange)](https://github.com/Godswrath88/OnTop/releases)
+
+Every version tag has a GitHub Release whose first line states its status:
+
+| Status | Meaning |
+|---|---|
+| ✅ **Stable** | Built clean **and** passed both the smoke test and the full feature checklist in `docs/testing/CHECKLIST.md` on my machine, or I have personally judged it good enough and said so in the release notes. |
+| ⚠ **Restore point** | Built clean, but has known issues (linked in the release). Use it only to roll back. |
+| 🧪 **Untested** | Built (or not yet built) but not tested. Marked *Pre-release* on GitHub. |
+
+Only Stable and Restore-point releases can be GitHub's **Latest** release, so [releases/latest](https://github.com/Godswrath88/OnTop/releases/latest) never points at an untested build. `main` is usually ahead of it and untested.
+
+**Right now no version is Stable** (pre-1.0, testing in progress). The latest release is **v0.43.0**, a restore point with known issues. **v0.45.2** is the newest version, and it is untested. Releases ship source only; see Build below.
+
 ## Build
 
 Requires the free .NET 8 SDK — no Visual Studio needed.
@@ -58,7 +75,7 @@ Every other hotkey is optional and unbound until you set it. Hotkeys are recorde
 
 ## Status
 
-Pre-1.0. Every feature is built; the installer, updater and portable build are written but not yet exercised end-to-end. 1.0.0 ships when they are.
+Pre-1.0, no Stable release yet (see Download above). Every feature is built; the installer, updater and portable build are written but not yet exercised end-to-end. 1.0.0 ships when they are.
 
 ## An AI-developed project
 
