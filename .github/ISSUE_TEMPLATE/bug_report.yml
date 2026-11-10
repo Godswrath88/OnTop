@@ -1,0 +1,81 @@
+name: Bug report
+description: Something in OnTop doesn't work as described.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Security problem?** Don't file it here; use private vulnerability reporting (see SECURITY.md).
+
+        **Logs are private.** OnTop's logs contain your window titles and process names. Paste only the lines around the problem, and edit out anything you don't want public.
+  - type: input
+    id: version
+    attributes:
+      label: OnTop version
+      description: Shown in the main window subtitle and in Help → About & License.
+      placeholder: "0.45.1"
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: How is it running?
+      options:
+        - Built from source
+        - Installer
+        - Portable
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Build / startup
+        - Emergency stop / exit
+        - Appearance / layout / help
+        - Zones / overlays
+        - Pinning
+        - Hotkeys / hold chords
+        - Stealth / quiet modes
+        - Macros
+        - Window placement / launcher
+        - Action Library
+        - Profiles / automation
+        - Config / data / backups
+        - Installer / portable / updater
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: checklist
+    attributes:
+      label: Checklist item (if any)
+      description: The ID from docs/testing/CHECKLIST.md, e.g. Z1 or M2.
+  - type: textarea
+    id: steps
+    attributes:
+      label: What you did
+      placeholder: |
+        1. Settings → Features → …
+        2. …
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Relevant log lines
+      description: "With Verbose Logging on (Settings → Logging). Logs are in %APPDATA%\OnTop\logs (portable: <exe folder>\Data\logs). Paste only the relevant lines."
+      render: text

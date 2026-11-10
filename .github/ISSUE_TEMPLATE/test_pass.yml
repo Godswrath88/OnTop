@@ -1,0 +1,35 @@
+name: Test pass
+description: One test round against one build. Holds the smoke test; failures get their own bug reports.
+title: "Test pass v"
+labels: ["test-pass"]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Build tested
+      placeholder: "0.45.1 (commit abc1234)"
+    validations:
+      required: true
+  - type: checkboxes
+    id: smoke
+    attributes:
+      label: Smoke test (docs/testing/CHECKLIST.md)
+      description: Tick what passed. Open a Bug report for anything that failed and link it below.
+      options:
+        - label: "B1: builds clean"
+        - label: "B2: launches; settings, zones and hotkeys intact"
+        - label: "E1 / E2: Kill and Exit hotkeys work"
+        - label: "Z1: a zone fires on the desktop"
+        - label: "P1: pin a window, change its opacity, unpin"
+        - label: "E5: Pinned Windows opens without freezing"
+        - label: "S1: Stealth removes hooks; leaving Stealth restores them"
+        - label: "A1: an accent change re-tints the app"
+  - type: textarea
+    id: retests
+    attributes:
+      label: Retests
+      description: Open issues labeled `retest` that you checked this round, e.g. "#2 passes, #6 still fails".
+  - type: textarea
+    id: notes
+    attributes:
+      label: Other items, failures filed, cosmetic notes

@@ -41,8 +41,9 @@ inside it are the contract between sessions.
    the checklist after any code change.
 6. **`README.md`** — user-facing overview (skim). `LICENSE` is GPL-3.0 — never
    edit it, and keep it in every zip.
-7. **`TESTING.md`** — the standing test checklist with my marks; "retest" items
-   were fixed and need a second look.
+7. **`docs/testing/CHECKLIST.md`** — the standing test checklist, by feature,
+   with my marks; open failures and "retest" items are GitHub issues (#N links).
+   `docs/TROUBLESHOOTING.md` is the user-facing guide.
 
 **Then follow the Session Workflow in PROJECT_SCOPE.md.** The short version:
 - Your environment cannot compile WPF — verify structurally (xmllint every .xaml,
@@ -61,7 +62,7 @@ inside it are the contract between sessions.
   imperative — never as "the owner asked". Never write my Windows username,
   e-mail or machine name into any file; the public handle is Godswrath88.
 - Re-zip everything (LICENSE + all docs incl. MASTER_PROMPT.md + SECURITY.md +
-  SESSION_STATE.md + HANDOFF.md + TESTING.md + the dotfiles + OnTop.sln + full
+  SESSION_STATE.md + HANDOFF.md + docs/ + .github/ + the dotfiles + OnTop.sln + full
   OnTop/ tree + installer/ + portable/, excluding bin/obj/publish/Output/out) and
   deliver the zip EVERY session, with a short "when you build, test X" list.
 - Installer, updater and portable build are untested until I say otherwise —

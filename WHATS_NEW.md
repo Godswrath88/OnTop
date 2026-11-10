@@ -1,5 +1,33 @@
 # What's New
 
+## Session 28 — v0.45.2 — Testing moves to GitHub
+
+The project now lives in a git repo instead of passed-around zips, so testing
+moves there too. TESTING.md was organized by stage (D, E, F … 6e), which mixed
+history with the checklist and buried each feature's checks across several sections.
+
+- **`docs/testing/CHECKLIST.md`** replaces it, organized by **feature**
+  (Zones, Pinning, Macros, Placement, …). Each check has an ID that never
+  changes (Z1, M2), so reports stay valid as the list grows. A smoke-test section at
+  the top is the five-minute pass for every build. Every existing mark and note
+  came along.
+- **Failures are GitHub issues now.** The 13 open retest items and the
+  still-unexplained Pinned Windows freeze are issues #1–#14. Labels: `retest`
+  (fixed, waiting for a confirming test), `blocker` (a failure cascades),
+  `needs-log`. Checklist items link their issue.
+- **Issue templates:** a Bug report form that asks for version, area, steps
+  and only the relevant log lines (logs contain window titles, so nothing is pasted
+  whole into a public issue), and a Test pass form with the smoke test as
+  checkboxes. Blank issues are off; security reports are pointed to private
+  reporting.
+- **`docs/TROUBLESHOOTING.md`** for anyone who downloads OnTop: what to do when
+  it freezes, where the settings and logs are, how to recover or reset settings,
+  why some windows can't be pinned, hotkey conflicts, and zone gating.
+- 0.45.1 was compiled clean (0 errors, 0 warnings) in a development session
+  on the Windows machine. That's the first build check that wasn't run by hand.
+
+No code or behavior change. Schema stays 29.
+
 ## Session 28 — v0.45.1 — Vulnerability reporting (docs only)
 
 The project now lives in a public GitHub repo with private vulnerability

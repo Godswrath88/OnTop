@@ -16,7 +16,7 @@
 >    resume/rollback contract, S28), `OnTop.sln`, and the complete `OnTop/` source tree. The zip IS the backup;
 >    there is no other copy.
 >    Quick self-check before shipping (from the repo root):
->    `for f in LICENSE PROJECT_SCOPE.md README.md WHATS_NEW.md ROADMAP.md CHANGELOG.md MASTER_PROMPT.md SECURITY.md HANDOFF.md SESSION_STATE.md TESTING.md OnTop.sln OnTop/OnTop.csproj; do [ -e "$f" ] || echo "MISSING $f"; done`
+>    `for f in LICENSE PROJECT_SCOPE.md README.md WHATS_NEW.md ROADMAP.md CHANGELOG.md MASTER_PROMPT.md SECURITY.md HANDOFF.md SESSION_STATE.md docs/testing/CHECKLIST.md docs/TROUBLESHOOTING.md OnTop.sln OnTop/OnTop.csproj; do [ -e "$f" ] || echo "MISSING $f"; done`
 >    and confirm the source count hasn't shrunk (`find OnTop -name '*.cs' -o -name '*.xaml' | wc -l`).
 > 4. If the working environment resets, restore from the last delivered zip
 >    (`unzip OnTopWPF_updated.zip`) — never rebuild from memory.
@@ -172,7 +172,7 @@ in zone list order. All zone coordinates are physical pixels.
   main-window subtitle + Help header — this is distinct from the lost AutoHotkey
   **v9.5**. Bump `<Version>` (and `AssemblyVersion`/`FileVersion`) once per
   session and add the matching `CHANGELOG.md` entry. 1.0.0 is reserved for when
-  the installer ships and v9.5 parity is complete (current: v0.45.1 — Draw/Drag-
+  the installer ships and v9.5 parity is complete (current: v0.45.2 — Draw/Drag-
   Box zones, all toggle + action hotkeys, window placement memory done; profiles
   / window-rules still pending). Don't hard-code the version string anywhere else
   — `AppInfo` reads it from the assembly.
@@ -393,7 +393,7 @@ section — read it before starting any macro work.
    execution paths). Security outranks shipping.
 6. Repackage (the zip is the ONLY backup — ship it EVERY session):
    `zip -rq OnTopWPF_updated.zip LICENSE README.md WHATS_NEW.md ROADMAP.md PROJECT_SCOPE.md
-   CHANGELOG.md MASTER_PROMPT.md SECURITY.md HANDOFF.md SESSION_STATE.md TESTING.md .gitignore .gitattributes .editorconfig OnTop.sln OnTop/ installer/
+   CHANGELOG.md MASTER_PROMPT.md SECURITY.md HANDOFF.md SESSION_STATE.md docs/ .github/ .gitignore .gitattributes .editorconfig OnTop.sln OnTop/ installer/
    portable/ -x '*/bin/*' '*/obj/*' '*/publish/*' '*/Output/*' '*/out/*'` — must
    contain all 5 docs + `MASTER_PROMPT.md` (the new-session bootstrap prompt; update
    it whenever the workflow/doc set changes) + `OnTop.sln` + the full `OnTop/`
@@ -1079,3 +1079,10 @@ section — read it before starting any macro work.
   pointing to GitHub private vulnerability reporting (now enabled on the public
   repo). No code change. Schema stays 29. RULE: never record a known, unfixed
   weakness in a public file; keep it in a private advisory until the fix ships.
+- S28 (v0.45.2, docs + GitHub templates only) — TESTING.md →
+  `docs/testing/CHECKLIST.md` (by feature, stable IDs, smoke test, all marks
+  kept); `docs/TROUBLESHOOTING.md` (user-facing); `.github/ISSUE_TEMPLATE/`
+  (Bug report, Test pass, config); labels retest/needs-log/blocker/test-pass;
+  open retest items = issues #1–#14. 0.45.1 compiled clean on the Windows
+  machine. Schema stays 29. RULE: failures and retests live in issues; never
+  paste a whole log into a public issue (window titles are private).
