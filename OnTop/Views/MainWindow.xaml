@@ -1,0 +1,607 @@
+<Window x:Class="OnTop.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:OnTop.Controls"
+        xmlns:helpers="clr-namespace:OnTop.Helpers"
+        Title="OnTop" Width="1060" Height="940"
+        WindowStartupLocation="CenterScreen"
+        Style="{StaticResource DarkChromeWindow}" ShowInTaskbar="True"
+        Topmost="{Binding Cfg.GuiAlwaysOnTop}"
+        KeyDown="Window_KeyDown" Loaded="Window_Loaded">
+
+    <Window.Resources>
+        <helpers:ZoneColorConverter x:Key="ZoneColorConverter"/>
+        <helpers:WidthLabelConverter x:Key="WidthLabel"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </Window.Resources>
+
+    <Window.InputBindings>
+        <KeyBinding Modifiers="Ctrl" Key="Z" Command="{Binding UndoCmd}"/>
+        <KeyBinding Modifiers="Ctrl" Key="Y" Command="{Binding RedoCmd}"/>
+    </Window.InputBindings>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>   <!-- Header -->
+            <RowDefinition Height="Auto"/>   <!-- Settings panel -->
+            <RowDefinition Height="*"/>      <!-- Zones (map/list/split) -->
+            <RowDefinition Height="Auto"/>   <!-- Action boxes -->
+            <RowDefinition Height="Auto"/>   <!-- Save/Close -->
+            <RowDefinition Height="Auto"/>   <!-- Status bar -->
+        </Grid.RowDefinitions>
+
+        <!-- ═══ HEADER ═══════════════════════════════════════════════ -->
+        <Border Grid.Row="0" Background="{StaticResource BgBandBrush}" CornerRadius="6" Padding="16,10" Margin="0,0,0,12">
+            <Grid>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="OnTop" FontSize="22" FontWeight="Bold" Foreground="White"/>
+                        <TextBlock x:Name="VersionText" VerticalAlignment="Bottom" Margin="8,0,0,4"
+                                   FontSize="12" Foreground="{StaticResource FgDimBrush}"/>
+                    </StackPanel>
+                    <TextBlock Text="Double left click inside an enabled zone to exit." Foreground="{StaticResource FgMutedBrush}" FontSize="12" Margin="0,2,0,0"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Button Content="Undo Ctrl+Z" Command="{Binding UndoCmd}" MinWidth="100" Margin="0,0,6,0"/>
+                    <Button Content="Redo Ctrl+Y" Command="{Binding RedoCmd}" MinWidth="100"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ═══ SETTINGS PANEL ═══════════════════════════════════════ -->
+        <GroupBox Grid.Row="1" Header="Settings" Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="290"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Left: Sliders (ADJUSTMENT header + v9.5 slider lock) -->
+                <Grid Grid.Column="0" Margin="0,4,20,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,6">
+                        <TextBlock Text="ADJUSTMENT" FontSize="10" FontWeight="SemiBold"
+                                   Foreground="{StaticResource FgMutedBrush}" VerticalAlignment="Center"/>
+                        <ToggleButton DockPanel.Dock="Right" Width="92" Height="22"
+                                      Style="{StaticResource SliderLockToggle}"
+                                      IsChecked="{Binding Cfg.SlidersLocked, Mode=TwoWay}"
+                                      ToolTip="Lock The Sliders So You Can't Accidentally Change Tolerance / Zone Size / Variation"/>
+                    </DockPanel>
+
+                    <StackPanel Grid.Row="1">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Cfg.SlidersLocked}" Value="True">
+                                        <Setter Property="Opacity" Value="0.45"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/><ColumnDefinition Width="*"/><ColumnDefinition Width="50"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Tolerance" VerticalAlignment="Center"
+                                       ToolTip="Extra Padding Added To Every Side Of The Zone's Hit Area (0–300)"/>
+                            <Slider AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="0" Grid.Column="1" Minimum="0" Maximum="300" Value="{Binding SliderTol}" VerticalAlignment="Center" Margin="8,0"
+                                    ToolTip="Extra Padding Added To Every Side Of The Zone's Hit Area (0–300)"/>
+                            <TextBlock Grid.Column="2" Text="{Binding SliderTol}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                        </Grid>
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/><ColumnDefinition Width="*"/><ColumnDefinition Width="50"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Zone Size" VerticalAlignment="Center"
+                                       ToolTip="The Core Width And Height Of The Zone Before Padding (0–400)"/>
+                            <Slider AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="0" Grid.Column="1" Minimum="0" Maximum="400" Value="{Binding SliderCap}" VerticalAlignment="Center" Margin="8,0"
+                                    ToolTip="The Core Width And Height Of The Zone Before Padding (0–400)"/>
+                            <TextBlock Grid.Column="2" Text="{Binding SliderCap}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                        </Grid>
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/><ColumnDefinition Width="*"/><ColumnDefinition Width="50"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Variation" VerticalAlignment="Center"
+                                       ToolTip="Additional Tolerance Layered On Top For Looser Matching (0–255)"/>
+                            <Slider AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="0" Grid.Column="1" Minimum="0" Maximum="255" Value="{Binding SliderVar}" VerticalAlignment="Center" Margin="8,0"
+                                    ToolTip="Additional Tolerance Layered On Top For Looser Matching (0–255)"/>
+                            <TextBlock Grid.Column="2" Text="{Binding SliderVar}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- Lock overlay: swallows clicks over the sliders when locked -->
+                    <Border Grid.Row="1" CornerRadius="8" Margin="-6,-4,-6,2"
+                            Visibility="{Binding Cfg.SlidersLocked, Converter={StaticResource BoolToVis}}">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#6612121E" Offset="0"/>
+                                <GradientStop Color="#8A10101A" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Border Background="#E61A1A2A" BorderBrush="#403A8BFF" BorderThickness="1"
+                                CornerRadius="14" Padding="14,6"
+                                HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE72E;" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                                           Foreground="{StaticResource AccentBlueBrush}" VerticalAlignment="Center" Margin="0,0,7,0"/>
+                                <TextBlock Text="Sliders Locked" FontSize="12"
+                                           Foreground="{StaticResource FgPrimaryBrush}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </Border>
+                </Grid>
+
+                <!-- Right: Toggles -->
+                <Border Grid.Column="1" Background="{StaticResource BgPanelBrush}" CornerRadius="6" Padding="12,8">
+                    <StackPanel>
+                        <CheckBox Content="Desktop Only" IsChecked="{Binding Cfg.DesktopOnly}" Style="{StaticResource ToggleSwitch}" Margin="0,4"
+                                  ToolTip="Only Register Zone Clicks When The Desktop Itself Is Focused — Not Over App Windows"/>
+                        <CheckBox Content="Debug Overlay" IsChecked="{Binding Cfg.DebugOverlay}" Style="{StaticResource ToggleSwitch}" Margin="0,4"
+                                  ToolTip="Draw Live Detection Boxes On Screen For Troubleshooting Zone Sizes"/>
+                        <CheckBox Content="Apply to All Zones" IsChecked="{Binding Cfg.ApplyAllZones}" Style="{StaticResource ToggleSwitch}" Margin="0,4"
+                                  ToolTip="Slider Changes Affect Every Zone At Once, Not Just The Selected One"/>
+                        <CheckBox Content="Override Exceptions" IsChecked="{Binding Cfg.OverrideExceptions}" Style="{StaticResource ToggleSwitch}" Margin="0,4"
+                                  ToolTip="Ignore The Exceptions List — Hotkeys And Exits Work Even Over Excepted Apps"/>
+                        <CheckBox Content="Start with Windows" IsChecked="{Binding Cfg.StartWithWindows}" Style="{StaticResource ToggleSwitch}" Margin="0,4"
+                                  ToolTip="Launch OnTop Automatically When You Sign In (Startup Folder Shortcut)"/>
+                        <CheckBox Content="Confirm Before Exit" IsChecked="{Binding Cfg.ConfirmBeforeExit}" Style="{StaticResource ToggleSwitch}" Margin="0,4"
+                                  ToolTip="Ask For Confirmation When A Zone Would Exit OnTop (Stealth Zones Skip This)"/>
+                        <CheckBox Content="Lock Overlays (Click-Through)" IsChecked="{Binding Cfg.OverlaysLocked}" Style="{StaticResource ToggleSwitch}" Margin="0,4"
+                                  ToolTip="Make Desktop Zone Overlays Purely Visual So Clicks Pass Through Them To The Desktop"/>
+                        <CheckBox Content="Keep GUIs On Top" IsChecked="{Binding Cfg.GuiAlwaysOnTop}" Style="{StaticResource ToggleSwitch}" Margin="0,4"/>
+                        <CheckBox Content="Stealth Mode (No Mouse Hook)" IsChecked="{Binding Cfg.StealthMode}" Style="{StaticResource ToggleSwitch}" Margin="0,4"
+                                  ToolTip="Removes The Global Mouse Hook Entirely So Anti-Cheat Software Sees Nothing — Zone Detection Is Off While Enabled"/>
+                        <CheckBox Content="Zones Trigger Stealth (Not Exit)" IsChecked="{Binding Cfg.ZonesTriggerStealth}" Style="{StaticResource ToggleSwitch}" Margin="0,4"
+                                  ToolTip="Global Override: Any Zone Double-Click Unhooks Into Stealth Mode Instead Of Closing OnTop"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </GroupBox>
+
+        <!-- ═══ ZONES — Map / List / Split, pop-out capable ═══════════ -->
+        <GroupBox Grid.Row="2" Header="Zones" Margin="0,0,0,12" MinHeight="300">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,8">
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                        <Border Background="{StaticResource BgPanelBrush}" CornerRadius="5" Padding="3">
+                            <StackPanel Orientation="Horizontal">
+                                <ToggleButton x:Name="ViewMapBtn" Content="Map" Tag="0" Style="{StaticResource ViewModeButton}"
+                                              Checked="ViewMode_Checked" Unchecked="ViewMode_Unchecked"/>
+                                <ToggleButton x:Name="ViewListBtn" Content="List" Tag="1" Style="{StaticResource ViewModeButton}"
+                                              Checked="ViewMode_Checked" Unchecked="ViewMode_Unchecked"/>
+                                <ToggleButton x:Name="ViewSplitBtn" Content="Split" Tag="2" Style="{StaticResource ViewModeButton}"
+                                              Checked="ViewMode_Checked" Unchecked="ViewMode_Unchecked"/>
+                            </StackPanel>
+                        </Border>
+                        <TextBlock Text="Drag Dots To Move · Double-Click The Map To Add · Right-Click A Zone For Options"
+                                   FontSize="11" Foreground="{StaticResource FgDimBrush}"
+                                   VerticalAlignment="Center" Margin="12,0,0,0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                        <Button Style="{StaticResource IconButton}" ToolTip="Fit / Reset The Map View"
+                                Click="FitMap_Click" Margin="0,0,4,0">
+                            <Viewbox Width="17" Height="15">
+                                <Canvas Width="16" Height="16">
+                                    <Path Data="M2,5 L2,2 L5,2 M11,2 L14,2 L14,5 M14,11 L14,14 L11,14 M5,14 L2,14 L2,11"
+                                          Stroke="{StaticResource FgPrimaryBrush}" StrokeThickness="1.4"
+                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                                </Canvas>
+                            </Viewbox>
+                        </Button>
+                        <Button Style="{StaticResource IconButton}" ToolTip="Flash All Zones On The Map"
+                                Click="FlashAll_Click" Margin="0,0,4,0">
+                            <Viewbox Width="17" Height="15">
+                                <Canvas Width="16" Height="16">
+                                    <Ellipse Canvas.Left="1" Canvas.Top="1" Width="14" Height="14" Stroke="{StaticResource FgMutedBrush}" StrokeThickness="1"/>
+                                    <Ellipse Canvas.Left="3.5" Canvas.Top="3.5" Width="9" Height="9" Stroke="{StaticResource FgPrimaryBrush}" StrokeThickness="1.2"/>
+                                    <Ellipse Canvas.Left="6.3" Canvas.Top="6.3" Width="3.4" Height="3.4" Fill="{StaticResource AccentBlueBrush}"/>
+                                </Canvas>
+                            </Viewbox>
+                        </Button>
+                        <Button Style="{StaticResource IconButton}" ToolTip="Pop Out The Map Into Its Own Window"
+                                Click="PopOutMap_Click" Margin="0,0,4,0">
+                            <Viewbox Width="19" Height="15">
+                                <Canvas Width="20" Height="16">
+                                    <!-- Folded map -->
+                                    <Path Data="M1,6 L4.5,4.5 L8,6 L11.5,4.5 L11.5,12.5 L8,14 L4.5,12.5 L1,14 Z"
+                                          Stroke="{StaticResource FgPrimaryBrush}" StrokeThickness="1.2" StrokeLineJoin="Round"/>
+                                    <Path Data="M4.5,4.5 L4.5,12.5 M8,6 L8,14"
+                                          Stroke="{StaticResource FgPrimaryBrush}" StrokeThickness="1.2"/>
+                                    <!-- Pop-out arrow -->
+                                    <Path Data="M11.5,5 L18.5,1 M18.5,1 L14,1 M18.5,1 L18.5,5.5"
+                                          Stroke="{StaticResource AccentBlueBrush}" StrokeThickness="1.5"
+                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                                </Canvas>
+                            </Viewbox>
+                        </Button>
+                        <Button Style="{StaticResource IconButton}" ToolTip="Pop Out The Zone List Into Its Own Window"
+                                Click="PopOutList_Click">
+                            <Viewbox Width="19" Height="15">
+                                <Canvas Width="20" Height="16">
+                                    <!-- Bulleted list -->
+                                    <Ellipse Canvas.Left="1.1" Canvas.Top="4.1" Width="1.8" Height="1.8" Fill="{StaticResource FgPrimaryBrush}"/>
+                                    <Ellipse Canvas.Left="1.1" Canvas.Top="8.6" Width="1.8" Height="1.8" Fill="{StaticResource FgPrimaryBrush}"/>
+                                    <Ellipse Canvas.Left="1.1" Canvas.Top="13.1" Width="1.8" Height="1.8" Fill="{StaticResource FgPrimaryBrush}"/>
+                                    <Path Data="M4.8,5 L11,5 M4.8,9.5 L11,9.5 M4.8,14 L11,14"
+                                          Stroke="{StaticResource FgPrimaryBrush}" StrokeThickness="1.2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                                    <!-- Pop-out arrow -->
+                                    <Path Data="M12,5 L18.5,1 M18.5,1 L14,1 M18.5,1 L18.5,5.5"
+                                          Stroke="{StaticResource AccentBlueBrush}" StrokeThickness="1.5"
+                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                                </Canvas>
+                            </Viewbox>
+                        </Button>
+                    </StackPanel>
+                </DockPanel>
+
+                <Grid Grid.Row="1" x:Name="SplitHost">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition x:Name="MapCol" Width="4.5*" MinWidth="150"/>
+                        <ColumnDefinition x:Name="SplitGap" Width="10"/>
+                        <ColumnDefinition x:Name="ListCol" Width="5.5*" MinWidth="190"/>
+                    </Grid.ColumnDefinitions>
+
+                    <controls:ZoneMapCanvas x:Name="ZoneMap" Grid.Column="0" MinHeight="110"
+                                            ItemsSource="{Binding Zones}"
+                                            SelectedZone="{Binding SelectedZone, Mode=TwoWay}"
+                                            ToolTip="Zone Map — Drag A Zone To Move It · Double-Click Empty Space To Add · Hold Middle Mouse Button To Scroll · Wheel To Zoom · Right-Click A Monitor To Reset View"/>
+
+                    <!-- Plain Thumb (not GridSplitter): we compute the split
+                         ourselves so the center magnet can hard-lock and release
+                         cleanly. A GridSplitter applies its own resize first each
+                         tick and fights our handler — that caused the center jitter. -->
+                    <Thumb x:Name="MapListSplitter" Grid.Column="1" Width="10"
+                           HorizontalAlignment="Center" VerticalAlignment="Stretch"
+                           Cursor="SizeWE"
+                           DragStarted="SplitDragStarted" DragDelta="SplitDragDelta"
+                           DragCompleted="SplitDragCompleted"
+                           ToolTip="Drag To Resize The Map / List Split (Holds At The Middle)">
+                        <Thumb.Template>
+                            <ControlTemplate TargetType="Thumb">
+                                <Border Background="Transparent">
+                                    <Rectangle Width="3" RadiusX="1.5" RadiusY="1.5"
+                                               VerticalAlignment="Stretch" Margin="0,14"
+                                               Fill="{StaticResource BorderDimBrush}"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Thumb.Template>
+                    </Thumb>
+
+                    <Grid x:Name="ListPane" Grid.Column="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0" Margin="0,0,0,4">
+                            <TextBox Text="{Binding ZoneSearch, UpdateSourceTrigger=PropertyChanged}"
+                                     ToolTip="Filter The List By Zone Name Or Group (The Map Is Unaffected)"/>
+                            <TextBlock Text="Filter Zones..." Foreground="{StaticResource FgDimBrush}"
+                                       Margin="6,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ZoneSearch}" Value="">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+                        <DataGrid x:Name="ZonesGrid" Grid.Row="1" ItemsSource="{Binding Zones}" SelectedItem="{Binding SelectedZone}" CanUserDeleteRows="False"
+                                  AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single"
+                                  MinHeight="100" SelectionChanged="ZonesGrid_SelectionChanged"
+                                  CellEditEnding="ZonesGrid_CellEditEnding">
+                            <DataGrid.Columns>
+                                <DataGridTemplateColumn Header="" Width="24" IsReadOnly="True" CanUserResize="False">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border Background="Transparent" Cursor="Hand"
+                                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                                    MouseLeftButtonUp="LocateCell_Click">
+                                                <TextBlock FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Text" Value="&#x26A0;"/>
+                                                            <Setter Property="Foreground" Value="{StaticResource WarnAmberBrush}"/>
+                                                            <Setter Property="ToolTip" Value="{Binding HealthWarning}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding HealthWarning}" Value="">
+                                                                    <Setter Property="Text" Value="&#x25CE;"/>
+                                                                    <Setter Property="Foreground" Value="{StaticResource FgDimBrush}"/>
+                                                                    <Setter Property="ToolTip" Value="Locate On Map (Click)"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Border>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Width="30" IsReadOnly="True" CanUserResize="False">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border Width="14" Height="14" CornerRadius="3" Cursor="Hand"
+                                                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                    ToolTip="Click To Cycle Color"
+                                                    MouseLeftButtonUp="Swatch_Click"
+                                                    Background="{Binding ColorIndex, Converter={StaticResource ZoneColorConverter}}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridCheckBoxColumn Header="On" Binding="{Binding Enabled, UpdateSourceTrigger=PropertyChanged}" Width="40"/>
+                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                                <DataGridTextColumn Header="X" Binding="{Binding X}" Width="60"/>
+                                <DataGridTextColumn Header="Y" Binding="{Binding Y}" Width="60"/>
+                                <DataGridTextColumn Binding="{Binding MonitorLabel}" Width="66" IsReadOnly="True">
+                                    <DataGridTextColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=DataGridColumnHeader}, Converter={StaticResource WidthLabel}, ConverterParameter='56|Mon|Monitor'}"/>
+                                        </DataTemplate>
+                                    </DataGridTextColumn.HeaderTemplate>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Tol" Binding="{Binding Tolerance}" Width="50"/>
+                                <DataGridTextColumn Header="CapX" Binding="{Binding CapX}" Width="55"/>
+                                <DataGridTextColumn Header="CapY" Binding="{Binding CapY}" Width="55"/>
+                                <DataGridTextColumn Header="Var" Binding="{Binding Variation}" Width="50"/>
+                                <DataGridTextColumn Header="Type" Binding="{Binding Kind}" Width="52" IsReadOnly="True"/>
+                                <DataGridCheckBoxColumn Header="Overlay" Binding="{Binding ShowDot, UpdateSourceTrigger=PropertyChanged}" Width="64"/>
+                                <DataGridTemplateColumn Header="Action" Width="66" IsReadOnly="True" CanUserResize="False">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border CornerRadius="4" Padding="6,1" Margin="2"
+                                                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                    MouseLeftButtonUp="ZoneAction_Click">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="Background" Value="{StaticResource RowDangerTintBrush}"/>
+                                                        <Setter Property="Cursor" Value="Hand"/>
+                                                        <Setter Property="ToolTip" Value="Click To Flip: Exit Closes OnTop, Stealth Unhooks The Mouse Instead"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding TriggerAction}" Value="Stealth">
+                                                                <Setter Property="Background" Value="{StaticResource RowAccentTintBrush}"/>
+                                                            </DataTrigger>
+                                                            <!-- Global "Zones Trigger Stealth" overrides every zone to Stealth,
+                                                                 so the per-zone chip isn't in effect: dim it and disable the flip. -->
+                                                            <DataTrigger Binding="{Binding DataContext.Cfg.ZonesTriggerStealth, RelativeSource={RelativeSource AncestorType=DataGrid}}" Value="True">
+                                                                <Setter Property="Opacity" Value="0.4"/>
+                                                                <Setter Property="IsHitTestVisible" Value="False"/>
+                                                                <Setter Property="Cursor" Value="Arrow"/>
+                                                                <Setter Property="ToolTip" Value="Overridden By 'Zones Trigger Stealth' — Every Zone Uses Stealth Right Now"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBlock Text="{Binding TriggerAction}" FontSize="11"
+                                                           Foreground="{StaticResource FgPrimaryBrush}"/>
+                                            </Border>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="Group" Binding="{Binding Group}" Width="80"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <TextBlock Text="No Zones Yet — Click Record Or Double-Click The Map"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   Foreground="{StaticResource FgDimBrush}" IsHitTestVisible="False">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Zones.Count}" Value="0">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </GroupBox>
+
+        <!-- ═══ ACTION BOXES ═════════════════════════════════════════ -->
+        <!-- S28 Stage J LAYOUT: three columns so this row stays SHORT and the
+             Zones row above keeps its height. Zone-only tools | Groups + Macros
+             (its own box) | App. Every card is a GroupBox; every wrapped item
+             keeps a bottom margin. -->
+        <Grid Grid.Row="3" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="4*"/>
+            </Grid.ColumnDefinitions>
+
+            <GroupBox Grid.Column="0" Header="Zone Actions">
+                <StackPanel>
+                    <!-- RECORD & EDIT: create / edit the selected zone. The mode
+                         selector sits directly beside Record so they read as a pair. -->
+                    <TextBlock Text="RECORD &amp; EDIT" FontSize="10" FontWeight="SemiBold"
+                               Foreground="{StaticResource FgMutedBrush}" Margin="2,0,0,4"/>
+                    <WrapPanel Margin="0,0,0,10">
+                        <ComboBox SelectedIndex="{Binding Cfg.RecordMode, Mode=TwoWay}" Width="132" Margin="0,0,8,0"
+                                  ToolTip="How Record Captures A Zone: Click A Point, Drag An Exact 1:1 Box, Or Draw A Freeform Shape (Switch Live With 1/2/3 During Capture)">
+                            <ComboBoxItem Content="Point Click"/>
+                            <ComboBoxItem Content="Drag Box"/>
+                            <ComboBoxItem Content="Freeform Draw"/>
+                        </ComboBox>
+                        <Button Content="Record" Click="Record_Click" Style="{StaticResource AccentButton}" Margin="0,0,8,0"
+                                ToolTip="Hides The Window — Capture A Zone On Screen Using The Selected Mode"/>
+                        <Button Content="Duplicate" Command="{Binding DuplicateZoneCmd}" Margin="0,0,8,0"
+                                ToolTip="Copy The Selected Zone With A Small Offset"/>
+                        <Button Content="Remove" Command="{Binding RemoveZoneCmd}"
+                                ToolTip="Delete The Selected Zone (Undoable)"/>
+                    </WrapPanel>
+
+                    <!-- ZONE DATA: move zones in and out as JSON. -->
+                    <TextBlock Text="ZONE DATA" FontSize="10" FontWeight="SemiBold"
+                               Foreground="{StaticResource FgMutedBrush}" Margin="2,0,0,4"/>
+                    <WrapPanel Margin="0,0,0,10">
+                        <Button Content="Import Zones..." Click="ImportZones_Click" Margin="0,0,8,0"
+                                ToolTip="Add Zones From A JSON File (Duplicates Skipped, Undoable)"/>
+                        <Button Content="Export Zones..." Click="ExportZones_Click"
+                                ToolTip="Save All Zones To A JSON File"/>
+                    </WrapPanel>
+
+                    <!-- CONFIGURE: open the configuration dialogs. -->
+                    <TextBlock Text="CONFIGURE" FontSize="10" FontWeight="SemiBold"
+                               Foreground="{StaticResource FgMutedBrush}" Margin="2,0,0,4"/>
+                    <WrapPanel Margin="0,0,0,10">
+                        <Button Content="Hotkeys..." Click="OpenHotkeys_Click" Margin="0,0,8,0"
+                                ToolTip="Record, Change, Or Clear Global Hotkeys"/>
+                        <Button Content="Exceptions..." Click="OpenExceptions_Click" Margin="0,0,8,0"
+                                ToolTip="Processes That Ignore The Pin / Exit Hotkeys While Focused"/>
+                        <Button Content="Auto-Close..." Click="OpenAutoClose_Click" Margin="0,0,8,0"
+                                ToolTip="Exit OnTop Automatically When Chosen Processes Are Running"/>
+                        <Button Content="Settings..." Click="OpenSettings_Click"
+                                ToolTip="Appearance, Logging, Backups, And Folders"/>
+                    </WrapPanel>
+
+                </StackPanel>
+            </GroupBox>
+
+            <StackPanel Grid.Column="2">
+            <GroupBox Header="Zone Groups" Margin="0,0,0,10">
+                <StackPanel>
+                    <TextBlock Text="FILTER AND BULK ACTIONS" FontSize="10" FontWeight="SemiBold"
+                               Foreground="{StaticResource FgMutedBrush}" Margin="0,0,0,5"/>
+                    <DockPanel Margin="0,0,0,12" LastChildFill="False">
+                        <ComboBox x:Name="GroupFilterBox" MinWidth="130" Margin="0,0,10,0"
+                                  ItemsSource="{Binding GroupNames}" SelectedItem="{Binding GroupFilter}"
+                                  DropDownOpened="GroupFilterBox_DropDownOpened"
+                                  ToolTip="Filter The Zone List To One Group (The Map Always Shows Every Zone)"/>
+                        <Button Content="Enable Group" Command="{Binding EnableGroupCmd}" Margin="0,0,8,0"
+                                ToolTip="Turn On Every Zone In The Filtered Group"/>
+                        <Button Content="Disable Group" Command="{Binding DisableGroupCmd}"
+                                ToolTip="Turn Off Every Zone In The Filtered Group"/>
+                    </DockPanel>
+                    <TextBlock Text="ASSIGN SELECTED ZONE" FontSize="10" FontWeight="SemiBold"
+                               Foreground="{StaticResource FgMutedBrush}" Margin="0,0,0,5"/>
+                    <DockPanel LastChildFill="False">
+                        <TextBox x:Name="GroupNameBox" Width="160" Margin="0,0,10,0"
+                                 ToolTip="Type A New Or Existing Group Name"/>
+                        <Button Content="Set Group" Click="SetGroup_Click"
+                                ToolTip="Move The Selected Zone Into This Group (Creates It If New)"/>
+                    </DockPanel>
+                </StackPanel>
+            </GroupBox>
+                <GroupBox Header="Macros">
+                    <StackPanel>
+
+                    <WrapPanel Margin="0,0,0,10">
+                        <Button Content="Macros..." Click="Macros_Click" Margin="0,0,8,6">
+                            <Button.ToolTip>
+                                <StackPanel MaxWidth="380">
+                                    <TextBlock TextWrapping="Wrap" Text="Record And Play Input Macros — Master Switch Inside (Ships Off), Step Editor, Per-Profile Block, Three-Layer Anti-Cheat Guard."/>
+                                    <TextBlock TextWrapping="Wrap" Margin="0,4,0,0" Foreground="{StaticResource WarnAmberBrush}"
+                                               Text="⚠ Recordings Capture Literal Keystrokes; Synthetic Playback Can Be Detected By Anti-Cheat."/>
+                                </StackPanel>
+                            </Button.ToolTip>
+                        </Button>
+                        <Button Content="● Record Macro" Click="RecordMacro_Click" Margin="0,0,8,6"
+                                ToolTip="Start Recording A New Macro (Same As The Record Hotkey). Press The Hotkey Again To Stop — Clicking In A Window To Stop Would Be Recorded Too."/>
+                        <Button Content="■ Stop (Ctrl+Alt+X)" Click="PanicMacro_Click" Margin="0,0,8,6"
+                                ToolTip="Stop Any Playing Macro Now (Same As The Built-In Panic Hotkey Ctrl+Alt+X)"/>
+                    </WrapPanel>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+
+            <GroupBox Grid.Column="4" Header="App">
+                <StackPanel>
+
+                    <StackPanel>
+                        <!-- Row 1: windows & tools. Row 2: live state + profiles.
+                             All items carry a bottom margin so WRAPPED rows never
+                             touch (the old single panel clipped when it wrapped). -->
+                        <WrapPanel>
+                            <Button Content="Logs..." Click="Logs_Click" Margin="0,0,8,6"
+                                    ToolTip="Open The Live Log Viewer"/>
+                            <Button Content="Pinned..." Click="Pins_Click" Margin="0,0,8,6"
+                                    ToolTip="View Every Topmost Window — Unpin Individually Or All At Once"/>
+                            <Button Content="Auto-Pin..." Click="Rules_Click" Margin="0,0,8,6">
+                                <Button.ToolTip>
+                                    <StackPanel MaxWidth="380">
+                                        <TextBlock TextWrapping="Wrap" Text="Auto-Pin — Pin Windows Automatically By Process Or Title (Off By Default)."/>
+                                        <TextBlock TextWrapping="Wrap" Margin="0,4,0,0" Foreground="{StaticResource WarnAmberBrush}"
+                                                   Text="⚠ A Background Window-Title Scanner — Some Anti-Cheat Software Dislikes These."/>
+                                    </StackPanel>
+                                </Button.ToolTip>
+                            </Button>
+                            <Button Content="Actions..." Click="Library_Click" Margin="0,0,8,6"
+                                    ToolTip="Action Library — Named Reusable Actions You Can Bind To Hotkeys And/Or Assign To Zones (Off By Default)"/>
+                            <Button Content="Placement..." Click="Placement_Click" Margin="0,0,8,6">
+                                <Button.ToolTip>
+                                    <StackPanel MaxWidth="380">
+                                        <TextBlock TextWrapping="Wrap" Text="Window Placement — Move Programs To Set Monitors/Positions On Startup, Hotkey, Or Zone; Optionally Launch Them First (Off By Default)."/>
+                                        <TextBlock TextWrapping="Wrap" Margin="0,4,0,0" Foreground="{StaticResource WarnAmberBrush}"
+                                                   Text="⚠ The Launch Half Starts Programs By Path. It Is Gated Off Twice And Every Launch Is Logged."/>
+                                    </StackPanel>
+                                </Button.ToolTip>
+                            </Button>
+                            <Button Content="Profiles..." Click="Profiles_Click" Margin="0,0,8,6"
+                                    ToolTip="Manage Profiles — Named Zone Workspaces (New / Rename / Delete / Switch)"/>
+                            <Button Content="Stats..." Click="Stats_Click" Margin="0,0,8,6"
+                                    ToolTip="Usage Statistics — Session And Lifetime Counters, Most-Triggered Zones"/>
+                            <Button Content="Help" Click="ShowHelp_Click" Margin="0,0,8,6"
+                                    ToolTip="How Everything Works"/>
+                        </WrapPanel>
+                        <WrapPanel>
+                            <Button Content="Peek" Click="Peek_Click" Margin="0,0,8,6"
+                                    ToolTip="Flash Every Zone On Screen For A Moment (Also Bindable As A Hotkey)"/>
+                            <Button Content="Legend" Click="Legend_Click" Margin="0,0,8,6"
+                                    ToolTip="Reopen The Overlay Legend Window"/>
+                            <CheckBox Content="Paused" IsChecked="{Binding DetectionPaused}"
+                                      Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center" Margin="0,0,14,6"
+                                      ToolTip="Pause Zone Detection (Hotkey: Ctrl+Alt+P — Timed Pauses In The Tray Menu)"/>
+                            <CheckBox Content="Test" IsChecked="{Binding TestMode}"
+                                      Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center" Margin="0,0,14,6"
+                                      ToolTip="Test Mode — Zone Gestures Report HIT/MISS (Toast + Flash) But Never Execute Their Action. Session-Only."/>
+                            <TextBlock Text="Profile:" VerticalAlignment="Center" Margin="0,0,6,6"
+                                       Foreground="{StaticResource FgMutedBrush}"/>
+                            <ComboBox x:Name="ProfileCombo" MinWidth="120" VerticalAlignment="Center" Margin="0,0,8,6"
+                                      DropDownOpened="ProfileCombo_DropDownOpened" SelectionChanged="ProfileCombo_SelectionChanged"
+                                      ToolTip="Active Profile — Switch Between Named Zone Workspaces"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+        </Grid>
+
+        <!-- ═══ SAVE / CLOSE ═════════════════════════════════════════ -->
+        <Grid Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="Save and Close (Ctrl+Enter)" Style="{StaticResource AccentButton}" Height="40"
+                    Click="SaveAndClose_Click"/>
+            <Button Grid.Column="2" Content="Close (No Save)" Height="40"
+                    Click="CloseNoSave_Click"/>
+        </Grid>
+
+        <!-- ═══ STATUS BAR ═══════════════════════════════════════════ -->
+        <Border Grid.Row="5" Background="{StaticResource BgBandBrush}" CornerRadius="6" Padding="12,7" Margin="0,12,0,0">
+            <Grid>
+                <TextBlock Text="{Binding StatusText}" Foreground="{StaticResource FgMutedBrush}" FontSize="12"/>
+                <TextBlock HorizontalAlignment="Right" Foreground="{StaticResource FgDimBrush}" FontSize="12"
+                           Text="{Binding Zones.Count, StringFormat='{}{0} Zones'}"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <!-- App icon is optional: only embed it if the user has supplied one.
+         The tray code already falls back to SystemIcons.Application. -->
+    <ApplicationIcon Condition="Exists('Assets\thumbtack.ico')">Assets\thumbtack.ico</ApplicationIcon>
+    <RootNamespace>OnTop</RootNamespace>
+    <AssemblyName>OnTop</AssemblyName>
+    <!-- SECURITY: pin least-privilege (asInvoker) + DPI awareness. See SECURITY.md. -->
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <!-- WPF-rewrite version line (distinct from the lost AutoHotkey "v9.5").
+         Bumped once per session; reaches 1.0.0 when the installer ships and
+         v9.5 parity (Draw zones done; profiles/window-rules pending) is complete.
+         Surfaced at runtime in the Help window and the main-window subtitle. -->
+    <Version>0.43.0</Version>
+    <AssemblyVersion>0.43.0.0</AssemblyVersion>
+    <FileVersion>0.43.0.0</FileVersion>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- S28: Windows DPAPI (ProtectedData) for OPTIONAL at-rest encryption of
+         macro recordings. Microsoft-published; not in the shared framework on
+         .NET 8, hence the package. NuGet restore must succeed (see BUILD notes). -->
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\thumbtack.ico" Condition="Exists('Assets\thumbtack.ico')" />
+    <!-- The tray loads the icon from disk at runtime — ship it beside the exe. -->
+    <None Include="Assets\thumbtack.ico" Condition="Exists('Assets\thumbtack.ico')" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!-- v9.5 parity: kill a running OnTop before build so the exe isn't file-locked -->
+  <Target Name="KillRunningOnTop" BeforeTargets="BeforeBuild" Condition="'$(OS)' == 'Windows_NT'">
+    <Exec Command="taskkill /f /im OnTop.exe &gt;nul 2&gt;&amp;1 &amp; exit /b 0" ContinueOnError="true" />
+  </Target>
+
+</Project>
