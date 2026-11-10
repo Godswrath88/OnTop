@@ -187,6 +187,11 @@ LICENSE and wording).
 Delivered 2026-09-24 in response to the Pinned-Windows freeze. Schema stays 29.
 Revert = v0.44.2 zip (lose nothing but the e-stop).
 
+### ✅ v0.45.1 — SECURITY.md vulnerability-reporting section (docs only) — git tag `v0.45.1`
+Delivered 2026-11-09. From here on, the project is in git (public repo
+github.com/Godswrath88/OnTop). Each delivery is a commit plus a version tag.
+Restore points are tags; the stable one is the `v0.43.0` release. Revert = tag v0.45.0.
+
 ### ⏳ Stage L — second test round → fixes → then Round 3 features (ROADMAP "🎨 ROUND 3" — approved list) — after I build 0.44.x and report per TESTING.md (plus installer/updater/portable when I get to them). Then 1.0.0.
 
 ### ✅ Hotfix — v0.36.1 — first build feedback — zip: `OnTopWPF_v0.36.1_stageC_hotfix1.zip`

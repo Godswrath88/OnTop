@@ -18,7 +18,7 @@
 ; ============================================================================
 
 #define MyAppName "OnTop"
-#define MyAppVersion "0.45.0"
+#define MyAppVersion "0.45.1"
 #define MyAppPublisher "Godswrath88"
 #define MyAppExeName "OnTop.exe"
 ; The publish folder produced by `dotnet publish` (relative to this .iss):

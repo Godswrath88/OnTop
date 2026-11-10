@@ -15,6 +15,12 @@ profiles / window-rules still pending). Format loosely follows
 
 ---
 
+## [0.45.1] — Session 28 — Vulnerability reporting (docs only)
+### Changed
+- **`SECURITY.md`** — new "Reporting a vulnerability" section at the top: use the
+  repo's private **Report a vulnerability** button, not a public issue. No code
+  or behavior change; schema stays 29.
+
 ## [0.45.0] — Session 28 (Stage L, part 1) — The Emergency Stop
 ### Added
 - **`Services/EmergencyStopService`** — Exit and Kill hotkeys now live on a
@@ -1069,6 +1075,7 @@ profiles / window-rules still pending). Format loosely follows
 
 ---
 
+[0.45.1]: WHATS_NEW.md
 [0.45.0]: WHATS_NEW.md
 [0.44.2]: WHATS_NEW.md
 [0.44.1]: WHATS_NEW.md

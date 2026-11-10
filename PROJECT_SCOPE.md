@@ -172,7 +172,7 @@ in zone list order. All zone coordinates are physical pixels.
   main-window subtitle + Help header — this is distinct from the lost AutoHotkey
   **v9.5**. Bump `<Version>` (and `AssemblyVersion`/`FileVersion`) once per
   session and add the matching `CHANGELOG.md` entry. 1.0.0 is reserved for when
-  the installer ships and v9.5 parity is complete (current: v0.45.0 — Draw/Drag-
+  the installer ships and v9.5 parity is complete (current: v0.45.1 — Draw/Drag-
   Box zones, all toggle + action hotkeys, window placement memory done; profiles
   / window-rules still pending). Don't hard-code the version string anywhere else
   — `AppInfo` reads it from the assembly.
@@ -1075,3 +1075,7 @@ section — read it before starting any macro work.
   `Win32.GetProcessName` → OpenProcess/QueryFullProcessImageName;
   RegisterHotKey SetLastError. Tray "Kill Now". Schema stays 29. RULE: any
   future stop/exit path must not depend on the UI thread being alive.
+- S28 (v0.45.1, docs-only) — SECURITY.md "Reporting a vulnerability" section
+  pointing to GitHub private vulnerability reporting (now enabled on the public
+  repo). No code change. Schema stays 29. RULE: never record a known, unfixed
+  weakness in a public file; keep it in a private advisory until the fix ships.

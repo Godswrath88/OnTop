@@ -12,6 +12,25 @@ attack surface changes.
 
 ---
 
+## Reporting a vulnerability
+
+**Please do not open a public issue for a security problem.** Report it privately instead:
+
+1. Go to the repository's **Security** tab.
+2. Click **Report a vulnerability** (GitHub's private vulnerability reporting).
+3. Describe what you found: the version, steps to reproduce, and what an attacker could do with it.
+
+Only the maintainer sees the report. The fix is worked on privately and the
+issue is published, with credit if you want it, once a fixed version is out.
+Bugs that aren't security problems can go in public Issues as usual.
+
+Scope: anything that lets OnTop, its config, imports, macros or updater be used
+to run code, leak data, or act without the user's knowledge or consent. Known
+limits that are already documented below (for example, what Stealth and Kill
+can't do) aren't vulnerabilities.
+
+---
+
 ## Threat model (what we defend against)
 
 1. **Config tampering / malicious config files.** `settings.json` lives in

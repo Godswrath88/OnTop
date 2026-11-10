@@ -1,5 +1,18 @@
 # What's New
 
+## Session 28 — v0.45.1 — Vulnerability reporting (docs only)
+
+The project now lives in a public GitHub repo with private vulnerability
+reporting turned on, but nothing told people to use it, so a security problem
+could have been posted as a public issue that anyone could read before it was fixed.
+
+- **`SECURITY.md` now starts with "Reporting a vulnerability":** Security tab →
+  **Report a vulnerability**, plus what to include and what counts as in scope.
+  The button only shows for visitors; as the owner, I see the incoming reports
+  list instead.
+- No code or behavior change. Schema stays 29. v0.45.0 is still not compiled,
+  so this build's status is the same as 0.45.0's.
+
 ## Session 28 (Stage L, part 1) — v0.45.0 — The Emergency Stop
 
 Clicking the Pinned Windows button froze OnTop — and the Exit hotkey did nothing,
