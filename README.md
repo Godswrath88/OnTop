@@ -51,7 +51,8 @@ Every other hotkey is optional and unbound until you set it. Hotkeys are recorde
 | `WHATS_NEW.md` | Per-version narrative, newest first. |
 | `CHANGELOG.md` | Terse versioned index. |
 | `SECURITY.md` | Threat model, standing security rules, per-session checklist. |
-| `TESTING.md` | The standing test checklist (legend inside). |
+| `docs/TROUBLESHOOTING.md` | Frozen app, logs, resetting settings, common problems, reporting a bug. |
+| `docs/testing/CHECKLIST.md` | The standing test checklist, by feature (legend inside). Failures are tracked as GitHub issues. |
 | `SESSION_STATE.md` / `HANDOFF.md` | Stage ledger and bootstrap notes for continuing development in a new session. |
 | `MASTER_PROMPT.md` | The prompt used to start a new development session. |
 

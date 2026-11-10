@@ -16,7 +16,7 @@ as its own module, so it can never destabilize the on-top core.
 ## 🎨 ROUND 3 — after the current test rounds pass (approved list, S28 2026-09-24)
 
 > **Gate:** nothing here starts until I have built and tested 0.44.x per
-> TESTING.md (plus installer/updater/portable when I get to them) and Stage L
+> docs/testing/CHECKLIST.md (plus installer/updater/portable when I get to them) and Stage L
 > has fixed what that turns up. I approved the list; ordering is mine to change.
 > Suggested staging: **L1** = design system + Professional mode toggle + main
 > window/settings (the big visual jump) · **L2** = grids/overlays/toasts/tray ·

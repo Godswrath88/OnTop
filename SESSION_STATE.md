@@ -192,7 +192,14 @@ Delivered 2026-11-09. From here on, the project is in git (public repo
 github.com/Godswrath88/OnTop). Each delivery is a commit plus a version tag.
 Restore points are tags; the stable one is the `v0.43.0` release. Revert = tag v0.45.0.
 
-### ⏳ Stage L — second test round → fixes → then Round 3 features (ROADMAP "🎨 ROUND 3" — approved list) — after I build 0.44.x and report per TESTING.md (plus installer/updater/portable when I get to them). Then 1.0.0.
+### ✅ v0.45.2 — testing rework (docs + GitHub templates only) — git tag `v0.45.2`
+Delivered 2026-11-09. TESTING.md → `docs/testing/CHECKLIST.md` (by feature,
+stable IDs, every mark kept); new `docs/TROUBLESHOOTING.md`; `.github/` issue
+templates (Bug report, Test pass); open retest items filed as issues #1–#14.
+0.45.1 compiled clean in a development session on the Windows machine.
+Revert = tag v0.45.1.
+
+### ⏳ Stage L — second test round → fixes → then Round 3 features (ROADMAP "🎨 ROUND 3" — approved list) — after I build 0.45.x and report per docs/testing/CHECKLIST.md + the retest issues (plus installer/updater/portable when I get to them). Then 1.0.0.
 
 ### ✅ Hotfix — v0.36.1 — first build feedback — zip: `OnTopWPF_v0.36.1_stageC_hotfix1.zip`
 Fixed 3 pre-existing symbol errors (`MacroSvc` undeclared since 0.33.0, `_sync`
@@ -203,7 +210,9 @@ Next build report decides whether the 0.33–0.36 line is clean.
 - v0.33.2 (code baseline for everything up to v0.33.8): was **UNCONFIRMED** when
   Stage A started; I chose to proceed with staged work and confirm the build
   afterward. Confirmed clean at 0.36.1 and again at 0.42.1 / 0.43.0.
-- v0.44.0–0.44.2: not yet compiled by me. If a build error comes back, fix it in
+- v0.45.1: compiled clean (0 errors, 0 warnings) in a development session on
+  the Windows machine, 2026-11-09, which covers the 0.44.x code as well.
+- v0.44.0–0.44.2: not separately compiled. If a build error comes back, fix it in
   the newest stage and re-deliver (hotfix bump per the document-every-change rule).
 - Installer, updater and portable build: **never tested**. Do not assume they
   work until I say I have run them.

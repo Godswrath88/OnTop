@@ -15,6 +15,24 @@ profiles / window-rules still pending). Format loosely follows
 
 ---
 
+## [0.45.2] — Session 28 — Testing rework (docs + GitHub templates only)
+### Added
+- **`docs/TROUBLESHOOTING.md`** — user-facing: emergency stop, file locations,
+  settings recovery/reset, elevated windows, hotkey conflicts, zone gating,
+  anti-cheat, how to report (logs are private — paste lines only).
+- **`.github/ISSUE_TEMPLATE/`** — Bug report form (version, mode, area,
+  checklist ID, steps, log lines), Test pass form (smoke-test checkboxes),
+  `config.yml` (blank issues off; links to private vulnerability reporting and
+  the troubleshooting guide).
+- GitHub labels `retest`, `needs-log`, `blocker`, `test-pass`; the 13 open
+  retest items plus the unconfirmed Pinned Windows freeze filed as issues #1–#14.
+### Changed
+- **`TESTING.md` → `docs/testing/CHECKLIST.md`**, reorganized by feature (B, E,
+  A, Z, P, H, S, M, L, AL, R, C, X) with stable item IDs and a smoke-test
+  section; every mark and note carried over; retest items link their issue.
+  References updated in README, HANDOFF, MASTER_PROMPT, PROJECT_SCOPE, ROADMAP,
+  SESSION_STATE. No code or behavior change; schema stays 29.
+
 ## [0.45.1] — Session 28 — Vulnerability reporting (docs only)
 ### Changed
 - **`SECURITY.md`** — new "Reporting a vulnerability" section at the top: use the
@@ -1075,6 +1093,7 @@ profiles / window-rules still pending). Format loosely follows
 
 ---
 
+[0.45.2]: WHATS_NEW.md
 [0.45.1]: WHATS_NEW.md
 [0.45.0]: WHATS_NEW.md
 [0.44.2]: WHATS_NEW.md
