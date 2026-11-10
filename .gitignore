@@ -1,0 +1,34 @@
+# .NET / Visual Studio / VS Code
+bin/
+obj/
+publish/
+out/
+*.user
+*.suo
+*.swp
+.vs/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+*.log
+TestResults/
+
+# Inno Setup / portable publish outputs (see installer/BUILD.md, portable/PORTABLE.md)
+installer/Output/
+portable/out/
+*.exe
+!installer/**/*.exe
+
+# OS
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Never commit a real config — it can contain window titles, paths, and macro
+# keystroke recordings (see SECURITY.md).
+settings*.json
+stats.json
+*.bak?
+OnTop.portable
+Data/

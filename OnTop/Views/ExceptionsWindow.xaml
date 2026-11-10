@@ -1,0 +1,77 @@
+<Window x:Class="OnTop.Views.ExceptionsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="OnTop — Process Exceptions" Width="780" Height="540"
+        Style="{StaticResource DarkChromeWindow}" ShowInTaskbar="True"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" TextWrapping="Wrap" Foreground="{DynamicResource FgMutedBrush}" Margin="0,0,0,10"
+                   Text="Excepted Processes Ignore The Always On Top And Exit Hotkeys While Focused (Per-Column). Changes Apply Immediately — Save From The Main Window To Persist."/>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <GroupBox Grid.Column="0" Header="Running Processes">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBox x:Name="FilterBox" Grid.Row="0" Margin="0,0,0,6"
+                             TextChanged="Filter_Changed" ToolTip="Filter Processes"/>
+                    <ListBox x:Name="ProcList" Grid.Row="1" SelectionMode="Extended"
+                             MouseDoubleClick="ProcList_DoubleClick"/>
+                </Grid>
+            </GroupBox>
+
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0">
+                <Button Style="{StaticResource TransferButton}" Margin="0,0,0,8" Click="Add_Click"
+                        ToolTip="Add Selected Processes">
+                    <Path Data="M3,3 L9,9 L3,15 M9,3 L15,9 L9,15" Stroke="{DynamicResource FgPrimaryBrush}"
+                          StrokeThickness="2" StrokeLineJoin="Round"
+                          StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                </Button>
+                <Button Style="{StaticResource TransferButton}" Click="Remove_Click"
+                        ToolTip="Remove Selected Exception">
+                    <Path Data="M15,3 L9,9 L15,15 M9,3 L3,9 L9,15" Stroke="{DynamicResource FgPrimaryBrush}"
+                          StrokeThickness="2" StrokeLineJoin="Round"
+                          StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                </Button>
+            </StackPanel>
+
+            <GroupBox Grid.Column="2" Header="Current Exceptions">
+                <DataGrid x:Name="ExGrid" ItemsSource="{Binding Exceptions}"
+                          AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                        <DataGridCheckBoxColumn Header="Block Toggle"
+                                                Binding="{Binding BlockToggle, UpdateSourceTrigger=PropertyChanged}" Width="95"/>
+                        <DataGridCheckBoxColumn Header="Block Exit"
+                                                Binding="{Binding BlockExit, UpdateSourceTrigger=PropertyChanged}" Width="85"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </GroupBox>
+        </Grid>
+
+        <Grid Grid.Row="2" Margin="0,12,0,0">
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Refresh Processes" Click="Refresh_Click" Margin="0,0,6,0"/>
+                <Button Content="Import..." Click="Import_Click" Margin="0,0,6,0"/>
+                <Button Content="Export..." Click="Export_Click"/>
+            </StackPanel>
+            <Button Content="Close" Style="{StaticResource AccentButton}" Width="120" Height="32"
+                    HorizontalAlignment="Right" Click="Close_Click"/>
+        </Grid>
+    </Grid>
+</Window>
