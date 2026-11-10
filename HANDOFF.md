@@ -104,3 +104,18 @@ ProtectedData`) means the build needs restore.
 2. Stage L: fix whatever the report shows (retest items first).
 3. Installer / updater / portable — when I say I am testing them.
 4. Round-3 features (ROADMAP "🎨 ROUND 3", staged L1/L2/L3 then B–E), then 1.0.0.
+
+**Repo restructure, step 2 (approved, not started; independent of testing,
+docs/infra only):**
+- `CLAUDE.md` at the root replaces HANDOFF.md + MASTER_PROMPT.md (Claude Code
+  loads it automatically).
+- Agent/process docs move into `docs/dev/` (PROJECT_SCOPE trimmed: the session
+  history goes, since git log has it; ROADMAP). BUILD/UPDATES/PORTABLE move to `docs/`.
+- Retire SESSION_STATE.md: tags are the restore points; the rollback rules go
+  into CLAUDE.md. WHATS_NEW.md → `docs/history/`; new release prose goes to
+  GitHub Release notes. Drop the zip commands and zip contract everywhere.
+- Workflow: branch per stage → PR → CI green → merge → tag.
+  `.github/workflows/build.yml` runs `dotnet build` on windows-latest and
+  checks that the version fields agree.
+- Step 3: update the OnTop skills (session-start, delivery-gate,
+  feedback-intake, review skills); they still assume zips and no compiler.
