@@ -69,7 +69,7 @@ Run these first; if any fail, stop and report.
 - [ ] **B9** Exe → Properties → Details shows Company/Copyright as `Godswrath88` / GPL-3.0-or-later.
 - [ ] **B10** **Verbose logging** shows: `Gesture … at (x,y)`, gating reasons, `no enabled zone … contains it`, `Placement … candidate:` lines, `Overlays re-asserted`, `Global hotkeys SUSPENDED/RESUMED`.
 - [ ] **B11** Icon (0.45.3): the red thumbtack shows on the exe in Explorer, the taskbar, Alt+Tab and the tray, and looks crisp (not blurry) in the tray.
-- [ ] **B12** Log Viewer → **Export Diagnostics…** to a file that already exists → confirm Replace → the zip is written (no error) and opens with settings.json, the log, diag.txt and log-tail.txt.
+- [ ] **B12** Log Viewer → **Export Diagnostics…** to a file that already exists → confirm Replace → the zip is written (no error) and opens with settings.json, the log, diag.txt and log-tail.txt. Type a bare name (no extension) → saved as .zip.
 
 ## E. Emergency stop & exit
 
@@ -139,6 +139,7 @@ Default combos: **Exit = F10**, **Kill = Ctrl+Alt+Q** (Hotkeys… to change).
 - [ ] **H4** Settings → Performance → Hotkey Re-Bind Retry 5 → with Verbose Logging on, `Still blocked: …` appears every ~5 s (0.45.3: DEBUG, not ERROR).
 - [ ] **H9** Hotkey freed (0.45.3): with a combo held by another app (e.g. Ctrl+Alt+N), close that app → within one retry a toast says "Ctrl+Alt+N (quick record) Is Now Active — The Other App Released It", and the hotkey works. Clearing a blocked combo in Hotkeys… instead shows no such note.
 - [ ] **H10** Stealth hotkey (0.45.3): set a Stealth combo in Hotkeys… → restart → no "In Use By Another App" warning for it, the log has no `Failed to bind stealth`, and pressing it toggles Stealth once (one toast, not two).
+- [ ] **H11** Panic key safety (0.45.3 review): open Hotkeys…, and while it's open trigger a zone set to Run Macro; then close Hotkeys… → Ctrl+Alt+X still stops the macro, and after it ends the Always On Top hotkey still works.
 - [ ] **H5** Cheat Sheet hotkey → card; Command Palette hotkey → type "peek" → Enter.
 - [ ] **H6** Features → Hold Chords on; Hotkeys… Hold To Peek → overlays while held; releasing Ctrl alone ends it. Log `Hold-chord keyboard hook INSTALLED`.
 - [ ] **H7** Hold To Pin → topmost while held, released after; an already-pinned window untouched.

@@ -27,7 +27,9 @@ fourth one crashed OnTop.
   The bundles written during this test are probably incomplete. The same zip
   code (also used by Log Viewer → Export) also failed when replacing an
   existing file, could fail if a log line was being written at that moment,
-  and two crash bundles in the same second collided. All fixed.
+  and two crash bundles in the same second collided. All fixed. Export now
+  only writes `.zip` files and replaces the target only once the new zip is
+  complete, so a mistyped file name can't wipe out a real file.
 - **#14 (Pinned Windows freeze, reported on 0.44.x)** is very likely this same
   bug: Pinned Windows throws the same exception. A retest will confirm it.
 
@@ -73,8 +75,10 @@ with the `KILL —` line. With the fix, every sub-window opens.
   Stealth hotkey was registered twice, so anyone with a Stealth combo had a
   hotkey that looked permanently blocked; and hotkey ids climbed on every
   retry until, after about a day of a persistent conflict, they'd run out of
-  Windows' range. A combo OnTop can't even read is now logged once as
-  invalid instead of being retried forever as "in use".
+  Windows' range. A combo OnTop can't even read now gets one "isn't a valid
+  key combination" toast instead of being retried forever as "in use". The
+  "is now active" note covers the main hotkeys and the toggle hotkeys; macro
+  and library hotkeys only log.
 - **Placement asks what to do about administrator windows.** OnTop can't
   move a window that belongs to a program running as administrator (GPU
   Tweak III here), and it won't run as administrator to get around that.
@@ -110,7 +114,15 @@ shows the "newer config" notice; that's expected.
 **Independent review.** Before delivery, a separate reviewer that hadn't seen
 any of this reasoning went over the whole change. It built clean (0 errors, 0
 warnings) and disproved several of my claims; everything above reflects the
-fixes. Not fixed, on purpose:
+fixes. A second fresh reviewer then checked just the fixes and caught one
+that was too clever: handing out the lowest free hotkey id let a stale id
+unregister someone else's hotkey (worst case: the macro panic key during
+playback, while the Hotkeys editor was open). Replaced with ids that climb and
+wrap, plus clearing every id when its hotkey is released. It also caught
+Export truncating a file before the zip was complete, Esc in the admin
+question counting as an answer, hint placement on mixed-scaling monitors,
+and Help overclaiming which hotkeys get a "now active" note. All fixed.
+Not fixed, on purpose:
 - Revert in the Placement window restores the rules as they were when it
   opened, so it also undoes an admin-window answer given while it was open.
   That's what Revert means; the answer is still applied correctly by rule id.
@@ -122,6 +134,12 @@ fixes. Not fixed, on purpose:
   slightly soft until OnTop restarts.
 - If another app grabs and releases the same combo repeatedly, each release
   gets its own "is now active" note.
+- The admin-window questions always appear on the primary monitor.
+- Settings on a screen shorter than about 340 px can still push its buttons
+  off the bottom; moving Settings to another monitor after it opens doesn't
+  refit it.
+- Exit and Kill (e-stop thread) still report an unreadable combo as "in use"
+  and retry it; they're set from Hotkeys…, which only records valid combos.
 
 **Still open:** a real UI freeze with the e-stop thread alive (E3/E4) hasn't
 been tested; this "freeze" was the debugger.

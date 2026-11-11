@@ -116,9 +116,12 @@ public sealed class NoticePopup : Window
         // Center over the owner once the size is known; fall back to the work area.
         Loaded += (_, _) =>
         {
-            Rect area = OwnerRect(owner) ?? SystemParameters.WorkArea;
-            Left = area.Left + (area.Width - ActualWidth) / 2;
-            Top = area.Top + (area.Height - ActualHeight) / 2;
+            // Position in DEVICE pixels: with per-monitor DPI, Left/Top would be
+            // read at this popup's monitor scale, not the owner's. Re-center once
+            // more if moving it onto the owner's monitor changes its scale.
+            var target = OwnerRectPx(owner);
+            CenterOn(target);
+            DpiChanged += (_, _) => Dispatcher.BeginInvoke(() => CenterOn(target));
 
             var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
             var dur = TimeSpan.FromMilliseconds(200);
@@ -144,19 +147,31 @@ public sealed class NoticePopup : Window
         BeginAnimation(OpacityProperty, fade);
     }
 
-    /// <summary>The owner's on-screen rectangle in DIPs. Left/Top/ActualWidth
-    /// are wrong for a maximized window (they hold the restore position), so
-    /// measure where its content actually is on screen.</summary>
-    private static Rect? OwnerRect(Window? owner)
+    /// <summary>Center this popup on <paramref name="targetPx"/> (device pixels),
+    /// or on the primary work area if there's no usable owner.</summary>
+    private void CenterOn(Rect? targetPx)
+    {
+        var hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
+        if (hwnd == IntPtr.Zero) return;
+        var r = targetPx ?? ToRect(System.Windows.Forms.Screen.PrimaryScreen?.WorkingArea ?? System.Windows.Forms.Screen.AllScreens[0].WorkingArea);
+        var dpi = VisualTreeHelper.GetDpi(this);
+        double w = ActualWidth * dpi.DpiScaleX, h = ActualHeight * dpi.DpiScaleY;
+        Helpers.Win32.SetWindowPos(hwnd, IntPtr.Zero, (int)(r.X + (r.Width - w) / 2), (int)(r.Y + (r.Height - h) / 2), 0, 0,
+            Helpers.Win32.SWP_NOSIZE | Helpers.Win32.SWP_NOZORDER | Helpers.Win32.SWP_NOACTIVATE);
+    }
+
+    private static Rect ToRect(System.Drawing.Rectangle r) => new(r.X, r.Y, r.Width, r.Height);
+
+    /// <summary>The owner's on-screen rectangle in device pixels. Left/Top are
+    /// wrong for a maximized window (they hold the restore position) and are in
+    /// the owner's DIPs, so measure where its content actually is on screen.</summary>
+    private static Rect? OwnerRectPx(Window? owner)
     {
         if (owner is not { IsVisible: true } || owner.WindowState == WindowState.Minimized) return null;
         try
         {
-            var src = PresentationSource.FromVisual(owner);
-            if (src?.CompositionTarget is null) return null;
-            var toDip = src.CompositionTarget.TransformFromDevice;
-            Point tl = toDip.Transform(owner.PointToScreen(new Point(0, 0)));
-            Point br = toDip.Transform(owner.PointToScreen(new Point(owner.ActualWidth, owner.ActualHeight)));
+            Point tl = owner.PointToScreen(new Point(0, 0));
+            Point br = owner.PointToScreen(new Point(owner.ActualWidth, owner.ActualHeight));
             return new Rect(tl, br);
         }
         catch (InvalidOperationException) { return null; }   // not connected to a PresentationSource

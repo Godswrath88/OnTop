@@ -1093,8 +1093,10 @@ section — read it before starting any macro work.
   no-op). RULE: a helper that re-parents an element must detach it first.
   RULE: every new settings field bumps the schema, even with defaults that
   fill in (otherwise older builds save over it). RULE: HotkeyService ids are
-  reused (lowest free); -1 = in use (retried), -3 = invalid combo (logged
-  once, never retried). RULE: retry ticks log at DEBUG only.
+  climbing and wrap at 0xBFFF (never lowest-free: stale ids/queued WM_HOTKEY),
+  and id fields are reset to -2 when released; -1 = in use (retried), -3 =
+  invalid combo (one toast per real bind, never retried). RULE: retry ticks
+  log at DEBUG only. RULE: file writers build to a temp file and move.
   "Do this first" messages from clicks in OnTop's own windows use
   `Views/NoticePopup` (fade in/out, never takes focus, duration =
   `NoticeSeconds` 1–60, `HintPopupsEnabled` off = toast instead). RULE: a

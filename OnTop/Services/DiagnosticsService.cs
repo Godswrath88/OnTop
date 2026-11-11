@@ -18,8 +18,27 @@ public static class DiagnosticsService
     /// user comment ("what were you doing?") is embedded in diag.txt.</summary>
     public static void WriteBundle(MainViewModel vm, string zipPath, string? comment = null)
     {
-        // FileMode.Create: Export's save dialog already confirmed "Replace";
-        // ZipFile.Open(Create) used CreateNew and threw on an existing file.
+        // Only ever write a .zip, and build it beside the target first: the
+        // target is replaced only once the bundle is complete. Together these
+        // mean a mistyped Export name (e.g. settings.json) can't truncate a
+        // real file. The save dialog has already confirmed any "Replace".
+        if (!zipPath.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
+            throw new ArgumentException("A diagnostics bundle must be saved as a .zip file.", nameof(zipPath));
+        string tmp = zipPath + ".partial";
+        try
+        {
+            WriteBundleTo(vm, tmp, comment);
+            File.Move(tmp, zipPath, overwrite: true);
+        }
+        finally
+        {
+            try { if (File.Exists(tmp)) File.Delete(tmp); }
+            catch (IOException ex) { vm.Log.Debug($"Diagnostics: could not remove {Path.GetFileName(tmp)}: {ex.Message}", "System"); }
+        }
+    }
+
+    private static void WriteBundleTo(MainViewModel vm, string zipPath, string? comment)
+    {
         using var fs = new FileStream(zipPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
         using var zip = new ZipArchive(fs, ZipArchiveMode.Create);
 

@@ -30,9 +30,11 @@ profiles / window-rules still pending). Format loosely follows
   created while previously created entries are still open`); replacing an
   existing file threw (CreateNew); the live log was read with FileShare.Read
   and could throw mid-write; two crash bundles in one second collided. Each
-  entry now closes before the next, the file is overwritten after the save
-  dialog's confirmation, the log is read with ReadWrite sharing, and crash
-  bundle names carry milliseconds.
+  entry now closes before the next; the bundle is built as `<name>.partial`
+  and moved over the target only when complete (after the save dialog's
+  Replace confirmation); only `.zip` targets are accepted and Export defaults
+  a bare name to .zip, so a mistyped name can't truncate settings.json; the
+  log is read with ReadWrite sharing; crash bundle names carry milliseconds.
 - **The Stealth hotkey was registered twice** (`RegisterIfSet` + a second
   `RegisterToggleHotkey`), so the second always failed with 1409: anyone with
   a Stealth combo had a permanently "blocked" hotkey and a retry loop that
@@ -40,10 +42,16 @@ profiles / window-rules still pending). Format loosely follows
   retry list like the others.
 - **Hotkey ids only climbed** (`_nextId++` on every retry tick); after roughly
   a day of a persistent conflict they'd pass RegisterHotKey's 0xBFFF range.
-  Register now takes the lowest free id.
+  Ids now climb and wrap inside that range, skipping live ones (never
+  lowest-first: a just-freed id is not handed straight to another hotkey), and
+  every id field is cleared when its hotkey is released, so a stale id can't
+  later unregister another owner's hotkey (e.g. the macro panic key).
 - **A combo that can't be parsed was treated as "in use by another app"** and
-  retried forever. It now returns -3, is logged once ("not a valid key
-  combination — set it again in Hotkeys…") and never retried.
+  retried forever. It now returns -3, gets one Warning toast and a log line
+  per real bind ("isn't a valid key combination — set it again in
+  Hotkeys…") and is never retried. Macro/library hotkeys say "not a valid key
+  combination" instead of "failed to register". (Exit/Kill live on the e-stop
+  thread and still treat an unreadable combo as "in use"; unchanged.)
 - **Retry ticks flooded the log:** the "Hotkeys: toggle=…" summary (INFO) and
   the macro/library "failed to register" lines (WARN) were written every
   tick, as was "Failed to bind" (ERROR). On retry ticks these are DEBUG now
@@ -63,7 +71,8 @@ profiles / window-rules still pending). Format loosely follows
   Duplicate with no zone selected (Remove and Duplicate used to do nothing
   silently), Record Macro with macros off, and the Action Library picker with
   nothing to pick. The hint fades in centered over the window you clicked in
-  (measured on screen, so a maximized window works), stays a few seconds, and
+  (measured and placed in device pixels, so maximized windows and monitors
+  with different scaling work), stays a few seconds, and
   fades out. Nothing to click, and it never takes focus: shown without
   activation and WS_EX_NOACTIVATE, so clicking it to dismiss doesn't either.
   Hover keeps it up. With Hint Popups off it's a Warning toast, which Do Not
@@ -76,10 +85,10 @@ profiles / window-rules still pending). Format loosely follows
 - **Placement on an administrator window asks** (`Views/ElevatedPlacementDialog`):
   "Turn This Rule Off" / "Keep Rule" + "Don't ask again for this placement".
   At most once per rule per session; never takes focus; several at once step
-  down the screen instead of stacking. While Do Not Disturb suppresses (a
-  watched game is running) it's an Error toast and the question is saved for
-  a later failure. Closing the dialog without answering (✕, Alt+F4, exit)
-  saves nothing. The answer is applied to the rule by id, so it still lands
+  down the primary screen (each takes the lowest free position) instead of
+  stacking. While Do Not Disturb suppresses (a watched game is running) it's
+  an Error toast and the question is saved for a later failure. Closing the
+  dialog without answering (✕, Esc, Alt+F4, exit) saves nothing. The answer is applied to the rule by id, so it still lands
   correctly if the list was reverted or edited meanwhile (or is dropped, with
   a log line, if the rule is gone). Don't-ask rules log a WARN and stay
   silent; the rule editor's new "Ask if it runs as admin" switch re-enables
@@ -95,7 +104,8 @@ profiles / window-rules still pending). Format loosely follows
   older loaders couldn't read and that had no small sizes for the tray. The
   tray asks for the small-icon size so it uses the matching frame.
 - Help: the admin-window question, hint popups, and the per-hotkey "now
-  active" note.
+  active" note (which hotkeys get it: the main ones and the toggle hotkeys;
+  macro/library and the rest are logged only).
 ### Schema
 - **29 → 30** (no-op migration): `AppSettings.HintPopupsEnabled` (true),
   `NoticeSeconds` (4, clamped 1–60 on load), `PlacementRule.ElevatedNoticeOff`

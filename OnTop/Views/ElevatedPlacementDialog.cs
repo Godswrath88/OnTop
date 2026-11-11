@@ -16,7 +16,6 @@ namespace OnTop.Views;
 /// </summary>
 public sealed class ElevatedPlacementDialog : Window
 {
-    private static int _open;   // dialogs currently open (UI thread only)
 
     public static void Show(PlacementRule rule, string processName, Action<bool /*turnOff*/, bool /*dontAsk*/> onAnswer)
         => new ElevatedPlacementDialog(rule, processName, onAnswer).Show();
@@ -66,7 +65,10 @@ public sealed class ElevatedPlacementDialog : Window
         buttons.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(8) });
         buttons.ColumnDefinitions.Add(new ColumnDefinition());
         var off = new Button { Content = "Turn This Rule Off", Height = 30, Style = (Style)Application.Current.FindResource("AccentButton") };
-        var keep = new Button { Content = "Keep Rule", Height = 30, IsCancel = true };
+        var keep = new Button { Content = "Keep Rule", Height = 30 };
+        // Esc closes WITHOUT answering (like ✕): IsCancel on Keep would make Esc
+        // an answer and save "don't ask again" if the box happened to be ticked.
+        PreviewKeyDown += (_, e) => { if (e.Key == System.Windows.Input.Key.Escape) { e.Handled = true; Close(); } };
         bool answered = false;
         void Answer(bool turnOff)
         {
@@ -77,16 +79,22 @@ public sealed class ElevatedPlacementDialog : Window
         }
         off.Click += (_, _) => Answer(true);
         keep.Click += (_, _) => Answer(false);
-        // Closing it any other way (title-bar ✕, Alt+F4, OnTop exiting) is NOT an
+        // Closing it any other way (title-bar ✕, Esc, Alt+F4, OnTop exiting) is NOT an
         // answer: nothing is saved (no disk write on the exit path), and the
         // question comes back next session.
 
         // Several rules failing at once: step each open dialog down-right so
         // they don't sit exactly on top of each other.
-        int slot = _open++;
-        Closed += (_, _) => _open--;
+        // The slot is the lowest one no other open dialog is using (no counter
+        // to leak if a dialog never shows; a closed slot is refilled first).
         Loaded += (_, _) =>
         {
+            int slot = 0;
+            var used = new System.Collections.Generic.HashSet<int>();
+            foreach (Window w in Application.Current.Windows)
+                if (w is ElevatedPlacementDialog d && !ReferenceEquals(d, this) && d.Tag is int s) used.Add(s);
+            while (used.Contains(slot)) slot++;
+            Tag = slot;
             var wa = SystemParameters.WorkArea;
             Left = Math.Min(wa.Right - ActualWidth, wa.Left + (wa.Width - ActualWidth) / 2 + 28 * slot);
             Top = Math.Min(wa.Bottom - ActualHeight, wa.Top + (wa.Height - ActualHeight) / 2 + 28 * slot);

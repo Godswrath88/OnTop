@@ -329,6 +329,13 @@ public class MainViewModel : ObservableObject
         Hotkeys.Unregister(_hkMacroRecordId);
         Hotkeys.Unregister(_hkPlacementId);
         foreach (var id in new[] { _hkPinCursorId, _hkOpUpId, _hkOpDownId, _hkClickThroughId, _hkCornerId, _hkCheatId, _hkPaletteId, _hkPinTimedId, _hkSendMonId, _hkMacroPauseId, _hkMacroStatusId }) Hotkeys.Unregister(id);
+        // 0.45.3 review: forget every id just released. The suspended path
+        // returns before re-assigning them, and a stale id must never be
+        // unregistered later: by then it may belong to another owner (e.g. the
+        // macro panic key registered while the Hotkeys editor was open).
+        _hkToggleId = _hkConfigId = _hkPauseId = _hkRehookId = _hkPinsId = _hkPeekId = _hkRulesId = _hkProfilesId = -2;
+        _hkQuickRecordId = _hkViewLogsId = _hkRestartId = _hkStealthId = _hkMacrosId = _hkMacroRecordId = _hkPlacementId = -2;
+        _hkPinCursorId = _hkOpUpId = _hkOpDownId = _hkClickThroughId = _hkCornerId = _hkCheatId = _hkPaletteId = _hkPinTimedId = _hkSendMonId = _hkMacroPauseId = _hkMacroStatusId = -2;
         foreach (var id in _macroHkIds) Hotkeys.Unregister(id);
         _macroHkIds.Clear();
         foreach (var id in _libraryHkIds) Hotkeys.Unregister(id);
@@ -390,6 +397,7 @@ public class MainViewModel : ObservableObject
                     else MacroSvc.Play(m);
                 });
                 if (id >= 0) _macroHkIds.Add(id);
+                else if (id == -3) { if (!isRetry) Log.Warn($"Macro hotkey is not a valid key combination: {m.Name} ({m.Hotkey})", "Hotkey"); }
                 else if (isRetry) Log.Debug($"Macro hotkey still not registered: {m.Name} ({m.Hotkey})", "Hotkey");
                 else Log.Warn($"Macro hotkey failed to register: {m.Name} ({m.Hotkey})", "Hotkey");
             }
@@ -402,6 +410,7 @@ public class MainViewModel : ObservableObject
                 var a = act;
                 int id = Hotkeys.Register(a.Hotkey, () => Application.Current.Dispatcher.Invoke(() => RunLibraryAction(a, "hotkey")));
                 if (id >= 0) _libraryHkIds.Add(id);
+                else if (id == -3) { if (!isRetry) Log.Warn($"Library hotkey is not a valid key combination: {a.Name} ({a.Hotkey})", "Hotkey"); }
                 else if (isRetry) Log.Debug($"Library hotkey still not registered: {a.Name} ({a.Hotkey})", "Hotkey");
                 else Log.Warn($"Library hotkey failed to register: {a.Name} ({a.Hotkey})", "Hotkey");
             }
@@ -537,7 +546,9 @@ public class MainViewModel : ObservableObject
     /// per real bind, not every retry tick.</summary>
     private void NoteInvalidCombo(string what, string key)
     {
-        if (!_bindIsRetry) Log.Warn($"Hotkey for {what} is not a valid key combination: \"{key}\" — set it again in Hotkeys…", "Hotkey");
+        if (_bindIsRetry) return;
+        Log.Warn($"Hotkey for {what} is not a valid key combination: \"{key}\" — set it again in Hotkeys…", "Hotkey");
+        ToastService.Show($"Hotkey For {what} Isn't A Valid Key Combination ({key}) — Set It Again In Hotkeys…", ToastType.Warning, 6500);
     }
 
     // ── Hotkey Callbacks ────────────────────────────────────────────────
