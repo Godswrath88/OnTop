@@ -15,7 +15,7 @@ profiles / window-rules still pending). Format loosely follows
 
 ---
 
-## [0.45.3] — Session 28 — HOTFIX: every footer sub-window crashed on open
+## [0.45.3] — Session 28 — HOTFIX: footer sub-windows crashed on open (+ test-round fixes)
 ### Fixed
 - **Every footer window crashed when opened** (Placement, Pinned Windows,
   Action Library, Auto-Pin, Macros, Profiles, Profile Rules, Schedules,
@@ -25,46 +25,83 @@ profiles / window-rules still pending). Format loosely follows
   already the logical child of another element`. Present since 0.44.0. The
   content is now detached first. Likely the cause of the Pinned Windows
   "freeze" (#14).
-- **Crash-report bundle failed** (`Entries cannot be created while previously
-  created entries are still open`): `diag.txt`'s writer stayed open while the
-  `log-tail.txt` entry was created. Each entry is now closed before the next.
-- "No Overlays Active" toast said "Dot Column"; it now names the Overlay column.
+- **Diagnostics zip (crash report + Log Viewer → Export) failed:** `diag.txt`'s
+  writer stayed open while the next entry was created (`Entries cannot be
+  created while previously created entries are still open`); replacing an
+  existing file threw (CreateNew); the live log was read with FileShare.Read
+  and could throw mid-write; two crash bundles in one second collided. Each
+  entry now closes before the next, the file is overwritten after the save
+  dialog's confirmation, the log is read with ReadWrite sharing, and crash
+  bundle names carry milliseconds.
+- **The Stealth hotkey was registered twice** (`RegisterIfSet` + a second
+  `RegisterToggleHotkey`), so the second always failed with 1409: anyone with
+  a Stealth combo had a permanently "blocked" hotkey and a retry loop that
+  never ended. Registered once now; a really blocked Stealth combo joins the
+  retry list like the others.
+- **Hotkey ids only climbed** (`_nextId++` on every retry tick); after roughly
+  a day of a persistent conflict they'd pass RegisterHotKey's 0xBFFF range.
+  Register now takes the lowest free id.
+- **A combo that can't be parsed was treated as "in use by another app"** and
+  retried forever. It now returns -3, is logged once ("not a valid key
+  combination — set it again in Hotkeys…") and never retried.
+- **Retry ticks flooded the log:** the "Hotkeys: toggle=…" summary (INFO) and
+  the macro/library "failed to register" lines (WARN) were written every
+  tick, as was "Failed to bind" (ERROR). On retry ticks these are DEBUG now
+  (summary skipped); a normal bind still logs them in full.
 - **Hotkey recovery note named nothing and only fired when every conflict
-  cleared.** Each blocked hotkey now gets its own note the moment the retry
-  binds it: "Ctrl+Alt+N (quick record) Is Now Active — The Other App Released
-  It" (+ an INFO log line). Only on retry ticks, so clearing a combo or
-  switching its feature off isn't announced. The conflict toast shows the
-  configured retry interval instead of a hard-coded 30 s. Still-blocked combos
-  log at DEBUG on retry ticks instead of an ERROR line every retry.
+  cleared** ("Hotkeys Bound — The Conflict Cleared", removed). Each blocked
+  hotkey now gets its own note the moment the retry binds it: "Ctrl+Alt+N
+  (quick record) Is Now Active — The Other App Released It" (+ INFO line).
+  Only on retry ticks, so clearing a combo or switching its feature off isn't
+  announced. The conflict toast shows the configured retry interval instead
+  of a hard-coded 30 s.
+- "No Overlays Active" toast said "Dot Column"; it now names the Overlay column.
+- A corrupt user tray-icon override fell back silently; it now logs a WARN.
 ### Changed
 - **"Do this first" messages are hint popups now** (`Views/NoticePopup`)
   instead of easy-to-miss status-bar text or toasts: Set Group / Remove /
   Duplicate with no zone selected (Remove and Duplicate used to do nothing
   silently), Record Macro with macros off, and the Action Library picker with
-  nothing to pick. The hint fades in centered over the window you clicked in,
-  stays a few seconds, and fades out. Nothing to click; it never takes focus.
-  Click dismisses it early, hover keeps it up.
+  nothing to pick. The hint fades in centered over the window you clicked in
+  (measured on screen, so a maximized window works), stays a few seconds, and
+  fades out. Nothing to click, and it never takes focus: shown without
+  activation and WS_EX_NOACTIVATE, so clicking it to dismiss doesn't either.
+  Hover keeps it up. With Hint Popups off it's a Warning toast, which Do Not
+  Disturb suppresses while a watched game runs.
+- **Settings keeps Save & Close / Cancel (Revert) in view:** the footer is
+  docked below the scroll area (thin divider) instead of scrolling with the
+  sections. On open, the window is fitted to the monitor it lands on (height
+  cap and position), so the footer can't end up below the screen edge.
 ### Added
-- **Placement on an administrator window asks once** (`Views/ElevatedPlacementDialog`):
+- **Placement on an administrator window asks** (`Views/ElevatedPlacementDialog`):
   "Turn This Rule Off" / "Keep Rule" + "Don't ask again for this placement".
-  Once per rule per session, never takes focus, toast only while DND is
-  active. Don't-ask rules log a WARN and stay silent; re-enable with the rule
-  editor's new "Ask if it runs as admin" switch. `PlacementRule.ElevatedNoticeOff`
-  (no schema bump). Still never elevates (SECURITY.md); the elevated helper
-  idea is shelved with reasons in ROADMAP.
+  At most once per rule per session; never takes focus; several at once step
+  down the screen instead of stacking. While Do Not Disturb suppresses (a
+  watched game is running) it's an Error toast and the question is saved for
+  a later failure. Closing the dialog without answering (✕, Alt+F4, exit)
+  saves nothing. The answer is applied to the rule by id, so it still lands
+  correctly if the list was reverted or edited meanwhile (or is dropped, with
+  a log line, if the rule is gone). Don't-ask rules log a WARN and stay
+  silent; the rule editor's new "Ask if it runs as admin" switch re-enables
+  the question, in the same session too. OnTop still never elevates
+  (SECURITY.md); the elevated helper idea is shelved with reasons in ROADMAP.
 - **Settings → Appearance → Hint Popups:** an on/off switch (off = hints show
   as a toast) and a typed "Stay Up For N Seconds" box (digits only, 1–60,
   default 4; 0, blank or out-of-range snaps back), with a Preview button.
-  `AppSettings.HintPopupsEnabled` + `NoticeSeconds` (clamped 1–60); no schema
-  bump: older builds ignore them.
-- **Settings keeps Save & Close / Cancel (Revert) in view:** the footer is
-  docked below the scroll area instead of scrolling with the sections.
 - **OnTop's own thumbtack icon** (`OnTop/Assets/thumbtack.ico`): a generic red
   push-pin drawn from simple shapes by `tools/make_icon.ps1`, original artwork
-  under the project license. Frames 16–64 px (32-bit BMP) + 256 px (PNG).
-  Replaces an unattributed single-frame 256 px PNG icon that older loaders
-  couldn't read and that had no small sizes for the tray. The tray now asks
-  for the small-icon size so it uses the matching frame.
+  under the project license. Frames 16/20/24/32/40/48/64 px (32-bit BMP) +
+  256 px (PNG). Replaces an unattributed single-frame 256 px PNG icon that
+  older loaders couldn't read and that had no small sizes for the tray. The
+  tray asks for the small-icon size so it uses the matching frame.
+- Help: the admin-window question, hint popups, and the per-hotkey "now
+  active" note.
+### Schema
+- **29 → 30** (no-op migration): `AppSettings.HintPopupsEnabled` (true),
+  `NoticeSeconds` (4, clamped 1–60 on load), `PlacementRule.ElevatedNoticeOff`
+  (false). The bump is what makes an older build treat the config as newer
+  and not save over it, dropping these fields. Rolling back to 0.45.2 or
+  0.43.0 therefore shows the "newer config" notice; that's expected.
 
 ## [0.45.2] — Session 28 — Testing rework (docs + GitHub templates only)
 ### Added

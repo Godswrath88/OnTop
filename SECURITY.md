@@ -74,6 +74,11 @@ point the machine is already compromised.
   redesigned or dropped, not elevated.
 
 ### Config & file I/O (`Services/SettingsService.cs`)
+- 0.45.3 fields: `HintPopupsEnabled` (bool), `NoticeSeconds` (clamped 1–60
+  in Validate) and `PlacementRule.ElevatedNoticeOff` (bool) are display-only.
+  From an imported config the worst case is a quieter or shorter hint, or an
+  admin-window question that doesn't appear (the failure is still logged).
+  None of them grants a capability, so none is in the powerful-fields stamp.
 - **Size cap**: refuse to parse any config/import file larger than a hard limit
   (currently 4 MB) — reject before deserializing, to bound memory.
 - **Strict deserialization**: reflection-based JSON that *ignores unknown fields*

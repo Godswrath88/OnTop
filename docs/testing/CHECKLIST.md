@@ -58,7 +58,7 @@ Run these first; if any fail, stop and report.
 
 - [.] **B1 [!] Compiles clean** on Windows (NuGet restore succeeded; `System.Security.Cryptography.ProtectedData` is the only package). Paste every error verbatim.
   > 11-09: v0.45.1, `dotnet build` Debug: 0 errors, 0 warnings (compiled in a development session on the Windows machine).
-- [.] **B2** First launch: settings migrate silently (now → schema 29); no "config conflict" prompt; no "powerful fields changed" toast on the **second** launch.
+- [.] **B2** First launch: settings migrate silently (now → schema 30); no "config conflict" prompt; no "powerful fields changed" toast on the **second** launch.
 - [.] **B3** Existing zones, profiles, hotkeys, macros all present.
 - [.] **B4** Hotkeys… shows **Ctrl+Alt+M** on "Record / Stop Macro".
 - [ ] **B5** `settings.json` (installed mode): macros stored as `EncryptedEvents` base64, no plain `Events`; macros still play after restart. Portable mode: plain `Events`.
@@ -69,6 +69,7 @@ Run these first; if any fail, stop and report.
 - [ ] **B9** Exe → Properties → Details shows Company/Copyright as `Godswrath88` / GPL-3.0-or-later.
 - [ ] **B10** **Verbose logging** shows: `Gesture … at (x,y)`, gating reasons, `no enabled zone … contains it`, `Placement … candidate:` lines, `Overlays re-asserted`, `Global hotkeys SUSPENDED/RESUMED`.
 - [ ] **B11** Icon (0.45.3): the red thumbtack shows on the exe in Explorer, the taskbar, Alt+Tab and the tray, and looks crisp (not blurry) in the tray.
+- [ ] **B12** Log Viewer → **Export Diagnostics…** to a file that already exists → confirm Replace → the zip is written (no error) and opens with settings.json, the log, diag.txt and log-tail.txt.
 
 ## E. Emergency stop & exit
 
@@ -137,6 +138,7 @@ Default combos: **Exit = F10**, **Kill = Ctrl+Alt+Q** (Hotkeys… to change).
 - [ ] **H3** Hotkey bind failure at startup logs a Win32 code (1409 = another program holds it); check the `[Hotkey]` lines if F1/F10 fail to bind.
 - [ ] **H4** Settings → Performance → Hotkey Re-Bind Retry 5 → with Verbose Logging on, `Still blocked: …` appears every ~5 s (0.45.3: DEBUG, not ERROR).
 - [ ] **H9** Hotkey freed (0.45.3): with a combo held by another app (e.g. Ctrl+Alt+N), close that app → within one retry a toast says "Ctrl+Alt+N (quick record) Is Now Active — The Other App Released It", and the hotkey works. Clearing a blocked combo in Hotkeys… instead shows no such note.
+- [ ] **H10** Stealth hotkey (0.45.3): set a Stealth combo in Hotkeys… → restart → no "In Use By Another App" warning for it, the log has no `Failed to bind stealth`, and pressing it toggles Stealth once (one toast, not two).
 - [ ] **H5** Cheat Sheet hotkey → card; Command Palette hotkey → type "peek" → Enter.
 - [ ] **H6** Features → Hold Chords on; Hotkeys… Hold To Peek → overlays while held; releasing Ctrl alone ends it. Log `Hold-chord keyboard hook INSTALLED`.
 - [ ] **H7** Hold To Pin → topmost while held, released after; an already-pinned window untouched.
@@ -183,6 +185,7 @@ Default combos: **Exit = F10**, **Kill = Ctrl+Alt+Q** (Hotkeys… to change).
 - [ ] **L10** **Placement window footer**: change something → Cancel (Revert) → change is gone. Change → Save & Close → kept. No ✕ in the title bar.
 - [ ] **L11** Placement has no "Allow Launching" switch; per-rule Launch alone gates.
 - [ ] **L12** Admin window (0.45.3; GPU Tweak III works): rule with On Start → restart OnTop with GPU Tweak running → one window "can't move its window … runs as administrator", focus stays where it was. **Keep Rule** with the box unticked → asked again next launch (not again in the same session: Apply Selected → toast only). Tick **Don't ask again** + Keep → next launch only a WARN log line, no window, no toast. Rule editor → **Ask if it runs as admin** on → asks again. **Turn This Rule Off** → the rule's On box clears.
+- [ ] **L13** Admin window: with the question open, press **Cancel (Revert)** in the Placement window, then answer **Turn This Rule Off** → the rule really ends up off (grid + after restart). Close the question with ✕ instead → nothing changes and it asks again next launch.
 
 ## AL. Action Library
 

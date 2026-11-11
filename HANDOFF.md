@@ -21,7 +21,7 @@ balance, grep cross-refs, dup-member scans). I compile on Windows and paste
 build errors verbatim into the next session; fixes come from those.
 
 ## Where things stand (updated 2026-11-09)
-- Current version **0.45.3**, schema **29**, 91 source files (.cs/.xaml).
+- Current version **0.45.3**, schema **30**, 91 source files (.cs/.xaml).
 - The project is in git (public repo github.com/Godswrath88/OnTop); each
   delivery is a commit + version tag. 0.45.1 = SECURITY.md vulnerability
   reporting; 0.45.2 = testing rework (docs + GitHub templates only);

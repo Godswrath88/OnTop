@@ -386,6 +386,11 @@ public class SettingsDialog : Window
         // so Save & Close / Cancel (Revert) are always visible; at the end of
         // the scroll the last section lands right above it.
         MaxHeight = Math.Max(400, SystemParameters.WorkArea.Height - 40);
+        // Primary-monitor cap above is a first guess; once the window exists,
+        // fit it to the monitor it actually opened on (a shorter secondary
+        // screen) and pull it fully on-screen (CenterOwner doesn't clamp), so
+        // the footer can never sit below the bottom edge.
+        Loaded += (_, _) => FitToMonitor();
         root.Margin = new Thickness(20, 14, 20, 10);
         var footerBar = new Border
         {
@@ -435,6 +440,25 @@ public class SettingsDialog : Window
         };
         check.SetBinding(ToggleButton.IsCheckedProperty, Bind(cfgProperty, BindingMode.TwoWay));
         return check;
+    }
+
+    private void FitToMonitor()
+    {
+        var src = PresentationSource.FromVisual(this);
+        if (src?.CompositionTarget is null) return;
+        var hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
+        var wa = System.Windows.Forms.Screen.FromHandle(hwnd).WorkingArea;   // device pixels
+        var toDip = src.CompositionTarget.TransformFromDevice;
+        Point tl = toDip.Transform(new Point(wa.Left, wa.Top));
+        Point br = toDip.Transform(new Point(wa.Right, wa.Bottom));
+        double margin = 20;
+        MaxHeight = Math.Max(300, br.Y - tl.Y - 2 * margin);
+        UpdateLayout();
+        double h = Math.Min(ActualHeight, MaxHeight);
+        if (Top + h > br.Y - margin) Top = br.Y - margin - h;
+        if (Top < tl.Y + margin) Top = tl.Y + margin;
+        if (Left + ActualWidth > br.X) Left = br.X - ActualWidth;
+        if (Left < tl.X) Left = tl.X;
     }
 
     private static StackPanel Section(string _) => new() { Margin = new Thickness(4, 2, 4, 4) };

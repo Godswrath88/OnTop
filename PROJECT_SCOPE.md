@@ -1089,7 +1089,12 @@ section — read it before starting any macro work.
 - S28 (v0.45.3, hotfix) — `EditorFooter.Wrap` detaches the window's content
   before re-parenting it (every footer window crashed on open since 0.44.0);
   the diagnostics zip closes each entry before creating the next. Schema
-  stays 29. RULE: a helper that re-parents an element must detach it first.
+  29 → 30 (HintPopupsEnabled, NoticeSeconds, PlacementRule.ElevatedNoticeOff;
+  no-op). RULE: a helper that re-parents an element must detach it first.
+  RULE: every new settings field bumps the schema, even with defaults that
+  fill in (otherwise older builds save over it). RULE: HotkeyService ids are
+  reused (lowest free); -1 = in use (retried), -3 = invalid combo (logged
+  once, never retried). RULE: retry ticks log at DEBUG only.
   "Do this first" messages from clicks in OnTop's own windows use
   `Views/NoticePopup` (fade in/out, never takes focus, duration =
   `NoticeSeconds` 1–60, `HintPopupsEnabled` off = toast instead). RULE: a

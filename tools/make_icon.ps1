@@ -1,4 +1,4 @@
-﻿param([string]$OutIco, [string]$PreviewPng)
+param([string]$OutIco, [string]$PreviewPng)
 # Draws a generic push-pin (thumbtack) from simple shapes and writes a
 # multi-size .ico: 16-64 px as 32-bit BMP frames (loads everywhere), 256 px as PNG.
 Add-Type -AssemblyName System.Drawing
@@ -97,7 +97,9 @@ $w.Flush()
 [System.IO.File]::WriteAllBytes($OutIco, $out.ToArray())
 
 # Preview sheet: each size at 1:1 and 4x, on dark and light backgrounds,
-# loaded back FROM the .ico (proves Windows can read every frame).
+# loaded back FROM the .ico for 16-48 px (checks those frames decode). The 256 px
+# preview is rendered directly: System.Drawing.Icon(path, 256, 256) hands back the
+# 64 px frame, so it cannot show the PNG frame.
 $sheet = New-Object System.Drawing.Bitmap 1100, 560
 $g = [System.Drawing.Graphics]::FromImage($sheet)
 $g.InterpolationMode = 'NearestNeighbor'
@@ -113,8 +115,7 @@ foreach ($sz in 16, 24, 32, 48) {
     }
     $x += [math]::Max($sz * 4, 70) + 20
 }
-$ico = New-Object System.Drawing.Icon $OutIco, 256, 256
-$big = $ico.ToBitmap()
+$big = New-Pin 256
 $g.InterpolationMode = 'HighQualityBicubic'
 $g.DrawImage($big, $x, 10, 256, 256); $g.DrawImage($big, $x, 290, 256, 256)
 $g.Dispose()

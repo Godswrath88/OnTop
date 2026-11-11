@@ -24,7 +24,10 @@ fourth one crashed OnTop.
   fourth was fatal by design.
 - **The crash-report prompt failed too:** the diagnostics zip kept `diag.txt`
   open while creating the next entry, which `ZipArchive` doesn't allow. Fixed.
-  The bundles written during this test are probably incomplete.
+  The bundles written during this test are probably incomplete. The same zip
+  code (also used by Log Viewer → Export) also failed when replacing an
+  existing file, could fail if a log line was being written at that moment,
+  and two crash bundles in the same second collided. All fixed.
 - **#14 (Pinned Windows freeze, reported on 0.44.x)** is very likely this same
   bug: Pinned Windows throws the same exception. A retest will confirm it.
 
@@ -35,9 +38,9 @@ with the `KILL —` line. With the fix, every sub-window opens.
 - "You need to do X first" messages were easy to miss: small grey text in the
   main window's status bar (Set Group with no zone selected) or a toast in the
   corner. They're now a hint card that fades in over the window you clicked
-  in, stays a few seconds, and fades out. There's nothing to click. It never
-  takes focus, so you can keep typing; a click dismisses it early and hovering
-  keeps it up. **Settings → Appearance → Hint Popups** turns it on or off
+  in (maximized windows included), stays a few seconds, and fades out.
+  There's nothing to click. It never takes focus, not even when you click it
+  to dismiss it early, so you can keep typing; hovering keeps it up. **Settings → Appearance → Hint Popups** turns it on or off
   (off shows the hint as a toast instead). Next to it, you type how many
   seconds it stays up: digits only, 1–60, default 4. A 0, a blank or anything
   out of range snaps back to the last good value. A Preview button shows a
@@ -45,15 +48,18 @@ with the `KILL —` line. With the fix, every sub-window opens.
   selected used to do nothing at all; they now say why. Same for Record Macro
   while macros are off, and the Action Library picker when there's nothing to
   pick. Hints only come from clicks in OnTop's own windows; anything a hotkey
-  or a background check triggers stays a toast.
+  or a background check triggers stays a toast. With Hint Popups off, the
+  toast is a Warning, so Do Not Disturb hides it while a watched game runs.
 - The "No Overlays Active" toast still called the Overlay column "Dot". Fixed.
   "Drag dots to move" (map hint, overlay legend) is left alone: it describes
   the dot you actually drag, not the option.
 - **Settings' Save & Close and Cancel (Revert) stay on screen.** They used to
   sit at the very end of the scrolling page. Now they're docked below the
   scroll area with a thin divider, so they're always visible, and scrolling
-  to the end brings the last section right down to them. The other sub-windows
-  and Hotkeys already kept their buttons outside the scroll area.
+  to the end brings the last section right down to them. When Settings opens,
+  it's also fitted to the monitor it lands on, so a shorter second screen
+  can't push the buttons below the edge. The other sub-windows and Hotkeys
+  already kept their buttons outside the scroll area.
 - **You hear about it when a blocked hotkey frees up.** Windows won't say
   which program holds a hotkey, and finding out would mean injecting code
   into other programs, which OnTop never does. Instead, OnTop now tells you
@@ -61,8 +67,14 @@ with the `KILL —` line. With the fix, every sub-window opens.
   Active — The Other App Released It". To find the culprit, close a suspect
   app and wait one retry (30 s by default; Settings → Performance). Before
   this, the only note came once every conflict had cleared, and it didn't
-  say which one. Retry ticks also stop writing an ERROR line each time; a
-  still-blocked combo logs at DEBUG.
+  say which one. Retry ticks no longer write to the log at normal levels
+  (the hotkey summary, "failed to bind" and macro/library warnings are DEBUG
+  on retries). Two older hotkey bugs surfaced in review and are fixed: the
+  Stealth hotkey was registered twice, so anyone with a Stealth combo had a
+  hotkey that looked permanently blocked; and hotkey ids climbed on every
+  retry until, after about a day of a persistent conflict, they'd run out of
+  Windows' range. A combo OnTop can't even read is now logged once as
+  invalid instead of being retried forever as "in use".
 - **Placement asks what to do about administrator windows.** OnTop can't
   move a window that belongs to a program running as administrator (GPU
   Tweak III here), and it won't run as administrator to get around that.
@@ -70,21 +82,46 @@ with the `KILL —` line. With the fix, every sub-window opens.
   first failure in a session opens a small window explaining why, with
   **Turn This Rule Off** or **Keep Rule**, plus **Don't ask again for this
   placement**, so keeping the rule doesn't mean a question every launch. It
-  doesn't take focus, and while a game is running (Do Not Disturb) it's just
-  a toast. A rule set to "don't ask" only notes the failure in the log. The
-  rule editor has a matching switch, **Ask if it runs as admin**, to turn the
-  question back on. I also looked hard at a separate administrator "window
+  doesn't take focus. While Do Not Disturb is holding notifications (a
+  watched game is running) it's only a toast, and the question waits for a
+  later failure. Closing it without answering saves nothing. Several at once
+  step down the screen instead of stacking. A rule set to "don't ask" only
+  notes the failure in the log. The rule editor has a matching switch, **Ask
+  if it runs as admin**, to turn the question back on, even in the same
+  session. I also looked hard at a separate administrator "window
   mover" helper and shelved it: with a per-user install, any program could
   swap that helper and get full admin the next time the prompt is accepted.
   The full reasoning is in ROADMAP under Security / Distribution.
 - **OnTop has its own icon.** A generic red push-pin, drawn from basic shapes
   by a script in `tools/make_icon.ps1`, so it's original and ships under
-  OnTop's own license; no icon pack or third-party art. It has every size
-  Windows asks for (16 px in the tray up to 256 px in Explorer), so it stays
-  crisp everywhere. The old `thumbtack.ico` had no recorded source, a single
+  OnTop's own license; no icon pack or third-party art. It has the standard
+  sizes from 16 px (tray) up to 256 px (Explorer); in-between sizes are
+  scaled from the nearest one. The old `thumbtack.ico` had no recorded source, a single
   256 px image and no small sizes, and it was stored in a format older
   loaders couldn't read. Users can still drop their own `thumbtack.ico` into
   the `assets` folder to change the tray icon.
+
+**Settings schema 29 → 30.** The three new fields (Hint Popups on/off and
+seconds, and the per-rule "don't ask again") get a no-op migration. The bump
+matters on the way back: an older OnTop now sees this config as newer and
+won't save over it and drop those fields. Rolling back to 0.45.2 or 0.43.0
+shows the "newer config" notice; that's expected.
+
+**Independent review.** Before delivery, a separate reviewer that hadn't seen
+any of this reasoning went over the whole change. It built clean (0 errors, 0
+warnings) and disproved several of my claims; everything above reflects the
+fixes. Not fixed, on purpose:
+- Revert in the Placement window restores the rules as they were when it
+  opened, so it also undoes an admin-window answer given while it was open.
+  That's what Revert means; the answer is still applied correctly by rule id.
+- On a PC where Do Not Disturb is on AND a watched process (e.g. a resident
+  anti-cheat service) is always running, the admin-window question can never
+  appear, and each startup shows an Error toast. Way out: switch off "Ask if
+  it runs as admin" in that rule's editor, or turn the rule off.
+- The tray icon size is read once at startup; after a DPI change it may look
+  slightly soft until OnTop restarts.
+- If another app grabs and releases the same combo repeatedly, each release
+  gets its own "is now active" note.
 
 **Still open:** a real UI freeze with the e-stop thread alive (E3/E4) hasn't
 been tested; this "freeze" was the debugger.

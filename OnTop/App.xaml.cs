@@ -438,7 +438,11 @@ public partial class App : Application
             else
                 _trayIcon.Icon = Drawing.SystemIcons.Application;
         }
-        catch { _trayIcon.Icon = Drawing.SystemIcons.Application; }
+        catch (Exception ex)
+        {
+            _vm.Log.Warn($"Tray icon could not be loaded from {System.IO.Path.GetFileName(_vm.Settings.IconPath)} ({ex.Message}); using the default icon", "System");
+            _trayIcon.Icon = Drawing.SystemIcons.Application;
+        }
 
         _trayIcon.DoubleClick += (_, _) => ToggleMainWindow();
         _trayIcon.MouseUp += (_, args) =>

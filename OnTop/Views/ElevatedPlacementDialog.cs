@@ -12,10 +12,12 @@ namespace OnTop.Views;
 /// move. One question, one answer: Turn This Rule Off, or Keep It, with
 /// "Don't ask again for this placement" so a kept rule never asks twice.
 /// Non-modal and never takes focus (it can fire at startup or from a zone
-/// action while you're busy elsewhere); it waits until you answer.
+/// action while you're busy elsewhere). Closing it without answering saves nothing.
 /// </summary>
 public sealed class ElevatedPlacementDialog : Window
 {
+    private static int _open;   // dialogs currently open (UI thread only)
+
     public static void Show(PlacementRule rule, string processName, Action<bool /*turnOff*/, bool /*dontAsk*/> onAnswer)
         => new ElevatedPlacementDialog(rule, processName, onAnswer).Show();
 
@@ -75,8 +77,20 @@ public sealed class ElevatedPlacementDialog : Window
         }
         off.Click += (_, _) => Answer(true);
         keep.Click += (_, _) => Answer(false);
-        // Closing any other way counts as "Keep Rule" with the box as ticked.
-        Closing += (_, _) => { if (!answered) { answered = true; onAnswer(false, dontAsk.IsChecked == true); } };
+        // Closing it any other way (title-bar ✕, Alt+F4, OnTop exiting) is NOT an
+        // answer: nothing is saved (no disk write on the exit path), and the
+        // question comes back next session.
+
+        // Several rules failing at once: step each open dialog down-right so
+        // they don't sit exactly on top of each other.
+        int slot = _open++;
+        Closed += (_, _) => _open--;
+        Loaded += (_, _) =>
+        {
+            var wa = SystemParameters.WorkArea;
+            Left = Math.Min(wa.Right - ActualWidth, wa.Left + (wa.Width - ActualWidth) / 2 + 28 * slot);
+            Top = Math.Min(wa.Bottom - ActualHeight, wa.Top + (wa.Height - ActualHeight) / 2 + 28 * slot);
+        };
         Grid.SetColumn(off, 0); Grid.SetColumn(keep, 2);
         buttons.Children.Add(off); buttons.Children.Add(keep);
         root.Children.Add(buttons);

@@ -60,7 +60,7 @@ public class PlacementRuleDialog : Window
         Row("Wait for window after launch (s)", "How Long To Keep Looking For The Window After Launching Before Giving Up (1–120)", _wait);
         Row("Ask if it runs as admin", "When The Window Belongs To A Program Running As Administrator (Which OnTop Can't Move), Ask Whether To Turn This Rule Off. Off = Just Note It In The Log.", _askAdmin);
         g.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-        var warn = new TextBlock { Text = "⚠ OnTop runs non-elevated by design and cannot move windows of programs running as administrator (the log will say 'access denied').", TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 8, 0, 0), Foreground = (System.Windows.Media.Brush)Application.Current.FindResource("WarnAmberBrush"), FontSize = 11.5 };
+        var warn = new TextBlock { Text = "⚠ OnTop runs non-elevated by design and cannot move windows of programs running as administrator (the log says it runs as administrator; OnTop asks once whether to turn the rule off).", TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 8, 0, 0), Foreground = (System.Windows.Media.Brush)Application.Current.FindResource("WarnAmberBrush"), FontSize = 11.5 };
         Grid.SetRow(warn, row); Grid.SetColumnSpan(warn, 2); g.Children.Add(warn); row++;
         g.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         var bar = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, Margin = new Thickness(0, 12, 0, 0) };
@@ -86,7 +86,9 @@ public class PlacementRuleDialog : Window
         _r.DelaySec = I(_delay, 0, 120, 0);
         _r.LaunchPath = _launch.Text.Trim(); _r.LaunchEnabled = _launchOn.IsChecked == true && _r.LaunchPath.Length > 0;
         _r.LaunchWaitSec = I(_wait, 1, 120, 10);
+        bool wasOff = _r.ElevatedNoticeOff;
         _r.ElevatedNoticeOff = _askAdmin.IsChecked != true;
+        if (wasOff && !_r.ElevatedNoticeOff) PlacementService.ResetElevatedAsk(_r.Id);   // ask again this session
         return true;
     }
     /// <summary>Edit in place; returns true if saved.</summary>

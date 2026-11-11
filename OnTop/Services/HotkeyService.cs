@@ -12,7 +12,10 @@ public class HotkeyService : IDisposable
     private IntPtr _hwnd;
     private HwndSource? _source;
     private readonly Dictionary<int, Action> _handlers = new();
-    private int _nextId = 9000;
+    /// <summary>First id handed out. Ids are reused: Register takes the lowest id
+    /// not currently registered, so re-binding every retry tick can't climb past
+    /// RegisterHotKey's documented 0x0000–0xBFFF range.</summary>
+    private const int FirstId = 9000;
 
     public void Initialize(Window window)
     {
@@ -27,10 +30,12 @@ public class HotkeyService : IDisposable
 
     public int Register(string hotkeyStr, Action callback)
     {
+        // -3 = not a valid combo (a config problem, not a conflict: never retried).
         if (!ParseHotkey(hotkeyStr, out uint mod, out uint vk))
-            return -1;
+            return -3;
 
-        int id = _nextId++;
+        int id = FirstId;
+        while (_handlers.ContainsKey(id)) id++;
         if (Win32.RegisterHotKey(_hwnd, id, mod | Win32.MOD_NOREPEAT, vk))
         {
             _handlers[id] = callback;

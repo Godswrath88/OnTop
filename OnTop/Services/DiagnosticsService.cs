@@ -7,8 +7,8 @@ namespace OnTop.Services;
 
 /// <summary>
 /// Builds the diagnostics bundle (settings.json, stats.json, current log,
-/// diag.txt) used by BOTH the Log Viewer's "Export Diagnostics..." button and
-/// the crash-report prompt. One writer, so the two paths can't drift.
+/// diag.txt, log-tail.txt) used by BOTH the Log Viewer's "Export Diagnostics..."
+/// button and the crash-report prompt. One writer, so the two paths can't drift.
 /// SECURITY: purely local — the caller picks (or owns) the destination path,
 /// contents are the user's own config, and nothing is ever transmitted.
 /// </summary>
@@ -18,11 +18,19 @@ public static class DiagnosticsService
     /// user comment ("what were you doing?") is embedded in diag.txt.</summary>
     public static void WriteBundle(MainViewModel vm, string zipPath, string? comment = null)
     {
-        using var zip = ZipFile.Open(zipPath, ZipArchiveMode.Create);
+        // FileMode.Create: Export's save dialog already confirmed "Replace";
+        // ZipFile.Open(Create) used CreateNew and threw on an existing file.
+        using var fs = new FileStream(zipPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
+        using var zip = new ZipArchive(fs, ZipArchiveMode.Create);
 
         void AddIfExists(string path, string entryName)
         {
-            if (File.Exists(path)) zip.CreateEntryFromFile(path, entryName);
+            if (!File.Exists(path)) return;
+            // ReadWrite|Delete sharing: the live log is still open for appending
+            // (CreateEntryFromFile's FileShare.Read would throw mid-write).
+            using var src = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            using var dst = zip.CreateEntry(entryName).Open();
+            src.CopyTo(dst);
         }
         AddIfExists(Path.Combine(vm.Settings.ConfigDir, "settings.json"), "settings.json");
         AddIfExists(Path.Combine(vm.Settings.ConfigDir, "stats.json"), "stats.json");
@@ -62,7 +70,7 @@ public static class DiagnosticsService
     {
         string dir = Path.Combine(vm.Settings.ConfigDir, "crashes");
         Directory.CreateDirectory(dir);
-        string path = Path.Combine(dir, $"OnTop_Crash_{DateTime.Now:yyyyMMdd_HHmmss}.zip");
+        string path = Path.Combine(dir, $"OnTop_Crash_{DateTime.Now:yyyyMMdd_HHmmss_fff}.zip");
         WriteBundle(vm, path, comment);
         return path;
     }

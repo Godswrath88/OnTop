@@ -103,7 +103,7 @@ public class SettingsService
 
     /// <summary>Current settings schema. Bump when stored shape changes and add a
     /// step to Migrate() — old files upgrade in place on load.</summary>
-    public const int CurrentSchemaVersion = 29;
+    public const int CurrentSchemaVersion = 30;
 
     // ── Inert-load guard (SECURITY.md "Config & Trusted-Data Integrity", S28) ──
     /// <summary>TRUE while any settings file is being read/validated. The three
@@ -717,6 +717,13 @@ public class SettingsService
             // v10 → v11: added Profiles (named zone workspaces), ActiveProfile,
             // and HotkeyProfiles (cycle). Empty by default; the VM creates the
             // "Default" profile from the live workspace on first run — no-op here.
+        }
+        if (settings.SchemaVersion < 30)
+        {
+            // v29 → v30 (0.45.3): HintPopupsEnabled (true), NoticeSeconds (4, clamped
+            // 1–60), PlacementRule.ElevatedNoticeOff (false). Defaults fill in; no-op.
+            // The bump is what makes an OLDER build treat this config as newer and
+            // not save over it (dropping these fields).
         }
         if (settings.SchemaVersion < 29)
         {

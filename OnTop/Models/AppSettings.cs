@@ -370,8 +370,8 @@ public class AppSettings : ObservableObject
     private int _noticeSeconds = 4;
     private bool _hintPopupsEnabled = true;
     /// <summary>0.45.3: "do this first" hints fade in as a popup (on) or show as
-    /// a toast (off). No schema bump: a config without these fields gets the
-    /// defaults, and older builds ignore them.</summary>
+    /// a toast (off). Schema 30 (no-op migration: defaults fill in; the bump
+    /// keeps an older build from saving over the config and dropping these).</summary>
     public bool HintPopupsEnabled { get => _hintPopupsEnabled; set => Set(ref _hintPopupsEnabled, value); }
     /// <summary>0.45.3: seconds a hint popup stays up (1–60, default 4).</summary>
     public int NoticeSeconds { get => _noticeSeconds; set => Set(ref _noticeSeconds, value); }
