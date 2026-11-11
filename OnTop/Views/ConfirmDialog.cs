@@ -11,7 +11,7 @@ namespace OnTop.Views;
 /// </summary>
 public class ConfirmDialog : Window
 {
-    private ConfirmDialog(string title, string message, string yesText, string? noText, bool info = false)
+    private ConfirmDialog(string title, string message, string yesText, string noText)
     {
         Style = (Style)Application.Current.FindResource("DarkChromeWindow");
         Title = title;
@@ -27,11 +27,10 @@ public class ConfirmDialog : Window
         var row = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 14) };
         row.Children.Add(new TextBlock
         {
-            Text = info ? "\uE946" : "\uE7BA",   // MDL2 Info / Warning
+            Text = "\uE7BA",   // MDL2 Warning
             FontFamily = new FontFamily("Segoe MDL2 Assets"),
             FontSize = 22,
-            Foreground = info ? new SolidColorBrush(Color.FromRgb(0x5B, 0xA8, 0xE6))
-                              : new SolidColorBrush(Color.FromRgb(0xE6, 0xA2, 0x3C)),
+            Foreground = new SolidColorBrush(Color.FromRgb(0xE6, 0xA2, 0x3C)),
             VerticalAlignment = VerticalAlignment.Top,
             Margin = new Thickness(0, 2, 12, 0)
         });
@@ -55,45 +54,14 @@ public class ConfirmDialog : Window
             Style = (Style)Application.Current.FindResource("AccentButton")
         };
         yes.Click += (_, _) => { DialogResult = true; Close(); };
+        var no = new Button { Content = noText, Height = 30, IsCancel = true };
         Grid.SetColumn(yes, 0);
+        Grid.SetColumn(no, 2);
         buttons.Children.Add(yes);
-        if (noText is null)
-        {
-            // Notice: one OK button across the full width; Esc closes too.
-            yes.IsCancel = true;
-            Grid.SetColumnSpan(yes, 3);
-        }
-        else
-        {
-            var no = new Button { Content = noText, Height = 30, IsCancel = true };
-            Grid.SetColumn(no, 2);
-            buttons.Children.Add(no);
-        }
+        buttons.Children.Add(no);
         root.Children.Add(buttons);
 
         Content = root;
-    }
-
-    /// <summary>
-    /// OK-only popup for "you need to do X first" messages that are easy to miss
-    /// in the status bar or a toast. Centered on the active OnTop window. Only
-    /// call this from a click in OnTop's own UI, never from a hotkey or a
-    /// background path: a modal popup would steal focus from a game.
-    /// </summary>
-    public static void Notice(string title, string message, Window? owner = null)
-    {
-        owner ??= ActiveOwnWindow();
-        var dialog = new ConfirmDialog(title, message, "OK", null, info: true);
-        if (owner is { IsVisible: true }) dialog.Owner = owner;
-        else dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-        dialog.ShowDialog();
-    }
-
-    private static Window? ActiveOwnWindow()
-    {
-        foreach (Window w in Application.Current.Windows)
-            if (w.IsActive && w.IsVisible) return w;
-        return Application.Current.MainWindow;
     }
 
     /// <summary>Show the confirmation; true = the affirmative button.</summary>

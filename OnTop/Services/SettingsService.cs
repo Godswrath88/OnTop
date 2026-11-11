@@ -299,6 +299,7 @@ public class SettingsService
         s.IdleProfile ??= ""; if (s.IdleProfile.Length > 60) s.IdleProfile = "";
         if (s.UiTheme < 0 || s.UiTheme > 2) s.UiTheme = 0;
         s.HotkeyRetrySeconds = Math.Clamp(s.HotkeyRetrySeconds, 5, 600);
+        s.NoticeSeconds = Math.Clamp(s.NoticeSeconds, 0, 15);
         s.PinScenes ??= new(); if (s.PinScenes.Count > 50) s.PinScenes.RemoveRange(50, s.PinScenes.Count - 50);
         foreach (var sc in s.PinScenes)
         {

@@ -34,12 +34,16 @@ with the `KILL —` line. With the fix, every sub-window opens.
 **Also in this build, from the same test:**
 - "You need to do X first" messages were easy to miss: small grey text in the
   main window's status bar (Set Group with no zone selected) or a toast in the
-  corner. They're now a small popup with an OK button, centered on the
-  window you clicked in. Remove and Duplicate with no zone selected used to do
-  nothing at all; they now say why. Same for Record Macro while macros are
-  off, and the Action Library picker when there's nothing to pick. Popups only
-  come from clicks in OnTop's own windows. Anything a hotkey or a background
-  check triggers stays a toast, so it can't steal focus from a game.
+  corner. They're now a hint card that fades in over the window you clicked
+  in, stays a few seconds, and fades out. There's nothing to click. It never
+  takes focus, so you can keep typing; a click dismisses it early and hovering
+  keeps it up. **Settings → Appearance → Hint Popups** sets how long it stays
+  (2–15 s, default 4) or turns it off, which shows the hint as a toast
+  instead. A Preview button shows a sample. Remove and Duplicate with no zone
+  selected used to do nothing at all; they now say why. Same for Record Macro
+  while macros are off, and the Action Library picker when there's nothing to
+  pick. Hints only come from clicks in OnTop's own windows; anything a hotkey
+  or a background check triggers stays a toast.
 - The "No Overlays Active" toast still called the Overlay column "Dot". Fixed.
   "Drag dots to move" (map hint, overlay legend) is left alone: it describes
   the dot you actually drag, not the option.

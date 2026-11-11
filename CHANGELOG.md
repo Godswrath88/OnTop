@@ -30,12 +30,17 @@ profiles / window-rules still pending). Format loosely follows
   `log-tail.txt` entry was created. Each entry is now closed before the next.
 - "No Overlays Active" toast said "Dot Column"; it now names the Overlay column.
 ### Changed
-- **"Do this first" messages are popups now** (`ConfirmDialog.Notice`, OK
-  only) instead of easy-to-miss status-bar text or toasts: Set Group /
-  Remove / Duplicate with no zone selected (Remove and Duplicate used to do
-  nothing silently), Record Macro with macros off, and the Action Library
-  picker with nothing to pick. Only for clicks in OnTop's own windows;
-  hotkey and background messages stay toasts so they never steal focus.
+- **"Do this first" messages are hint popups now** (`Views/NoticePopup`)
+  instead of easy-to-miss status-bar text or toasts: Set Group / Remove /
+  Duplicate with no zone selected (Remove and Duplicate used to do nothing
+  silently), Record Macro with macros off, and the Action Library picker with
+  nothing to pick. The hint fades in centered over the window you clicked in,
+  stays a few seconds, and fades out. Nothing to click; it never takes focus.
+  Click dismisses it early, hover keeps it up.
+### Added
+- **Settings → Appearance → Hint Popups:** 2–15 seconds (default 4) or Off
+  (hints show as a toast), with a Preview button. `AppSettings.NoticeSeconds`
+  (0–15); no schema bump: older builds ignore it.
 
 ## [0.45.2] — Session 28 — Testing rework (docs + GitHub templates only)
 ### Added

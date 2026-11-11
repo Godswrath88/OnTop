@@ -2038,7 +2038,7 @@ public class MainViewModel : ObservableObject
     /// <summary>Assign the selected zone to a group (creates the group implicitly).</summary>
     public void SetSelectedZoneGroup(string? name)
     {
-        if (SelectedZone == null) { Views.ConfirmDialog.Notice("Select A Zone First", "Click a zone in the list (or on the map), then press Set Group again."); return; }
+        if (SelectedZone == null) { Views.NoticePopup.Show("Select A Zone First", "Click a zone in the list (or on the map), then press Set Group again."); return; }
         name = string.IsNullOrWhiteSpace(name) ? "Default" : name.Trim();
         PushUndo();
         SelectedZone.Group = name;
@@ -2474,7 +2474,7 @@ public class MainViewModel : ObservableObject
 
     private void RemoveSelectedZone()
     {
-        if (SelectedZone == null) { Views.ConfirmDialog.Notice("Select A Zone First", "Click the zone you want to remove in the list (or on the map), then press Remove again."); return; }
+        if (SelectedZone == null) { Views.NoticePopup.Show("Select A Zone First", "Click the zone you want to remove in the list (or on the map), then press Remove again."); return; }
         PushUndo();
         Log.Action($"Zone removed: {SelectedZone.Name}");
         Zones.Remove(SelectedZone);
@@ -2524,7 +2524,7 @@ public class MainViewModel : ObservableObject
 
     private void DuplicateSelectedZone()
     {
-        if (SelectedZone == null) { Views.ConfirmDialog.Notice("Select A Zone First", "Click the zone you want to copy in the list (or on the map), then press Duplicate again."); return; }
+        if (SelectedZone == null) { Views.NoticePopup.Show("Select A Zone First", "Click the zone you want to copy in the list (or on the map), then press Duplicate again."); return; }
         PushUndo();
         var copy = SelectedZone.Clone();
         copy.Id = Guid.NewGuid().ToString("N")[..8];

@@ -154,6 +154,24 @@ public class SettingsDialog : Window
         accentRow.Children.Add(accentCombo);
         accentRow.Children.Add(new TextBlock { Text = "(Restart To Apply)", Opacity = 0.5, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 0, 0) });
         appearance.Children.Add(accentRow);
+        // 0.45.3: "do this first" hint popups (NoticePopup) — duration or off.
+        var hintRow = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 4, 0, 2) };
+        hintRow.Children.Add(new TextBlock { Text = "Hint Popups:", VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 8, 0) });
+        var hintChoices = new[] { 0, 2, 3, 4, 6, 8, 10, 15 };
+        var hintCombo = new ComboBox
+        {
+            MinWidth = 130,
+            ToolTip = "Hints Like \"Select A Zone First\" Fade In Over The Window You Clicked In, Then Fade Out. Pick How Long They Stay Up, Or Off To Show Them As A Small Toast Instead.",
+        };
+        foreach (int s in hintChoices) hintCombo.Items.Add(s == 0 ? "Off (Use Toasts)" : $"{s} Seconds");
+        int hintIdx = Array.IndexOf(hintChoices, _vm.Cfg.NoticeSeconds);
+        hintCombo.SelectedIndex = hintIdx >= 0 ? hintIdx : Array.IndexOf(hintChoices, 4);
+        hintCombo.SelectionChanged += (_, _) => { if (hintCombo.SelectedIndex >= 0) _vm.Cfg.NoticeSeconds = hintChoices[hintCombo.SelectedIndex]; };
+        hintRow.Children.Add(hintCombo);
+        var hintPreview = new Button { Content = "Preview", Margin = new Thickness(8, 0, 0, 0), ToolTip = "Show A Sample Hint With The Current Setting" };
+        hintPreview.Click += (_, _) => NoticePopup.Show("Sample Hint", "This is how a \"do this first\" hint looks. Click it to dismiss early; hover to keep it up.", this);
+        hintRow.Children.Add(hintPreview);
+        appearance.Children.Add(hintRow);
         var opacityRow = new Grid { Margin = new Thickness(0, 8, 0, 2) };
         opacityRow.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
         opacityRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });

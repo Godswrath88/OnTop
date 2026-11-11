@@ -1091,6 +1091,7 @@ section — read it before starting any macro work.
   the diagnostics zip closes each entry before creating the next. Schema
   stays 29. RULE: a helper that re-parents an element must detach it first.
   "Do this first" messages from clicks in OnTop's own windows use
-  `ConfirmDialog.Notice` (OK-only popup). RULE: never show a modal popup
-  from a hotkey or background path (it steals focus from games); those
-  stay toasts. The user-facing name of `Zone.ShowDot` is "Overlay".
+  `Views/NoticePopup` (fade in/out, never takes focus, duration =
+  `NoticeSeconds`, 0 = toast instead). RULE: hotkey and background paths use
+  toasts, not hint popups. RULE: "do this first" hints never need a click to
+  get out of. The user-facing name of `Zone.ShowDot` is "Overlay".
