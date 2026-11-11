@@ -43,6 +43,14 @@ build errors verbatim into the next session; fixes come from those.
   issues (labels `bug`, `retest`, `needs-log`, `blocker`); a checklist item
   with an open issue links `#N`. A test round is a "Test pass" issue.
   `docs/TROUBLESHOOTING.md` is the user-facing guide.
+- **Releases:** every version tag gets a GitHub Release whose first line is
+  its status: ✅ Stable (built clean + passed the smoke test AND the full
+  feature checklist in docs/testing/CHECKLIST.md — or I override and say a
+  build is "good enough"; only I grant Stable, never mark it unasked; an
+  override is noted in the release body), ⚠ Restore point (built clean, known issues
+  linked), or 🧪 Untested (marked Pre-release). Only Stable/Restore point may
+  be "Latest". When a version earns Stable, edit its release, untick
+  Pre-release, mark it Latest, and update the README "Download" paragraph.
 - Round-3 features (Professional appearance mode etc.) are the approved list at
   the TOP of `ROADMAP.md` ("🎨 ROUND 3"). They wait until I have tested the
   current stages. No additions before that.
