@@ -10,19 +10,23 @@ missing, and an uninstaller that asks before touching your data.
 ## One-time setup
 1. Install **Inno Setup 6.2 or newer** (free): https://jrsoftware.org/isdl.php
 
-## Build steps (every release)
-From a terminal in this `installer\` folder:
+## Build steps
+Every release already gets its installer built by GitHub Actions (attached to
+the release). To build one yourself, from the repo root:
 
 ```
-dotnet publish ..\OnTop\OnTop.csproj -c Release -r win-x64 --self-contained false -o publish
+powershell -ExecutionPolicy Bypass -File tools\build-installer.ps1
 ```
 
-Then open `OnTop.iss` in the Inno Setup Compiler and press **Compile**
-(or from a terminal: `iscc OnTop.iss`). The result lands in
-`installer\Output\OnTopSetup-<version>.exe`.
+That publishes the app into `installer\publish` and compiles `OnTop.iss`; the
+result lands in `installer\Output\OnTopSetup-<version>.exe`. By hand instead:
+from `installer\`, run
+`dotnet publish ..\OnTop\OnTop.csproj -c Release -r win-x64 --self-contained false -o publish`,
+then open `OnTop.iss` in the Inno Setup Compiler and press **Compile**.
 
-> Keep `#define MyAppVersion` in `OnTop.iss` in sync with the version in
-> `OnTop.csproj` each release (the session workflow's version bump covers both).
+The version is never edited here: `OnTop.iss` reads it from the published
+`OnTop.exe`, which gets it from `Directory.Build.props` (the single version
+source). `tools\check-version.ps1` verifies everything agrees.
 
 ## Choices baked in (and why)
 - **Per-user install by default, no UAC** (`PrivilegesRequired=lowest`) — this

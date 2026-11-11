@@ -1,0 +1,13 @@
+<Project>
+  <!-- THE version number for OnTop. Bump it here and nowhere else:
+       the app (Version / AssemblyVersion / FileVersion), the installer (read
+       from the published exe) and CI's checks all take it from this file.
+       WPF-rewrite line, distinct from the lost AutoHotkey "v9.5"; 1.0.0 when
+       the installer ships and v9.5 parity is complete. -->
+  <PropertyGroup>
+    <OnTopVersion>0.45.3</OnTopVersion>
+    <Version>$(OnTopVersion)</Version>
+    <AssemblyVersion>$(OnTopVersion).0</AssemblyVersion>
+    <FileVersion>$(OnTopVersion).0</FileVersion>
+  </PropertyGroup>
+</Project>
