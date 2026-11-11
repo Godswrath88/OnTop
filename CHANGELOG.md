@@ -15,6 +15,20 @@ profiles / window-rules still pending). Format loosely follows
 
 ---
 
+## [0.45.3] — Session 28 — HOTFIX: every footer sub-window crashed on open
+### Fixed
+- **Every footer window crashed when opened** (Placement, Pinned Windows,
+  Action Library, Auto-Pin, Macros, Profiles, Profile Rules, Schedules,
+  Known Anti-Cheat, Statistics, Help, Config History, Toast History):
+  `EditorFooter.Wrap` added the window's content to a new panel while the
+  window still owned it → `InvalidOperationException: Specified element is
+  already the logical child of another element`. Present since 0.44.0. The
+  content is now detached first. Likely the cause of the Pinned Windows
+  "freeze" (#14).
+- **Crash-report bundle failed** (`Entries cannot be created while previously
+  created entries are still open`): `diag.txt`'s writer stayed open while the
+  `log-tail.txt` entry was created. Each entry is now closed before the next.
+
 ## [0.45.2] — Session 28 — Testing rework (docs + GitHub templates only)
 ### Added
 - **`docs/TROUBLESHOOTING.md`** — user-facing: emergency stop, file locations,

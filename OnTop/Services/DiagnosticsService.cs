@@ -28,31 +28,32 @@ public static class DiagnosticsService
         AddIfExists(Path.Combine(vm.Settings.ConfigDir, "stats.json"), "stats.json");
         AddIfExists(vm.Log.CurrentLogFile, Path.GetFileName(vm.Log.CurrentLogFile));
 
-        var diag = zip.CreateEntry("diag.txt");
-        using var w = new StreamWriter(diag.Open());
-        w.WriteLine($"OnTop version : {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}");
-        w.WriteLine($"Schema        : {SettingsService.CurrentSchemaVersion}");
-        w.WriteLine($"OS            : {Environment.OSVersion}");
-        w.WriteLine($".NET          : {Environment.Version}");
-        w.WriteLine($"Generated     : {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
-        w.WriteLine($"Zones         : {vm.Zones.Count}   Profiles: {vm.Cfg.Profiles.Count}   Active: {vm.ActiveProfileName}");
-        w.WriteLine();
-        w.WriteLine("Monitors:");
-        foreach (var scr in System.Windows.Forms.Screen.AllScreens)
-            w.WriteLine($"  {(scr.Primary ? "*" : " ")} {scr.DeviceName}  {scr.Bounds.Width}x{scr.Bounds.Height} @ ({scr.Bounds.X},{scr.Bounds.Y})");
-        if (!string.IsNullOrWhiteSpace(comment))
+        // A ZipArchive in Create mode allows only one open entry at a time, so
+        // each entry's writer is disposed before the next CreateEntry.
+        using (var w = new StreamWriter(zip.CreateEntry("diag.txt").Open()))
         {
+            w.WriteLine($"OnTop version : {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}");
+            w.WriteLine($"Schema        : {SettingsService.CurrentSchemaVersion}");
+            w.WriteLine($"OS            : {Environment.OSVersion}");
+            w.WriteLine($".NET          : {Environment.Version}");
+            w.WriteLine($"Generated     : {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+            w.WriteLine($"Zones         : {vm.Zones.Count}   Profiles: {vm.Cfg.Profiles.Count}   Active: {vm.ActiveProfileName}");
             w.WriteLine();
-            w.WriteLine("User comment (what were you doing?):");
-            w.WriteLine(comment.Trim());
+            w.WriteLine("Monitors:");
+            foreach (var scr in System.Windows.Forms.Screen.AllScreens)
+                w.WriteLine($"  {(scr.Primary ? "*" : " ")} {scr.DeviceName}  {scr.Bounds.Width}x{scr.Bounds.Height} @ ({scr.Bounds.X},{scr.Bounds.Y})");
+            if (!string.IsNullOrWhiteSpace(comment))
+            {
+                w.WriteLine();
+                w.WriteLine("User comment (what were you doing?):");
+                w.WriteLine(comment.Trim());
+            }
         }
-        w.Flush();
 
         // Roadmap: the last ~50 log lines ride along even if the log file on
         // disk is locked, rotated, or huge — the freshest context, guaranteed.
-        var tail = zip.CreateEntry("log-tail.txt");
-        using var tw = new StreamWriter(tail.Open());
-        tw.Write(vm.Log.TailText(50));
+        using (var tw = new StreamWriter(zip.CreateEntry("log-tail.txt").Open()))
+            tw.Write(vm.Log.TailText(50));
     }
 
     /// <summary>Bundle into %APPDATA%\OnTop\crashes with a timestamped name.

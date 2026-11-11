@@ -21,10 +21,11 @@ balance, grep cross-refs, dup-member scans). I compile on Windows and paste
 build errors verbatim into the next session; fixes come from those.
 
 ## Where things stand (updated 2026-11-09)
-- Current version **0.45.2**, schema **29**, 91 source files (.cs/.xaml).
+- Current version **0.45.3**, schema **29**, 91 source files (.cs/.xaml).
 - The project is in git (public repo github.com/Godswrath88/OnTop); each
   delivery is a commit + version tag. 0.45.1 = SECURITY.md vulnerability
-  reporting; 0.45.2 = testing rework (docs + GitHub templates only).
+  reporting; 0.45.2 = testing rework (docs + GitHub templates only);
+  0.45.3 = hotfix: every footer sub-window crashed on open (since 0.44.0).
 - **Development sessions on the Windows machine CAN compile** (.NET 8 SDK
   installed): `dotnet build OnTop/OnTop.csproj`. 0.45.1 built clean there
   (0 errors, 0 warnings). Runtime behavior is still mine to test.
@@ -107,7 +108,7 @@ ProtectedData`) means the build needs restore.
   updater stack. Azure Trusted Signing (~$10/mo) or SignPath noted as options.
 
 ## Next steps, in order
-1. I run 0.45.2 through `docs/testing/CHECKLIST.md` (smoke test first, then
+1. I run 0.45.3 through `docs/testing/CHECKLIST.md` (smoke test first, then
    the open `retest` issues #1–#14); failures become issues.
 2. Stage L: fix whatever the report shows (retest items first).
 3. Installer / updater / portable — when I say I am testing them.

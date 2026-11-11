@@ -32,6 +32,11 @@ public static class EditorFooter
         right.Children.Add(save);
         DockPanel.SetDock(right, Dock.Right); bar.Children.Add(right);
         DockPanel.SetDock(bar, Dock.Bottom); host.Children.Add(bar);
+        // Every caller sets w.Content = content before calling Wrap, which makes
+        // the window its logical parent. WPF throws "already the logical child
+        // of another element" if it is added to host while still attached, so
+        // detach it first.
+        if (ReferenceEquals(w.Content, content)) w.Content = null;
         host.Children.Add(content);
         w.Content = host;
         w.PreviewKeyDown += (_, e) =>

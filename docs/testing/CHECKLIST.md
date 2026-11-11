@@ -73,7 +73,8 @@ Run these first; if any fail, stop and report.
 
 Default combos: **Exit = F10**, **Kill = Ctrl+Alt+Q** (Hotkeys… to change).
 
-- [ ] **E1 Kill while healthy**: press the Kill combo → OnTop is gone instantly; the log's last line is `KILL — Kill hotkey: terminating OnTop now …`.
+- [.] **E1 Kill while healthy**: press the Kill combo → OnTop is gone instantly; the log's last line is `KILL — Kill hotkey: terminating OnTop now …`.
+  > 11-10: v0.45.2, pass (log ends with the `KILL —` line).
 - [ ] **E2 Exit while healthy**: Exit combo → normal clean exit (confirm dialog if enabled; `Exit hotkey pressed (e-stop thread) — handing to the UI thread` then `OnTop exited`).
 - [ ] **E3 Kill while FROZEN** (the real test): reproduce the freeze (open Pinned Windows, or whatever froze it) → wait for the UI to stop responding → Kill combo → process ends. Log shows `UI thread unresponsive for N s` before the KILL line. (#14)
 - [ ] **E4 Exit while FROZEN**: same, press Exit → after ~3 s the process ends; log shows `UI thread did not respond to Exit within 3 s — escalating`.
@@ -87,7 +88,8 @@ Default combos: **Exit = F10**, **Kill = Ctrl+Alt+Q** (Hotkeys… to change).
 - [ ] **A1 [!] ⟳ retest — Accent**: Settings → Appearance → pick an accent → whole app re-tints **immediately**. Also try Theme (High Contrast / Light / Dark), which uses the same mechanism. (#1)
   > 09-24: "accent doesn't change colors of anything".
 - [ ] **A2** Theme: High Contrast / Light / Dark switch live. List what looks wrong in Light.
-- [ ] **A3** **Every sub-GUI** (Macros, Actions, Placement, Auto-Pin, Profile Rules, Schedules, Known Anti-Cheat, Pinned, Stats, Profiles, Help, Config History, Toast History, step editor) has a footer button and **no title-bar ✕**. Editors: Cancel (Revert) undoes what you changed since opening; Save & Close keeps. Settings: Cancel (Revert) restores every setting to what it was when opened (try flipping Low Impact and a theme, then Revert).
+- [ ] **A3 [!] ⟳ retest** **Every sub-GUI** (Macros, Actions, Placement, Auto-Pin, Profile Rules, Schedules, Known Anti-Cheat, Pinned, Stats, Profiles, Help, Config History, Toast History, step editor) opens, has a footer button and **no title-bar ✕**. Editors: Cancel (Revert) undoes what you changed since opening; Save & Close keeps. Settings: Cancel (Revert) restores every setting to what it was when opened (try flipping Low Impact and a theme, then Revert).
+  > 11-10: v0.45.2, Placement, Action Library, Auto-Pin and Pinned crashed on open (`already the logical child of another element`). Every footer window was affected since 0.44.0; fixed in 0.45.3. Open each one once.
 - [ ] **A4** Action row = three cards; nothing clipped; Zones row ≥ 300 px.
 - [ ] **A5** Every former button still exists (Macros card / App card).
 - [ ] **A6** Help CONTENTS chips; one "Zone Map" section mentioning middle-mouse scroll.

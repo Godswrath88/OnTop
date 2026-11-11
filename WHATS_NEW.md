@@ -1,5 +1,39 @@
 # What's New
 
+## Session 28 — v0.45.3 — Hotfix: sub-windows crashed on open
+
+**What was reported:** opening Placement "glitched everything out". The whole
+PC and the cursor lagged, and neither F10 nor Ctrl+Alt+Q stopped OnTop; it
+had to be stopped from Visual Studio. Run again without the debugger, each
+sub-window button showed "Unexpected Error — Details Were Logged", and the
+fourth one crashed OnTop.
+
+**What it actually was:**
+- Every window with the Save & Close / Close footer (added in 0.44.0) threw
+  on open. Each window sets `Content = root` and then calls
+  `EditorFooter.Wrap(this, root, …)`, which added `root` to a new panel while
+  the window still owned it. WPF refuses that ("already the logical child of
+  another element"). The stack traces pointed to `EditorFooter.cs:35` from
+  Placement, Action Library, Auto-Pin and Pinned Windows. Wrap now detaches
+  the content first; one fix covers all 13 windows.
+- **The lag and the dead hotkeys came from the debugger, not OnTop.** Under
+  Visual Studio, the exception paused every thread in the process, including
+  the e-stop thread. OnTop's low-level mouse/keyboard hooks stopped
+  answering, so Windows waited on them for every input event. Without the
+  debugger, OnTop's own handler recovered from the first three errors; the
+  fourth was fatal by design.
+- **The crash-report prompt failed too:** the diagnostics zip kept `diag.txt`
+  open while creating the next entry, which `ZipArchive` doesn't allow. Fixed.
+  The bundles written during this test are probably incomplete.
+- **#14 (Pinned Windows freeze, reported on 0.44.x)** is very likely this same
+  bug: Pinned Windows throws the same exception. A retest will confirm it.
+
+**Confirmed in the same session:** Kill while healthy (E1) works; the log ends
+with the `KILL —` line.
+
+**Still open:** a real UI freeze with the e-stop thread alive (E3/E4) hasn't
+been tested; this "freeze" was the debugger.
+
 ## Session 28 — v0.45.2 — Testing moves to GitHub
 
 The project now lives in a git repo instead of passed-around zips, so testing
