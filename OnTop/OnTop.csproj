@@ -42,13 +42,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Unit tests reach internal helpers (e.g. SettingsService.Migrate). -->
+    <InternalsVisibleTo Include="OnTop.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Assets\thumbtack.ico" Condition="Exists('Assets\thumbtack.ico')" />
     <!-- The tray loads the icon from disk at runtime — ship it beside the exe. -->
     <None Include="Assets\thumbtack.ico" Condition="Exists('Assets\thumbtack.ico')" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
-  <!-- v9.5 parity: kill a running OnTop before build so the exe isn't file-locked -->
-  <Target Name="KillRunningOnTop" BeforeTargets="BeforeBuild" Condition="'$(OS)' == 'Windows_NT'">
+  <!-- v9.5 parity: kill a running OnTop before build so the exe isn't file-locked.
+       Visual Studio builds only: a command-line, CI or test build must never
+       force-close the copy I'm actually using (it did, until 0.45.4). -->
+  <Target Name="KillRunningOnTop" BeforeTargets="BeforeBuild" Condition="'$(OS)' == 'Windows_NT' And '$(BuildingInsideVisualStudio)' == 'true'">
     <Exec Command="taskkill /f /im OnTop.exe &gt;nul 2&gt;&amp;1 &amp; exit /b 0" ContinueOnError="true" />
   </Target>
 

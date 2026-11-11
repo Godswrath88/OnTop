@@ -636,7 +636,7 @@ public class SettingsService
     }
 
     /// <summary>Forward-compatible migrations for settings written by older builds.</summary>
-    private static void Migrate(AppSettings settings)
+    internal static void Migrate(AppSettings settings)
     {
         if (settings.SchemaVersion < 2)
         {
