@@ -310,6 +310,7 @@ public class MainViewModel : ObservableObject
 
     private void BindHotkeys(bool isRetry)
     {
+        _bindIsRetry = isRetry;
         // Unbind old
         Hotkeys.Unregister(_hkToggleId);
         // (Exit/Kill: e-stop thread — see below)
@@ -328,6 +329,13 @@ public class MainViewModel : ObservableObject
         Hotkeys.Unregister(_hkMacroRecordId);
         Hotkeys.Unregister(_hkPlacementId);
         foreach (var id in new[] { _hkPinCursorId, _hkOpUpId, _hkOpDownId, _hkClickThroughId, _hkCornerId, _hkCheatId, _hkPaletteId, _hkPinTimedId, _hkSendMonId, _hkMacroPauseId, _hkMacroStatusId }) Hotkeys.Unregister(id);
+        // 0.45.3 review: forget every id just released. The suspended path
+        // returns before re-assigning them, and a stale id must never be
+        // unregistered later: by then it may belong to another owner (e.g. the
+        // macro panic key registered while the Hotkeys editor was open).
+        _hkToggleId = _hkConfigId = _hkPauseId = _hkRehookId = _hkPinsId = _hkPeekId = _hkRulesId = _hkProfilesId = -2;
+        _hkQuickRecordId = _hkViewLogsId = _hkRestartId = _hkStealthId = _hkMacrosId = _hkMacroRecordId = _hkPlacementId = -2;
+        _hkPinCursorId = _hkOpUpId = _hkOpDownId = _hkClickThroughId = _hkCornerId = _hkCheatId = _hkPaletteId = _hkPinTimedId = _hkSendMonId = _hkMacroPauseId = _hkMacroStatusId = -2;
         foreach (var id in _macroHkIds) Hotkeys.Unregister(id);
         _macroHkIds.Clear();
         foreach (var id in _libraryHkIds) Hotkeys.Unregister(id);
@@ -389,6 +397,8 @@ public class MainViewModel : ObservableObject
                     else MacroSvc.Play(m);
                 });
                 if (id >= 0) _macroHkIds.Add(id);
+                else if (id == -3) { if (!isRetry) Log.Warn($"Macro hotkey is not a valid key combination: {m.Name} ({m.Hotkey})", "Hotkey"); }
+                else if (isRetry) Log.Debug($"Macro hotkey still not registered: {m.Name} ({m.Hotkey})", "Hotkey");
                 else Log.Warn($"Macro hotkey failed to register: {m.Name} ({m.Hotkey})", "Hotkey");
             }
 
@@ -400,6 +410,8 @@ public class MainViewModel : ObservableObject
                 var a = act;
                 int id = Hotkeys.Register(a.Hotkey, () => Application.Current.Dispatcher.Invoke(() => RunLibraryAction(a, "hotkey")));
                 if (id >= 0) _libraryHkIds.Add(id);
+                else if (id == -3) { if (!isRetry) Log.Warn($"Library hotkey is not a valid key combination: {a.Name} ({a.Hotkey})", "Hotkey"); }
+                else if (isRetry) Log.Debug($"Library hotkey still not registered: {a.Name} ({a.Hotkey})", "Hotkey");
                 else Log.Warn($"Library hotkey failed to register: {a.Name} ({a.Hotkey})", "Hotkey");
             }
 
@@ -411,6 +423,12 @@ public class MainViewModel : ObservableObject
         if (_hkQuickRecordId == -1) failed.Add(("quick record", _cfg.HotkeyQuickRecord));
         if (_hkViewLogsId == -1) failed.Add(("view logs", _cfg.HotkeyViewLogs));
         if (_hkRestartId == -1) failed.Add(("soft restart", _cfg.HotkeyRestart));
+        if (_hkStealthId == -1) failed.Add(("stealth", _cfg.HotkeyStealth));
+        foreach (var (hid, what, key) in new[] {
+            (_hkToggleId, "toggle", _cfg.HotkeyToggle), (_hkConfigId, "config", _cfg.HotkeyConfig),
+            (_hkQuickRecordId, "quick record", _cfg.HotkeyQuickRecord), (_hkViewLogsId, "view logs", _cfg.HotkeyViewLogs),
+            (_hkRestartId, "soft restart", _cfg.HotkeyRestart), (_hkStealthId, "stealth", _cfg.HotkeyStealth) })
+            if (hid == -3) NoteInvalidCombo(what, key);
 
         // Optional per-toggle hotkeys (all default unbound). WM_HOTKEY arrives
         // on the window's message loop — the UI thread — so flipping Cfg here
@@ -429,33 +447,52 @@ public class MainViewModel : ObservableObject
             () => _cfg.OverlaysLocked, v => _cfg.OverlaysLocked = v);
         RegisterToggleHotkey(_cfg.HotkeyGuisOnTop, "Keep GUIs On Top", failed,
             () => _cfg.GuiAlwaysOnTop, v => _cfg.GuiAlwaysOnTop = v);
-        RegisterToggleHotkey(_cfg.HotkeyStealth, "Stealth Mode", failed,
-            () => _cfg.StealthMode, v => _cfg.StealthMode = v);
+        // (Stealth is bound once, above, via RegisterIfSet + OnHotkeyStealth. A second
+        // RegisterToggleHotkey here made the same combo fail with 1409 forever.)
         RegisterToggleHotkey(_cfg.HotkeyZonesStealth, "Zones Trigger Stealth", failed,
             () => _cfg.ZonesTriggerStealth, v => _cfg.ZonesTriggerStealth = v);
 
+        // 0.45.3: confirm EACH hotkey the moment it becomes active after being
+        // blocked (not only once every conflict has cleared), naming the combo
+        // and what it does. Only on retry ticks: nothing in the config changed
+        // since the last attempt, so a combo that left the failed list really
+        // did bind. (On a normal rebind, a combo can also leave the list because
+        // it was cleared or its feature switched off; that is not a recovery.)
+        var nowFailed = failed.Select(f => $"{f.What}\u001f{f.Key}").ToHashSet();
+        if (isRetry) foreach (var key in _hotkeyBlocked.Where(k => !nowFailed.Contains(k)).ToList())
+        {
+            var parts = key.Split('\u001f');
+            Log.Info($"Hotkey now active: {parts[1]} ({parts[0]}) — the other program released it", "Hotkey");
+            ToastService.Show($"{parts[1]} ({parts[0]}) Is Now Active — The Other App Released It", ToastType.Success, 5000);
+        }
+        _hotkeyBlocked = nowFailed;
+
         if (failed.Count > 0)
         {
-            foreach (var f in failed) Log.Error($"Failed to bind {f.What}: {f.Key}", "Hotkey");
+            // Full ERROR on a real bind; retry ticks log at DEBUG so a combo held
+            // all session doesn't add an error line every retry.
+            foreach (var f in failed)
+                if (isRetry) Log.Debug($"Still blocked: {f.What}: {f.Key}", "Hotkey");
+                else Log.Error($"Failed to bind {f.What}: {f.Key}", "Hotkey");
             if (!isRetry)   // one warning, not one per retry tick
                 ToastService.Show(
-                    $"Hotkeys In Use By Another App: {string.Join(", ", failed.Select(f => f.Key))} — Retrying Every 30s Until They're Free",
+                    $"Hotkeys In Use By Another App: {string.Join(", ", failed.Select(f => f.Key))} — Retrying Every {Math.Clamp(_cfg.HotkeyRetrySeconds, 5, 600)}s; You'll Get A Note When Each One Frees Up",
                     ToastType.Warning, 6500);
             EnsureHotkeyRetry();
         }
         else if (_hotkeyRetryPending)
         {
             StopHotkeyRetry();
-            Log.Info("Hotkeys recovered — the conflicting program released them", "Hotkey");
-            ToastService.Show("Hotkeys Bound — The Conflict Cleared", ToastType.Success);
         }
 
-        Log.Info($"Hotkeys: toggle={_cfg.HotkeyToggle} exit={_cfg.HotkeyExit} config={_cfg.HotkeyConfig} kill={_cfg.HotkeyKill} (exit/kill on the e-stop thread{(EStop.KillBound ? "" : $" — KILL NOT BOUND, error {EStop.KillError}")})", "Hotkey");
+        if (!isRetry) Log.Info($"Hotkeys: toggle={_cfg.HotkeyToggle} exit={_cfg.HotkeyExit} config={_cfg.HotkeyConfig} kill={_cfg.HotkeyKill} (exit/kill on the e-stop thread{(EStop.KillBound ? "" : $" — KILL NOT BOUND, error {EStop.KillError}")})", "Hotkey");
     }
 
     // ── Hotkey Retry (grabs F1/F10 the moment the other program closes) ──
     private DispatcherTimer? _hotkeyRetryTimer;
     private bool _hotkeyRetryPending;
+    /// <summary>"feature␟combo" for each hotkey that failed to bind last time.</summary>
+    private HashSet<string> _hotkeyBlocked = new();
 
     private void EnsureHotkeyRetry()
     {
@@ -477,14 +514,14 @@ public class MainViewModel : ObservableObject
         _hotkeyRetryTimer?.Stop();
     }
 
-    /// <summary>Hotkeys may be cleared (unbound): -2 = intentionally unbound, -1 = bind failure.</summary>
+    /// <summary>Hotkeys may be cleared (unbound): -2 = intentionally unbound, -1 = bind failure (retried), -3 = invalid combo (not retried).</summary>
     private int RegisterIfSet(string hotkey, Action callback)
         => string.IsNullOrWhiteSpace(hotkey) ? -2 : Hotkeys.Register(hotkey, callback);
 
     /// <summary>Register one optional toggle hotkey: pressing it flips the
     /// setting, toasts the new state (the GUI is usually hidden when a global
     /// hotkey fires), and updates the status bubble. Empty = stay unbound;
-    /// failures join the shared 30s retry list.</summary>
+    /// failures join the shared retry list (Settings → Performance interval).</summary>
     private void RegisterToggleHotkey(string hotkey, string label,
         List<(string What, string Key)> failed, Func<bool> get, Action<bool> set)
     {
@@ -497,7 +534,21 @@ public class MainViewModel : ObservableObject
             ToastService.Show($"{label} {(now ? "On" : "Off")}", ToastType.Info);
         });
         if (id == -1) failed.Add((label, hotkey));
+        else if (id == -3) NoteInvalidCombo(label, hotkey);
         else _toggleHotkeyIds.Add(id);
+    }
+
+    /// <summary>True while BindHotkeys runs from the retry timer.</summary>
+    private bool _bindIsRetry;
+
+    /// <summary>A combo that can't be parsed is a config problem, not a conflict:
+    /// it never joins the retry list (it would never free up) and is logged once
+    /// per real bind, not every retry tick.</summary>
+    private void NoteInvalidCombo(string what, string key)
+    {
+        if (_bindIsRetry) return;
+        Log.Warn($"Hotkey for {what} is not a valid key combination: \"{key}\" — set it again in Hotkeys…", "Hotkey");
+        ToastService.Show($"Hotkey For {what} Isn't A Valid Key Combination ({key}) — Set It Again In Hotkeys…", ToastType.Warning, 6500);
     }
 
     // ── Hotkey Callbacks ────────────────────────────────────────────────
@@ -2038,7 +2089,7 @@ public class MainViewModel : ObservableObject
     /// <summary>Assign the selected zone to a group (creates the group implicitly).</summary>
     public void SetSelectedZoneGroup(string? name)
     {
-        if (SelectedZone == null) { StatusText = "Select A Zone First"; return; }
+        if (SelectedZone == null) { Views.NoticePopup.Show("Select A Zone First", "Click a zone in the list (or on the map), then press Set Group again."); return; }
         name = string.IsNullOrWhiteSpace(name) ? "Default" : name.Trim();
         PushUndo();
         SelectedZone.Group = name;
@@ -2474,7 +2525,7 @@ public class MainViewModel : ObservableObject
 
     private void RemoveSelectedZone()
     {
-        if (SelectedZone == null) return;
+        if (SelectedZone == null) { Views.NoticePopup.Show("Select A Zone First", "Click the zone you want to remove in the list (or on the map), then press Remove again."); return; }
         PushUndo();
         Log.Action($"Zone removed: {SelectedZone.Name}");
         Zones.Remove(SelectedZone);
@@ -2524,7 +2575,7 @@ public class MainViewModel : ObservableObject
 
     private void DuplicateSelectedZone()
     {
-        if (SelectedZone == null) return;
+        if (SelectedZone == null) { Views.NoticePopup.Show("Select A Zone First", "Click the zone you want to copy in the list (or on the map), then press Duplicate again."); return; }
         PushUndo();
         var copy = SelectedZone.Clone();
         copy.Id = Guid.NewGuid().ToString("N")[..8];

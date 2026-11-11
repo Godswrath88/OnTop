@@ -140,6 +140,7 @@ public partial class App : Application
         _vm.MainWindowRequested += () => Dispatcher.Invoke(ShowMainWindow);
         // S28 Stage G: DND predicate, cheat sheet, palette.
         ToastService.SuppressRoutine = _vm.ShouldSuppressRoutineToasts;
+        Views.NoticePopup.Seconds = () => _vm.Cfg.HintPopupsEnabled ? _vm.Cfg.NoticeSeconds : 0;
         _vm.CheatSheetRequested += () => Dispatcher.Invoke(ToggleCheatSheet);
         _vm.PaletteRequested += () => Dispatcher.Invoke(ShowPalette);
         // S28: Low Impact Mode — BelowNormal priority + slower scanners. Applied
@@ -430,12 +431,18 @@ public partial class App : Application
         // Try to load custom icon, fall back to app icon
         try
         {
+            // Ask for the tray's own size so Windows uses the matching 16/20/24 px
+            // frame instead of shrinking a large one.
             if (System.IO.File.Exists(_vm.Settings.IconPath))
-                _trayIcon.Icon = new Drawing.Icon(_vm.Settings.IconPath);
+                _trayIcon.Icon = new Drawing.Icon(_vm.Settings.IconPath, Forms.SystemInformation.SmallIconSize);
             else
                 _trayIcon.Icon = Drawing.SystemIcons.Application;
         }
-        catch { _trayIcon.Icon = Drawing.SystemIcons.Application; }
+        catch (Exception ex)
+        {
+            _vm.Log.Warn($"Tray icon could not be loaded from {System.IO.Path.GetFileName(_vm.Settings.IconPath)} ({ex.Message}); using the default icon", "System");
+            _trayIcon.Icon = Drawing.SystemIcons.Application;
+        }
 
         _trayIcon.DoubleClick += (_, _) => ToggleMainWindow();
         _trayIcon.MouseUp += (_, args) =>

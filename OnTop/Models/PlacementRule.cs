@@ -55,12 +55,16 @@ public class PlacementRule : ObservableObject
     /// VERBATIM in the UI; quarantined (blanked) on import.</summary>
     public string LaunchPath { get => _launchPath; set => Set(ref _launchPath, value ?? ""); }
     public bool LaunchEnabled { get => _launchEnabled; set => Set(ref _launchEnabled, value); }
+    private bool _elevatedNoticeOff;
+    /// <summary>0.45.3: "Don't ask again for this placement" -- when the target runs as
+    /// administrator, skip the Turn Off / Keep dialog and just log it.</summary>
+    public bool ElevatedNoticeOff { get => _elevatedNoticeOff; set => Set(ref _elevatedNoticeOff, value); }
 
     public PlacementRule Clone() => new()
     {
         Id = Id, Enabled = Enabled, Name = Name, Process = Process, TitleContains = TitleContains,
         Monitor = Monitor, X = X, Y = Y, W = W, H = H, Maximize = Maximize,
         ApplyOnStartup = ApplyOnStartup, LaunchPath = LaunchPath, LaunchEnabled = LaunchEnabled,
-        DelaySec = DelaySec, LaunchWaitSec = LaunchWaitSec,
+        DelaySec = DelaySec, LaunchWaitSec = LaunchWaitSec, ElevatedNoticeOff = ElevatedNoticeOff,
     };
 }

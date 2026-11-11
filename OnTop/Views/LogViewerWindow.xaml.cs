@@ -157,6 +157,7 @@ public partial class LogViewerWindow : Window
             Title = "Export Diagnostics Bundle",
             FileName = $"OnTop_Diagnostics_{DateTime.Now:yyyyMMdd_HHmmss}.zip",
             Filter = "Zip Archive (*.zip)|*.zip",
+            DefaultExt = ".zip", AddExtension = true,   // a bare name becomes .zip
         };
         if (dlg.ShowDialog(this) != true) return;
 

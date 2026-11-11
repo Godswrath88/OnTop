@@ -367,6 +367,14 @@ public class AppSettings : ObservableObject
     public bool ClickThroughBorder { get => _clickThroughBorder; set => Set(ref _clickThroughBorder, value); }
     /// <summary>S28 K: optional — show/hide the macro status strip.</summary>
     public string HotkeyMacroStatus { get => _hotkeyMacroStatus; set => Set(ref _hotkeyMacroStatus, value ?? ""); }
+    private int _noticeSeconds = 4;
+    private bool _hintPopupsEnabled = true;
+    /// <summary>0.45.3: "do this first" hints fade in as a popup (on) or show as
+    /// a toast (off). Schema 30 (no-op migration: defaults fill in; the bump
+    /// keeps an older build from saving over the config and dropping these).</summary>
+    public bool HintPopupsEnabled { get => _hintPopupsEnabled; set => Set(ref _hintPopupsEnabled, value); }
+    /// <summary>0.45.3: seconds a hint popup stays up (1–60, default 4).</summary>
+    public int NoticeSeconds { get => _noticeSeconds; set => Set(ref _noticeSeconds, value); }
     /// <summary>On display-configuration changes (dock/undock), automatically
     /// disable zones whose anchor no longer sits on any monitor.</summary>
     public bool AutoDisableOffscreenZones { get => _autoDisableOffscreenZones; set => Set(ref _autoDisableOffscreenZones, value); }

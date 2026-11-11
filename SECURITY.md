@@ -74,6 +74,11 @@ point the machine is already compromised.
   redesigned or dropped, not elevated.
 
 ### Config & file I/O (`Services/SettingsService.cs`)
+- 0.45.3 fields: `HintPopupsEnabled` (bool), `NoticeSeconds` (clamped 1–60
+  in Validate) and `PlacementRule.ElevatedNoticeOff` (bool) are display-only.
+  From an imported config the worst case is a quieter or shorter hint, or an
+  admin-window question that doesn't appear (the failure is still logged).
+  None of them grants a capability, so none is in the powerful-fields stamp.
 - **Size cap**: refuse to parse any config/import file larger than a hard limit
   (currently 4 MB) — reject before deserializing, to bound memory.
 - **Strict deserialization**: reflection-based JSON that *ignores unknown fields*
@@ -574,6 +579,11 @@ above are now code, not just doctrine:
   a strictly smaller footprint during capture.
 - Placement failure on elevated targets is reported, never worked around: OnTop
   stays `asInvoker`. The "access denied" toast is the security posture speaking.
+  0.45.3: the report became a once-per-session Turn Off / Keep question
+  (non-activating, toast under DND) with per-rule "don't ask again"; still
+  no workaround. An elevated helper was evaluated and shelved (ROADMAP,
+  Security / Distribution): with a per-user install, its exe would be
+  swappable by any program before the next accepted admin prompt.
 - After Action (then Stealth / then Exit) is an internal state change; the
   global override narrowing (Exit→Stealth only) removes a surprise, not a guard.
 - Footers/revert operate on in-memory config snapshots (JSON) — no new file I/O

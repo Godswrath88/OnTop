@@ -172,7 +172,7 @@ in zone list order. All zone coordinates are physical pixels.
   main-window subtitle + Help header — this is distinct from the lost AutoHotkey
   **v9.5**. Bump `<Version>` (and `AssemblyVersion`/`FileVersion`) once per
   session and add the matching `CHANGELOG.md` entry. 1.0.0 is reserved for when
-  the installer ships and v9.5 parity is complete (current: v0.45.2 — Draw/Drag-
+  the installer ships and v9.5 parity is complete (current: v0.45.3 — Draw/Drag-
   Box zones, all toggle + action hotkeys, window placement memory done; profiles
   / window-rules still pending). Don't hard-code the version string anywhere else
   — `AppInfo` reads it from the assembly.
@@ -1086,3 +1086,21 @@ section — read it before starting any macro work.
   open retest items = issues #1–#14. 0.45.1 compiled clean on the Windows
   machine. Schema stays 29. RULE: failures and retests live in issues; never
   paste a whole log into a public issue (window titles are private).
+- S28 (v0.45.3, hotfix) — `EditorFooter.Wrap` detaches the window's content
+  before re-parenting it (every footer window crashed on open since 0.44.0);
+  the diagnostics zip closes each entry before creating the next. Schema
+  29 → 30 (HintPopupsEnabled, NoticeSeconds, PlacementRule.ElevatedNoticeOff;
+  no-op). RULE: a helper that re-parents an element must detach it first.
+  RULE: every new settings field bumps the schema, even with defaults that
+  fill in (otherwise older builds save over it). RULE: HotkeyService ids are
+  climbing and wrap at 0xBFFF (never lowest-free: stale ids/queued WM_HOTKEY),
+  and id fields are reset to -2 when released; -1 = in use (retried), -3 =
+  invalid combo (one toast per real bind, never retried). RULE: retry ticks
+  log at DEBUG only. RULE: file writers build to a temp file and move.
+  "Do this first" messages from clicks in OnTop's own windows use
+  `Views/NoticePopup` (fade in/out, never takes focus, duration =
+  `NoticeSeconds` 1–60, `HintPopupsEnabled` off = toast instead). RULE: a
+  scrolling window keeps its Save/Close buttons docked outside the
+  ScrollViewer. RULE: hotkey and background paths use
+  toasts, not hint popups. RULE: "do this first" hints never need a click to
+  get out of. The user-facing name of `Zone.ShowDot` is "Overlay".

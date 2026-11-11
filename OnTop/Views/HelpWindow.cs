@@ -50,6 +50,7 @@ public class HelpWindow : Window
         P(sp, $"Kill Immediately (No Cleanup):  {Hk(cfg.HotkeyKill)}  —  the EMERGENCY STOP. Exit and Kill are watched by a separate thread inside OnTop, so they work even if the rest of the app is frozen: Kill ends OnTop instantly; Exit tries a clean shutdown first and force-stops after 3 seconds if the app does not respond. Kill stays armed everywhere — including inside the hotkey recorder. A frozen tray icon may linger until you hover it.");
         P(sp, "Pause/Resume Zone Detection:  Ctrl+Alt+P (Fixed)");
         P(sp, "Leave Stealth / Re-Hook Mouse:  Ctrl+Alt+R (Fixed)");
+        P(sp, "If another program already holds one of your combos, OnTop says so and keeps retrying (Settings > Performance sets how often). Windows doesn't reveal which program holds a hotkey, but for the main hotkeys (Always On Top, Settings, Quick Record, View Logs, Soft Restart, Stealth, Exit, Kill) and the per-setting toggle hotkeys, OnTop tells you the moment each one becomes active, so you can close a suspect app and watch for that note. Other hotkeys (macros, library actions and the rest) are only re-tried when OnTop re-binds its hotkeys (for example after a retry or a settings change), and failures for them go to the log only.");
         P(sp, $"Macros Window:  {Hk(cfg.HotkeyMacros)} (Optional)");
         P(sp, $"Record / Stop Macro:  {Hk(cfg.HotkeyMacroRecord)} (Only While Macros Are Enabled)");
         P(sp, $"Apply All Placements:  {Hk(cfg.HotkeyPlacement)} (Only While Window Placement Is Enabled)");
@@ -140,6 +141,7 @@ public class HelpWindow : Window
 
         H(sp, "Appearance & Accent");
         P(sp, "Settings > Appearance: pick an Accent Color (applies after restart), toggle Mica (on Windows 10 you get an acrylic blur instead), and every control now shows a visible focus ring when navigating by keyboard.");
+        P(sp, "Hint Popups: messages like 'Select A Zone First' fade in over the window you clicked in, then fade out by themselves. Nothing to click; clicking dismisses early, hovering keeps them up. Settings > Appearance turns them off (they become toasts) and sets how many seconds they stay (1–60). Preview shows a sample.");
 
         H(sp, "Portable Mode");
         P(sp, "Place an empty file named OnTop.portable next to OnTop.exe (or launch with --portable) and ALL data lives in a Data folder beside the exe — true run-from-USB. Without the marker, data lives in %APPDATA%\\OnTop as usual.");
@@ -219,7 +221,7 @@ public class HelpWindow : Window
 
         H(sp, "Window Placement & Launcher");
         W(sp, "The launch half starts whatever program path a rule names, as you. It is off twice by default — a global 'Allow Launching' switch AND a per-rule Launch box — moving never launches, every launch is logged and toasted, and launch paths from imported configs arrive blanked until you review them.");
-        P(sp, "Add Rule… / Edit Selected… (or double-click / right-click a row) opens the full editor with a running-process picker, .exe browser, monitor, position, a DELAY (seconds to wait for programs still starting up), and the launch half. Every grid column has a hover description. If the log says 'access denied', the program runs as administrator — OnTop is non-elevated by design and cannot move it.");
+        P(sp, "Add Rule… / Edit Selected… (or double-click / right-click a row) opens the full editor with a running-process picker, .exe browser, monitor, position, a DELAY (seconds to wait for programs still starting up), and the launch half. Every grid column has a hover description. If a rule's window belongs to a program running as administrator, OnTop can't move it (it never runs as administrator itself). The first time that happens in a session it asks: Turn This Rule Off, or Keep Rule, with 'Don't ask again for this placement'. The rule editor's 'Ask if it runs as admin' switch turns the question back on.");
         P(sp, "APP → Placement… keeps rules that put a program's window on a chosen monitor at a chosen position and size (or maximized). 'Capture From Focused Window' fills a rule from wherever the window is right now. Apply a rule from the button, all of them from the optional Apply All Placements hotkey, automatically a few seconds after OnTop starts ('On Start'), or from a zone (Set Action → Apply Placement). If no matching window exists and launching is allowed for that rule, OnTop starts the program and places its window once it appears (within ten seconds). The feature is off by default in Settings → Features.");
 
         H(sp, "Pinned Windows");

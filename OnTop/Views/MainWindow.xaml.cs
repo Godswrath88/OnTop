@@ -420,7 +420,7 @@ public partial class MainWindow : Window
 
     private void RecordMacro_Click(object sender, RoutedEventArgs e)
     {
-        if (!VM.Cfg.MacrosEnabled) { Services.ToastService.Show("Turn Macros On First (Macros… → Macros Enabled)", Services.ToastType.Warning); return; }
+        if (!VM.Cfg.MacrosEnabled) { NoticePopup.Show("Turn Macros On First", "Macro recording is off. Open Macros… and switch on Macros Enabled, then press Record again."); return; }
         VM.MacroSvc.ToggleRecording();
     }
     private void PanicMacro_Click(object sender, RoutedEventArgs e) => VM.MacroSvc.Stop();

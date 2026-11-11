@@ -18,9 +18,9 @@
          Bumped once per session; reaches 1.0.0 when the installer ships and
          v9.5 parity (Draw zones done; profiles/window-rules pending) is complete.
          Surfaced at runtime in the Help window and the main-window subtitle. -->
-    <Version>0.45.2</Version>
-    <AssemblyVersion>0.45.2.0</AssemblyVersion>
-    <FileVersion>0.45.2.0</FileVersion>
+    <Version>0.45.3</Version>
+    <AssemblyVersion>0.45.3.0</AssemblyVersion>
+    <FileVersion>0.45.3.0</FileVersion>
     <!-- Assembly metadata (shows in the exe's Details tab). Copyright holder is
          the public handle only — never a real name, e-mail or machine name. -->
     <Authors>Godswrath88</Authors>

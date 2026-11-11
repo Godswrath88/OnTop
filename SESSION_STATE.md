@@ -199,6 +199,16 @@ templates (Bug report, Test pass); open retest items filed as issues #1–#14.
 0.45.1 compiled clean in a development session on the Windows machine.
 Revert = tag v0.45.1.
 
+### ✅ v0.45.3 — hotfix: footer sub-windows crashed on open — git tag `v0.45.3`
+Delivered 2026-11-10. `EditorFooter.Wrap` re-parented content the window still
+owned (all 13 footer windows crashed on open since 0.44.0; likely #14); the
+crash-bundle zip kept an entry open. Same round: hint popups + setting, own
+icon, sticky Settings footer, per-hotkey "now active" note, admin-window
+Placement question; review fixes (Stealth double hotkey, id reuse, retry log
+noise, zip export). Schema 30. Independent review ran (findings dispositioned
+in WHATS_NEW). Built clean (0 errors, 0 warnings). Revert = tag v0.45.2
+(shows the "newer config" notice; expected).
+
 ### ⏳ Stage L — second test round → fixes → then Round 3 features (ROADMAP "🎨 ROUND 3" — approved list) — after I build 0.45.x and report per docs/testing/CHECKLIST.md + the retest issues (plus installer/updater/portable when I get to them). Then 1.0.0.
 
 ### ✅ Hotfix — v0.36.1 — first build feedback — zip: `OnTopWPF_v0.36.1_stageC_hotfix1.zip`

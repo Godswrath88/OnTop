@@ -110,9 +110,9 @@ public class PlacementService
             if (!ok)
             {
                 int err = System.Runtime.InteropServices.Marshal.GetLastWin32Error();
-                string why = err == 5 ? "access denied — that program is running as administrator; OnTop runs non-elevated by design and cannot move elevated windows" : $"Win32 error {err}";
-                _vm.Log.Error($"Placement '{r.Name}' FAILED ({trigger}): '{Win32.GetWindowTitle(hwnd)}' — {why}", "Placement");
-                ToastService.Show(err == 5 ? $"Can't Move '{r.Name}' — It Runs As Administrator" : $"Placement '{r.Name}' Failed — See Log", ToastType.Error, 7000);
+                if (err == 5) { ElevatedTarget(r, hwnd, trigger); return false; }
+                _vm.Log.Error($"Placement '{r.Name}' FAILED ({trigger}): '{Win32.GetWindowTitle(hwnd)}' — Win32 error {err}", "Placement");
+                ToastService.Show($"Placement '{r.Name}' Failed — See Log", ToastType.Error, 7000);
                 return false;
             }
             _vm.Log.Action($"Placement '{r.Name}' applied ({trigger}): {Win32.GetWindowTitle(hwnd)} → monitor {mi + 1} {(r.Maximize ? "maximized" : $"{r.X},{r.Y} {r.W}×{r.H}")}", "Placement");
@@ -126,6 +126,60 @@ public class PlacementService
             return false;
         }
     }
+
+    /// <summary>Rule ids already asked about this session (one dialog per rule per run).</summary>
+    private static readonly HashSet<string> _elevatedAsked = new();   // UI thread only
+
+    /// <summary>0.45.3: the target runs as administrator (SetWindowPos error 5).
+    /// OnTop stays non-elevated (SECURITY.md), so this is reported, never worked
+    /// around. Asks once per rule per session: Turn Rule Off / Keep Rule, with
+    /// "Don't ask again for this placement". A rule marked don't-ask just logs.</summary>
+    private void ElevatedTarget(PlacementRule r, IntPtr hwnd, string trigger)
+    {
+        string proc = Win32.GetProcessName(hwnd) ?? "";
+        string what = $"Placement '{r.Name}' ({trigger}): '{Win32.GetWindowTitle(hwnd)}' runs as administrator; OnTop runs non-elevated by design and cannot move it";
+        if (r.ElevatedNoticeOff) { _vm.Log.Warn($"{what} (skipped quietly: 'don't ask again' is set for this rule)", "Placement"); return; }
+        _vm.Log.Error($"{what} — access denied", "Placement");
+        // Once per rule per session. Never while a game/guard is running (DND):
+        // the toast, which DND handles, and the ask is NOT used up, so the
+        // question comes on the next failure after the game closes.
+        if (_elevatedAsked.Contains(r.Id) || _vm.ShouldSuppressRoutineToasts())
+        {
+            ToastService.Show($"Can't Move '{r.Name}' — It Runs As Administrator", ToastType.Error, 7000);
+            return;
+        }
+        _elevatedAsked.Add(r.Id);
+        string ruleId = r.Id, ruleName = r.Name;
+        System.Windows.Application.Current.Dispatcher.BeginInvoke(() =>
+            Views.ElevatedPlacementDialog.Show(r, proc, (turnOff, dontAsk) =>
+            {
+                // The dialog can sit unanswered while the list is reverted,
+                // restored or edited: act on the rule as it is NOW (by id), not
+                // on the object captured when the dialog opened.
+                var live = _vm.Placements.FirstOrDefault(p => p.Id == ruleId);
+                if (live is null)
+                {
+                    _vm.Log.Info($"Placement '{ruleName}': answer ignored — the rule no longer exists", "Placement");
+                    return;
+                }
+                if (turnOff)
+                {
+                    live.Enabled = false;
+                    _vm.Log.Action($"Placement '{live.Name}' turned off (its window runs as administrator)", "Placement");
+                    ToastService.Show($"Placement '{live.Name}' Turned Off", ToastType.Info);
+                }
+                else if (dontAsk)
+                {
+                    live.ElevatedNoticeOff = true;
+                    _vm.Log.Action($"Placement '{live.Name}' kept; won't ask again about administrator windows", "Placement");
+                }
+                if (turnOff || dontAsk) _vm.SaveAll();
+            }));
+    }
+
+    /// <summary>The rule editor's "Ask if it runs as admin" was switched back on:
+    /// allow the question again this session.</summary>
+    public static void ResetElevatedAsk(string ruleId) => _elevatedAsked.Remove(ruleId);
 
     /// <summary>Apply every enabled rule (hotkey / button / startup).</summary>
     public async Task ApplyAllAsync(string trigger, bool startupOnly = false)

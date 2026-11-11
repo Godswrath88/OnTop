@@ -12,7 +12,13 @@ public class HotkeyService : IDisposable
     private IntPtr _hwnd;
     private HwndSource? _source;
     private readonly Dictionary<int, Action> _handlers = new();
-    private int _nextId = 9000;
+    /// <summary>Ids climb from FirstId and wrap back at LastId (RegisterHotKey's
+    /// documented range ends at 0xBFFF), skipping ids still registered. They are
+    /// NOT handed out lowest-first: a just-released id must not be reused right
+    /// away, or a WM_HOTKEY still queued for its old owner (or a stale id held by
+    /// a caller) would reach the new one. A full lap is ~40,000 registrations.</summary>
+    private const int FirstId = 9000, LastId = 0xBFFF;
+    private int _nextId = FirstId;
 
     public void Initialize(Window window)
     {
@@ -27,10 +33,13 @@ public class HotkeyService : IDisposable
 
     public int Register(string hotkeyStr, Action callback)
     {
+        // -3 = not a valid combo (a config problem, not a conflict: never retried).
         if (!ParseHotkey(hotkeyStr, out uint mod, out uint vk))
-            return -1;
+            return -3;
 
-        int id = _nextId++;
+        int id;
+        do { id = _nextId; _nextId = _nextId >= LastId ? FirstId : _nextId + 1; }
+        while (_handlers.ContainsKey(id));
         if (Win32.RegisterHotKey(_hwnd, id, mod | Win32.MOD_NOREPEAT, vk))
         {
             _handlers[id] = callback;

@@ -478,6 +478,22 @@ repo so it's version-controlled like everything else.
   the installer is meant to be shared with other people)
 - Privacy note in Help: the hook reads mouse position/clicks only — no
   keylogging, nothing leaves the machine
+- ⏸ **SHELVED (2026-11-10): elevated "window mover" helper so Placement can
+  move administrator windows.** Evaluated and parked. A tiny separate helper,
+  started through the admin prompt only when a move hits an admin window,
+  would work (for one startup rule, about one prompt per OnTop launch). Risks
+  that parked it: (1) with the per-user install the helper sits in a
+  user-writable folder, so any program could swap the exe and get full admin
+  the next time the (unsigned, "Unknown publisher") prompt is accepted. The
+  no-prompt scheduled-task variant is worse. A safe version needs code
+  signing + a per-machine install under Program Files, and no portable mode.
+  (2) A non-elevated caller driving an elevated helper is a confused deputy:
+  any desktop program could move/hide admin windows (click-tricking).
+  (3) Every helper bug is an admin bug. (4) A routine admin prompt trains
+  click-through. (5) Anti-cheat visibility. It would also need SECURITY.md's
+  "no feature may depend on elevation" rule changed. Revisit only after
+  code signing lands. What shipped instead (0.45.3): a clear notice with
+  Turn Rule Off / Keep Rule + "Don't ask again for this placement".
 
 ### 🔺 MAJOR — Online update checker + updater (S20)
 

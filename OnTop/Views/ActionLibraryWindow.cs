@@ -169,7 +169,7 @@ public class ActionLibraryWindow : Window
     /// <summary>Tiny picker: a dialog with a ListBox of names; returns the chosen id (or current).</summary>
     private string PickFrom(string title, System.Collections.Generic.List<(string Id, string Name)> items, string current)
     {
-        if (items.Count == 0) { ToastService.Show($"{title}: Nothing To Choose From Yet", ToastType.Warning); return current; }
+        if (items.Count == 0) { NoticePopup.Show($"{title}: Nothing To Choose From Yet", "There is nothing of this kind to pick yet. Create one first (for example a macro, a placement rule or a pin scene), then come back and choose it here.", this); return current; }
         var dlg = new Window { Style = (Style)Application.Current.FindResource("DarkChromeWindow"), Title = title, Width = 380, Height = 360, Owner = this, WindowStartupLocation = WindowStartupLocation.CenterOwner, Topmost = true, ShowInTaskbar = false };
         var lb = new ListBox { Margin = new Thickness(12) };
         foreach (var (id, name) in items) lb.Items.Add(new ListBoxItem { Content = name, Tag = id, IsSelected = id == current });

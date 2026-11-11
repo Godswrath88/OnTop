@@ -58,7 +58,7 @@ Run these first; if any fail, stop and report.
 
 - [.] **B1 [!] Compiles clean** on Windows (NuGet restore succeeded; `System.Security.Cryptography.ProtectedData` is the only package). Paste every error verbatim.
   > 11-09: v0.45.1, `dotnet build` Debug: 0 errors, 0 warnings (compiled in a development session on the Windows machine).
-- [.] **B2** First launch: settings migrate silently (now → schema 29); no "config conflict" prompt; no "powerful fields changed" toast on the **second** launch.
+- [.] **B2** First launch: settings migrate silently (now → schema 30); no "config conflict" prompt; no "powerful fields changed" toast on the **second** launch.
 - [.] **B3** Existing zones, profiles, hotkeys, macros all present.
 - [.] **B4** Hotkeys… shows **Ctrl+Alt+M** on "Record / Stop Macro".
 - [ ] **B5** `settings.json` (installed mode): macros stored as `EncryptedEvents` base64, no plain `Events`; macros still play after restart. Portable mode: plain `Events`.
@@ -68,12 +68,15 @@ Run these first; if any fail, stop and report.
 - [ ] **B8** Help → last TOC chip "About & License" jumps to its section; text shows the version, `Godswrath88`, the GPL notice and the no-warranty line.
 - [ ] **B9** Exe → Properties → Details shows Company/Copyright as `Godswrath88` / GPL-3.0-or-later.
 - [ ] **B10** **Verbose logging** shows: `Gesture … at (x,y)`, gating reasons, `no enabled zone … contains it`, `Placement … candidate:` lines, `Overlays re-asserted`, `Global hotkeys SUSPENDED/RESUMED`.
+- [ ] **B11** Icon (0.45.3): the red thumbtack shows on the exe in Explorer, the taskbar, Alt+Tab and the tray, and looks crisp (not blurry) in the tray.
+- [ ] **B12** Log Viewer → **Export Diagnostics…** to a file that already exists → confirm Replace → the zip is written (no error) and opens with settings.json, the log, diag.txt and log-tail.txt. Type a bare name (no extension) → saved as .zip.
 
 ## E. Emergency stop & exit
 
 Default combos: **Exit = F10**, **Kill = Ctrl+Alt+Q** (Hotkeys… to change).
 
-- [ ] **E1 Kill while healthy**: press the Kill combo → OnTop is gone instantly; the log's last line is `KILL — Kill hotkey: terminating OnTop now …`.
+- [.] **E1 Kill while healthy**: press the Kill combo → OnTop is gone instantly; the log's last line is `KILL — Kill hotkey: terminating OnTop now …`.
+  > 11-10: v0.45.2, pass (log ends with the `KILL —` line).
 - [ ] **E2 Exit while healthy**: Exit combo → normal clean exit (confirm dialog if enabled; `Exit hotkey pressed (e-stop thread) — handing to the UI thread` then `OnTop exited`).
 - [ ] **E3 Kill while FROZEN** (the real test): reproduce the freeze (open Pinned Windows, or whatever froze it) → wait for the UI to stop responding → Kill combo → process ends. Log shows `UI thread unresponsive for N s` before the KILL line. (#14)
 - [ ] **E4 Exit while FROZEN**: same, press Exit → after ~3 s the process ends; log shows `UI thread did not respond to Exit within 3 s — escalating`.
@@ -87,7 +90,13 @@ Default combos: **Exit = F10**, **Kill = Ctrl+Alt+Q** (Hotkeys… to change).
 - [ ] **A1 [!] ⟳ retest — Accent**: Settings → Appearance → pick an accent → whole app re-tints **immediately**. Also try Theme (High Contrast / Light / Dark), which uses the same mechanism. (#1)
   > 09-24: "accent doesn't change colors of anything".
 - [ ] **A2** Theme: High Contrast / Light / Dark switch live. List what looks wrong in Light.
-- [ ] **A3** **Every sub-GUI** (Macros, Actions, Placement, Auto-Pin, Profile Rules, Schedules, Known Anti-Cheat, Pinned, Stats, Profiles, Help, Config History, Toast History, step editor) has a footer button and **no title-bar ✕**. Editors: Cancel (Revert) undoes what you changed since opening; Save & Close keeps. Settings: Cancel (Revert) restores every setting to what it was when opened (try flipping Low Impact and a theme, then Revert).
+- [~] **A3 [!] ⟳ retest** **Every sub-GUI** (Macros, Actions, Placement, Auto-Pin, Profile Rules, Schedules, Known Anti-Cheat, Pinned, Stats, Profiles, Help, Config History, Toast History, step editor) opens, has a footer button and **no title-bar ✕**. Editors: Cancel (Revert) undoes what you changed since opening; Save & Close keeps. Settings: Cancel (Revert) restores every setting to what it was when opened (try flipping Low Impact and a theme, then Revert).
+  > 11-10: v0.45.2, Placement, Action Library, Auto-Pin and Pinned crashed on open (`already the logical child of another element`). Every footer window was affected since 0.44.0; fixed in 0.45.3. Open each one once.
+  > 11-10: 0.45.3 fix, every sub-window opens. Footer buttons, missing ✕ and Cancel (Revert) not tested yet.
+- [ ] **A11** "Do this first" hint popups (0.45.3): with no zone selected, press **Set Group**, **Remove** and **Duplicate** → each fades in a hint centered on the main window, then fades out by itself (no status-bar-only message, no silent no-op, nothing to click). You can keep typing while it's up. Click dismisses it early; hovering keeps it up. With macros off, **Record** → hint. Action Library → edit an action whose picker has nothing to pick → hint. Does it look professional? Note anything that feels off.
+- [ ] **A13** Settings → Appearance → **Hint Popups**: Preview shows a sample; typing 2 vs 10 in **Stay Up For** visibly changes how long it stays. Letters can't be typed; 0, blank or 99 snaps back with a "1–60" toast. Switch **off** → the seconds box greys out and the same hints appear as a toast instead. Both survive a restart.
+- [ ] **A14** Settings: shrink nothing, just scroll. **Save & Close** and **Cancel (Revert)** stay visible at the bottom the whole time; scrolled to the end, the Data section sits right above them.
+- [ ] **A12** Tray → **Show Overlay Legend** with no overlays on → toast says "Overlay Column", not "Dot".
 - [ ] **A4** Action row = three cards; nothing clipped; Zones row ≥ 300 px.
 - [ ] **A5** Every former button still exists (Macros card / App card).
 - [ ] **A6** Help CONTENTS chips; one "Zone Map" section mentioning middle-mouse scroll.
@@ -127,7 +136,10 @@ Default combos: **Exit = F10**, **Kill = Ctrl+Alt+Q** (Hotkeys… to change).
 - [.] **H1** Ctrl+Alt+P; Ctrl+Alt+X; stealth toggle hotkey; auto-stealth watcher.
 - [ ] **H2 ⟳ retest** — Hotkeys… dialog: press a combo that a library action already uses → refused the moment you press it (toast names both), box reverts. (#12)
 - [ ] **H3** Hotkey bind failure at startup logs a Win32 code (1409 = another program holds it); check the `[Hotkey]` lines if F1/F10 fail to bind.
-- [ ] **H4** Settings → Performance → Hotkey Re-Bind Retry 5 → retries every ~5 s in the log.
+- [ ] **H4** Settings → Performance → Hotkey Re-Bind Retry 5 → with Verbose Logging on, `Still blocked: …` appears every ~5 s (0.45.3: DEBUG, not ERROR).
+- [ ] **H9** Hotkey freed (0.45.3): with a combo held by another app (e.g. Ctrl+Alt+N), close that app → within one retry a toast says "Ctrl+Alt+N (quick record) Is Now Active — The Other App Released It", and the hotkey works. Clearing a blocked combo in Hotkeys… instead shows no such note.
+- [ ] **H10** Stealth hotkey (0.45.3): set a Stealth combo in Hotkeys… → restart → no "In Use By Another App" warning for it, the log has no `Failed to bind stealth`, and pressing it toggles Stealth once (one toast, not two).
+- [ ] **H11** Panic key safety (0.45.3 review): open Hotkeys…, and while it's open trigger a zone set to Run Macro; then close Hotkeys… → Ctrl+Alt+X still stops the macro, and after it ends the Always On Top hotkey still works.
 - [ ] **H5** Cheat Sheet hotkey → card; Command Palette hotkey → type "peek" → Enter.
 - [ ] **H6** Features → Hold Chords on; Hotkeys… Hold To Peek → overlays while held; releasing Ctrl alone ends it. Log `Hold-chord keyboard hook INSTALLED`.
 - [ ] **H7** Hold To Pin → topmost while held, released after; an already-pinned window untouched.
@@ -173,6 +185,8 @@ Default combos: **Exit = F10**, **Kill = Ctrl+Alt+Q** (Hotkeys… to change).
 - [ ] **L9 ⟳ retest** — **Reopen Placement… after closing it** (edit a cell first, then close while the cell is still in edit mode) → no crash. (#10)
 - [ ] **L10** **Placement window footer**: change something → Cancel (Revert) → change is gone. Change → Save & Close → kept. No ✕ in the title bar.
 - [ ] **L11** Placement has no "Allow Launching" switch; per-rule Launch alone gates.
+- [ ] **L12** Admin window (0.45.3; GPU Tweak III works): rule with On Start → restart OnTop with GPU Tweak running → one window "can't move its window … runs as administrator", focus stays where it was. **Keep Rule** with the box unticked → asked again next launch (not again in the same session: Apply Selected → toast only). Tick **Don't ask again** + Keep → next launch only a WARN log line, no window, no toast. Rule editor → **Ask if it runs as admin** on → asks again. **Turn This Rule Off** → the rule's On box clears.
+- [ ] **L13** Admin window: with the question open, press **Cancel (Revert)** in the Placement window, then answer **Turn This Rule Off** → the rule really ends up off (grid + after restart). Close the question with ✕ instead → nothing changes and it asks again next launch.
 
 ## AL. Action Library
 

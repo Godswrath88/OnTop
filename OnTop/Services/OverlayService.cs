@@ -225,7 +225,7 @@ public sealed class OverlayService : IDisposable
         }
         else
         {
-            ToastService.Show("No Overlays Active — Turn On A Zone's Dot Column First", ToastType.Info, 4000);
+            ToastService.Show("No Overlays Active — Tick A Zone's Overlay Column First", ToastType.Info, 4000);
         }
     }
 
