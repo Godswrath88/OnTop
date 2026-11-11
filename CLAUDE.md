@@ -16,8 +16,9 @@ outranks everything else.
 | `OnTop.Tests/` | Unit tests (xUnit); `dotnet test` runs them. |
 | `Directory.Build.props` | **The only place the version number lives.** |
 | `installer/`, `portable/` | Inno Setup script; portable publish script. |
-| `tools/` | Helper scripts (e.g. `make_icon.ps1`). |
+| `tools/` | Helper scripts: version/privacy checks, installer build, icon, git hooks. |
 | `.github/` | CI workflows, issue templates, PR template. |
+| `.claude/skills/` | Project skills (session start, feedback intake, reviews, delivery gate). |
 | `CHANGELOG.md` | One entry per version (Keep a Changelog). |
 | `SECURITY.md` | Threat model, standing rules, per-change checklist. |
 | `docs/dev/PROJECT_SCOPE.md` | Standing requirements, build rules, architecture map, rules learned. Read before changing code. |
@@ -93,8 +94,14 @@ Installer, updater and portable build are **untested until I say otherwise.**
 - Every `*Brush` in XAML is a `DynamicResource`. Under-the-cursor logic uses
   `Win32.TopWindowAtPoint`.
 - Never write my real name, Windows username, e-mail or machine name into any
-  file, commit or PR. The public handle is **Godswrath88**; release builds use
-  `PathMap`.
+  file, commit, PR, issue or skill. The public handle is **Godswrath88**;
+  commits use the GitHub noreply address; release builds use `PathMap`.
+  Enforced three ways: the hooks in `tools/git-hooks/` (`core.hooksPath`)
+  block commits and pushes matching the private patterns in
+  `.git/info/identity-patterns` (never uploaded; never copy or print it);
+  CI's `tools/check-privacy.ps1` blocks real user paths, real e-mail addresses
+  and non-noreply authors; and the delivery gate scans every PR. If a check
+  fires, remove the text; never bypass a hook (`--no-verify`).
 - Never record a known, unfixed weakness in a public file (private advisory
   until the fix ships).
 - Docs and comments are first person (as me) or neutral imperative.

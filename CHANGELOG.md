@@ -26,6 +26,14 @@ shippable installer lands and v9.5 parity is complete. Format follows
   round-trip, PlacementRule.Clone completeness, tamper-stamp scope, clamps,
   migration, hotkey parsing and id allocation, zone hit-test, export guard.
 - `tools/check-version.ps1`, `tools/build-installer.ps1`; a PR template.
+- **Privacy guard:** `tools/git-hooks/` pre-commit and pre-push hooks block
+  any commit or push containing a private identifier (patterns kept only in
+  `.git/info/`, never uploaded) or a non-noreply author; CI runs
+  `tools/check-privacy.ps1` (real user-profile paths, real e-mail addresses,
+  non-noreply commit authors). History and GitHub content scanned clean.
+- **Project skills** in `.claude/skills/` (session start, feedback intake,
+  independent review, threat review, delivery gate), rewritten for the git /
+  PR / CI workflow; they hold no personal data.
 ### Changed
 - **One version source:** `Directory.Build.props`. The csproj no longer sets
   a version, and the installer reads it from the published exe.

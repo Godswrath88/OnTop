@@ -32,3 +32,6 @@ stats.json
 *.bak?
 OnTop.portable
 Data/
+
+# Claude Code per-user settings (never shared)
+.claude/settings.local.json

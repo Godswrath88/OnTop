@@ -1,0 +1,16 @@
+#!/bin/sh
+# Local only. Last line of defense: scans every commit about to be pushed
+# (diffs, messages, author/committer) for private identifiers.
+pat=.git/info/identity-patterns
+z=0000000000000000000000000000000000000000
+status=0
+while read local_ref local_sha remote_ref remote_sha; do
+  [ "$local_sha" = "$z" ] && continue
+  if [ "$remote_sha" = "$z" ]; then range="$local_sha --not --remotes"; else range="$remote_sha..$local_sha"; fi
+  bad_ids=$(git log --format='%ae%n%ce' $range | grep -v -E '@users\.noreply\.github\.com$|^noreply@github\.com$' | sort -u)
+  if [ -n "$bad_ids" ]; then echo "BLOCKED push: commits authored/committed with a non-noreply address." >&2; status=1; fi
+  if [ -s "$pat" ] && git log -p --format='%an%n%cn%n%B' $range | grep -v '^-' | grep -q -i -E -f "$pat"; then
+    echo "BLOCKED push: a commit in $local_ref contains a private identifier (see .git/info/identity-patterns)." >&2; status=1
+  fi
+done
+exit $status

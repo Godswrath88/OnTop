@@ -21,10 +21,16 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # the privacy check reads the PR's commit authors
 
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
+
+      - name: No personal identifiers (paths, e-mails, commit authors)
+        shell: pwsh
+        run: ./tools/check-privacy.ps1 -Range "${{ github.event_name == 'pull_request' && format('origin/{0}..HEAD', github.base_ref) || '' }}"
 
       - name: Version is consistent
         shell: pwsh
