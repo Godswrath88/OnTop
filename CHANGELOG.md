@@ -29,6 +29,13 @@ profiles / window-rules still pending). Format loosely follows
   created entries are still open`): `diag.txt`'s writer stayed open while the
   `log-tail.txt` entry was created. Each entry is now closed before the next.
 - "No Overlays Active" toast said "Dot Column"; it now names the Overlay column.
+- **Hotkey recovery note named nothing and only fired when every conflict
+  cleared.** Each blocked hotkey now gets its own note the moment the retry
+  binds it: "Ctrl+Alt+N (quick record) Is Now Active — The Other App Released
+  It" (+ an INFO log line). Only on retry ticks, so clearing a combo or
+  switching its feature off isn't announced. The conflict toast shows the
+  configured retry interval instead of a hard-coded 30 s. Still-blocked combos
+  log at DEBUG on retry ticks instead of an ERROR line every retry.
 ### Changed
 - **"Do this first" messages are hint popups now** (`Views/NoticePopup`)
   instead of easy-to-miss status-bar text or toasts: Set Group / Remove /

@@ -135,7 +135,8 @@ Default combos: **Exit = F10**, **Kill = Ctrl+Alt+Q** (Hotkeys… to change).
 - [.] **H1** Ctrl+Alt+P; Ctrl+Alt+X; stealth toggle hotkey; auto-stealth watcher.
 - [ ] **H2 ⟳ retest** — Hotkeys… dialog: press a combo that a library action already uses → refused the moment you press it (toast names both), box reverts. (#12)
 - [ ] **H3** Hotkey bind failure at startup logs a Win32 code (1409 = another program holds it); check the `[Hotkey]` lines if F1/F10 fail to bind.
-- [ ] **H4** Settings → Performance → Hotkey Re-Bind Retry 5 → retries every ~5 s in the log.
+- [ ] **H4** Settings → Performance → Hotkey Re-Bind Retry 5 → with Verbose Logging on, `Still blocked: …` appears every ~5 s (0.45.3: DEBUG, not ERROR).
+- [ ] **H9** Hotkey freed (0.45.3): with a combo held by another app (e.g. Ctrl+Alt+N), close that app → within one retry a toast says "Ctrl+Alt+N (quick record) Is Now Active — The Other App Released It", and the hotkey works. Clearing a blocked combo in Hotkeys… instead shows no such note.
 - [ ] **H5** Cheat Sheet hotkey → card; Command Palette hotkey → type "peek" → Enter.
 - [ ] **H6** Features → Hold Chords on; Hotkeys… Hold To Peek → overlays while held; releasing Ctrl alone ends it. Log `Hold-chord keyboard hook INSTALLED`.
 - [ ] **H7** Hold To Pin → topmost while held, released after; an already-pinned window untouched.

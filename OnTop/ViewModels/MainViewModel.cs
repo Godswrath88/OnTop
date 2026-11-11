@@ -434,20 +434,37 @@ public class MainViewModel : ObservableObject
         RegisterToggleHotkey(_cfg.HotkeyZonesStealth, "Zones Trigger Stealth", failed,
             () => _cfg.ZonesTriggerStealth, v => _cfg.ZonesTriggerStealth = v);
 
+        // 0.45.3: confirm EACH hotkey the moment it becomes active after being
+        // blocked (not only once every conflict has cleared), naming the combo
+        // and what it does. Only on retry ticks: nothing in the config changed
+        // since the last attempt, so a combo that left the failed list really
+        // did bind. (On a normal rebind, a combo can also leave the list because
+        // it was cleared or its feature switched off; that is not a recovery.)
+        var nowFailed = failed.Select(f => $"{f.What}\u001f{f.Key}").ToHashSet();
+        if (isRetry) foreach (var key in _hotkeyBlocked.Where(k => !nowFailed.Contains(k)).ToList())
+        {
+            var parts = key.Split('\u001f');
+            Log.Info($"Hotkey now active: {parts[1]} ({parts[0]}) — the other program released it", "Hotkey");
+            ToastService.Show($"{parts[1]} ({parts[0]}) Is Now Active — The Other App Released It", ToastType.Success, 5000);
+        }
+        _hotkeyBlocked = nowFailed;
+
         if (failed.Count > 0)
         {
-            foreach (var f in failed) Log.Error($"Failed to bind {f.What}: {f.Key}", "Hotkey");
+            // Full ERROR on a real bind; retry ticks log at DEBUG so a combo held
+            // all session doesn't add an error line every retry.
+            foreach (var f in failed)
+                if (isRetry) Log.Debug($"Still blocked: {f.What}: {f.Key}", "Hotkey");
+                else Log.Error($"Failed to bind {f.What}: {f.Key}", "Hotkey");
             if (!isRetry)   // one warning, not one per retry tick
                 ToastService.Show(
-                    $"Hotkeys In Use By Another App: {string.Join(", ", failed.Select(f => f.Key))} — Retrying Every 30s Until They're Free",
+                    $"Hotkeys In Use By Another App: {string.Join(", ", failed.Select(f => f.Key))} — Retrying Every {Math.Clamp(_cfg.HotkeyRetrySeconds, 5, 600)}s; You'll Get A Note When Each One Frees Up",
                     ToastType.Warning, 6500);
             EnsureHotkeyRetry();
         }
         else if (_hotkeyRetryPending)
         {
             StopHotkeyRetry();
-            Log.Info("Hotkeys recovered — the conflicting program released them", "Hotkey");
-            ToastService.Show("Hotkeys Bound — The Conflict Cleared", ToastType.Success);
         }
 
         Log.Info($"Hotkeys: toggle={_cfg.HotkeyToggle} exit={_cfg.HotkeyExit} config={_cfg.HotkeyConfig} kill={_cfg.HotkeyKill} (exit/kill on the e-stop thread{(EStop.KillBound ? "" : $" — KILL NOT BOUND, error {EStop.KillError}")})", "Hotkey");
@@ -456,6 +473,8 @@ public class MainViewModel : ObservableObject
     // ── Hotkey Retry (grabs F1/F10 the moment the other program closes) ──
     private DispatcherTimer? _hotkeyRetryTimer;
     private bool _hotkeyRetryPending;
+    /// <summary>"feature␟combo" for each hotkey that failed to bind last time.</summary>
+    private HashSet<string> _hotkeyBlocked = new();
 
     private void EnsureHotkeyRetry()
     {

@@ -54,6 +54,15 @@ with the `KILL —` line. With the fix, every sub-window opens.
   scroll area with a thin divider, so they're always visible, and scrolling
   to the end brings the last section right down to them. The other sub-windows
   and Hotkeys already kept their buttons outside the scroll area.
+- **You hear about it when a blocked hotkey frees up.** Windows won't say
+  which program holds a hotkey, and finding out would mean injecting code
+  into other programs, which OnTop never does. Instead, OnTop now tells you
+  the moment it gets each hotkey back: "Ctrl+Alt+N (quick record) Is Now
+  Active — The Other App Released It". To find the culprit, close a suspect
+  app and wait one retry (30 s by default; Settings → Performance). Before
+  this, the only note came once every conflict had cleared, and it didn't
+  say which one. Retry ticks also stop writing an ERROR line each time; a
+  still-blocked combo logs at DEBUG.
 - **OnTop has its own icon.** A generic red push-pin, drawn from basic shapes
   by a script in `tools/make_icon.ps1`, so it's original and ships under
   OnTop's own license; no icon pack or third-party art. It has every size
