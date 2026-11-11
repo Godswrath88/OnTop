@@ -140,7 +140,7 @@ public partial class App : Application
         _vm.MainWindowRequested += () => Dispatcher.Invoke(ShowMainWindow);
         // S28 Stage G: DND predicate, cheat sheet, palette.
         ToastService.SuppressRoutine = _vm.ShouldSuppressRoutineToasts;
-        Views.NoticePopup.Seconds = () => _vm.Cfg.NoticeSeconds;
+        Views.NoticePopup.Seconds = () => _vm.Cfg.HintPopupsEnabled ? _vm.Cfg.NoticeSeconds : 0;
         _vm.CheatSheetRequested += () => Dispatcher.Invoke(ToggleCheatSheet);
         _vm.PaletteRequested += () => Dispatcher.Invoke(ShowPalette);
         // S28: Low Impact Mode — BelowNormal priority + slower scanners. Applied

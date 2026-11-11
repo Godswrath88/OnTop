@@ -93,7 +93,8 @@ Default combos: **Exit = F10**, **Kill = Ctrl+Alt+Q** (Hotkeys… to change).
   > 11-10: v0.45.2, Placement, Action Library, Auto-Pin and Pinned crashed on open (`already the logical child of another element`). Every footer window was affected since 0.44.0; fixed in 0.45.3. Open each one once.
   > 11-10: 0.45.3 fix, every sub-window opens. Footer buttons, missing ✕ and Cancel (Revert) not tested yet.
 - [ ] **A11** "Do this first" hint popups (0.45.3): with no zone selected, press **Set Group**, **Remove** and **Duplicate** → each fades in a hint centered on the main window, then fades out by itself (no status-bar-only message, no silent no-op, nothing to click). You can keep typing while it's up. Click dismisses it early; hovering keeps it up. With macros off, **Record** → hint. Action Library → edit an action whose picker has nothing to pick → hint. Does it look professional? Note anything that feels off.
-- [ ] **A13** Settings → Appearance → **Hint Popups**: Preview shows a sample; 2 s vs 10 s visibly change how long it stays; **Off** → the same hints appear as a toast instead. The choice survives a restart.
+- [ ] **A13** Settings → Appearance → **Hint Popups**: Preview shows a sample; typing 2 vs 10 in **Stay Up For** visibly changes how long it stays. Letters can't be typed; 0, blank or 99 snaps back with a "1–60" toast. Switch **off** → the seconds box greys out and the same hints appear as a toast instead. Both survive a restart.
+- [ ] **A14** Settings: shrink nothing, just scroll. **Save & Close** and **Cancel (Revert)** stay visible at the bottom the whole time; scrolled to the end, the Data section sits right above them.
 - [ ] **A12** Tray → **Show Overlay Legend** with no overlays on → toast says "Overlay Column", not "Dot".
 - [ ] **A4** Action row = three cards; nothing clipped; Zones row ≥ 300 px.
 - [ ] **A5** Every former button still exists (Macros card / App card).

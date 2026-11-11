@@ -37,9 +37,11 @@ with the `KILL —` line. With the fix, every sub-window opens.
   corner. They're now a hint card that fades in over the window you clicked
   in, stays a few seconds, and fades out. There's nothing to click. It never
   takes focus, so you can keep typing; a click dismisses it early and hovering
-  keeps it up. **Settings → Appearance → Hint Popups** sets how long it stays
-  (2–15 s, default 4) or turns it off, which shows the hint as a toast
-  instead. A Preview button shows a sample. Remove and Duplicate with no zone
+  keeps it up. **Settings → Appearance → Hint Popups** turns it on or off
+  (off shows the hint as a toast instead). Next to it, you type how many
+  seconds it stays up: digits only, 1–60, default 4. A 0, a blank or anything
+  out of range snaps back to the last good value. A Preview button shows a
+  sample. Remove and Duplicate with no zone
   selected used to do nothing at all; they now say why. Same for Record Macro
   while macros are off, and the Action Library picker when there's nothing to
   pick. Hints only come from clicks in OnTop's own windows; anything a hotkey
@@ -47,6 +49,11 @@ with the `KILL —` line. With the fix, every sub-window opens.
 - The "No Overlays Active" toast still called the Overlay column "Dot". Fixed.
   "Drag dots to move" (map hint, overlay legend) is left alone: it describes
   the dot you actually drag, not the option.
+- **Settings' Save & Close and Cancel (Revert) stay on screen.** They used to
+  sit at the very end of the scrolling page. Now they're docked below the
+  scroll area with a thin divider, so they're always visible, and scrolling
+  to the end brings the last section right down to them. The other sub-windows
+  and Hotkeys already kept their buttons outside the scroll area.
 - **OnTop has its own icon.** A generic red push-pin, drawn from basic shapes
   by a script in `tools/make_icon.ps1`, so it's original and ships under
   OnTop's own license; no icon pack or third-party art. It has every size

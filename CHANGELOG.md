@@ -38,9 +38,13 @@ profiles / window-rules still pending). Format loosely follows
   stays a few seconds, and fades out. Nothing to click; it never takes focus.
   Click dismisses it early, hover keeps it up.
 ### Added
-- **Settings → Appearance → Hint Popups:** 2–15 seconds (default 4) or Off
-  (hints show as a toast), with a Preview button. `AppSettings.NoticeSeconds`
-  (0–15); no schema bump: older builds ignore it.
+- **Settings → Appearance → Hint Popups:** an on/off switch (off = hints show
+  as a toast) and a typed "Stay Up For N Seconds" box (digits only, 1–60,
+  default 4; 0, blank or out-of-range snaps back), with a Preview button.
+  `AppSettings.HintPopupsEnabled` + `NoticeSeconds` (clamped 1–60); no schema
+  bump: older builds ignore them.
+- **Settings keeps Save & Close / Cancel (Revert) in view:** the footer is
+  docked below the scroll area instead of scrolling with the sections.
 - **OnTop's own thumbtack icon** (`OnTop/Assets/thumbtack.ico`): a generic red
   push-pin drawn from simple shapes by `tools/make_icon.ps1`, original artwork
   under the project license. Frames 16–64 px (32-bit BMP) + 256 px (PNG).

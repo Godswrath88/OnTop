@@ -1092,6 +1092,8 @@ section — read it before starting any macro work.
   stays 29. RULE: a helper that re-parents an element must detach it first.
   "Do this first" messages from clicks in OnTop's own windows use
   `Views/NoticePopup` (fade in/out, never takes focus, duration =
-  `NoticeSeconds`, 0 = toast instead). RULE: hotkey and background paths use
+  `NoticeSeconds` 1–60, `HintPopupsEnabled` off = toast instead). RULE: a
+  scrolling window keeps its Save/Close buttons docked outside the
+  ScrollViewer. RULE: hotkey and background paths use
   toasts, not hint popups. RULE: "do this first" hints never need a click to
   get out of. The user-facing name of `Zone.ShowDot` is "Overlay".

@@ -154,20 +154,41 @@ public class SettingsDialog : Window
         accentRow.Children.Add(accentCombo);
         accentRow.Children.Add(new TextBlock { Text = "(Restart To Apply)", Opacity = 0.5, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 0, 0) });
         appearance.Children.Add(accentRow);
-        // 0.45.3: "do this first" hint popups (NoticePopup) — duration or off.
+        // 0.45.3: "do this first" hint popups (NoticePopup) — on/off + seconds.
         var hintRow = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 4, 0, 2) };
-        hintRow.Children.Add(new TextBlock { Text = "Hint Popups:", VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 8, 0) });
-        var hintChoices = new[] { 0, 2, 3, 4, 6, 8, 10, 15 };
-        var hintCombo = new ComboBox
+        var hintToggle = Toggle("Hint Popups", nameof(AppSettings.HintPopupsEnabled));
+        hintToggle.VerticalAlignment = VerticalAlignment.Center;
+        hintToggle.ToolTip = "Hints Like \"Select A Zone First\" Fade In Over The Window You Clicked In, Then Fade Out. Off Shows Them As A Small Toast Instead.";
+        hintRow.Children.Add(hintToggle);
+        var hintSecsLabel = new TextBlock { Text = "Stay Up For", VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(14, 0, 6, 0) };
+        var hintSecs = new TextBox
         {
-            MinWidth = 130,
-            ToolTip = "Hints Like \"Select A Zone First\" Fade In Over The Window You Clicked In, Then Fade Out. Pick How Long They Stay Up, Or Off To Show Them As A Small Toast Instead.",
+            Width = 44, Text = _vm.Cfg.NoticeSeconds.ToString(), MaxLength = 2,
+            HorizontalContentAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center,
+            ToolTip = "Seconds A Hint Stays Up (1–60). Hovering The Hint Keeps It Up Longer.",
         };
-        foreach (int s in hintChoices) hintCombo.Items.Add(s == 0 ? "Off (Use Toasts)" : $"{s} Seconds");
-        int hintIdx = Array.IndexOf(hintChoices, _vm.Cfg.NoticeSeconds);
-        hintCombo.SelectedIndex = hintIdx >= 0 ? hintIdx : Array.IndexOf(hintChoices, 4);
-        hintCombo.SelectionChanged += (_, _) => { if (hintCombo.SelectedIndex >= 0) _vm.Cfg.NoticeSeconds = hintChoices[hintCombo.SelectedIndex]; };
-        hintRow.Children.Add(hintCombo);
+        var hintSecsUnit = new TextBlock { Text = "Seconds", VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(6, 0, 0, 0) };
+        // Digits only while typing; the value is checked when you leave the box
+        // or press Enter. Anything outside 1–60 (including 0 and blank) snaps
+        // back to the last good value.
+        hintSecs.PreviewTextInput += (_, e) => e.Handled = !e.Text.All(char.IsDigit);
+        DataObject.AddPastingHandler(hintSecs, (_, e) =>
+        {
+            if (e.DataObject.GetData(typeof(string)) is not string t || !t.All(char.IsDigit)) e.CancelCommand();
+        });
+        void CommitHintSecs()
+        {
+            if (int.TryParse(hintSecs.Text, out int v) && v is >= 1 and <= 60) _vm.Cfg.NoticeSeconds = v;
+            else Services.ToastService.Show("Hint Time Must Be 1–60 Seconds", Services.ToastType.Warning, 3000);
+            hintSecs.Text = _vm.Cfg.NoticeSeconds.ToString();
+        }
+        hintSecs.LostKeyboardFocus += (_, _) => CommitHintSecs();
+        hintSecs.KeyDown += (_, e) => { if (e.Key == System.Windows.Input.Key.Enter) { CommitHintSecs(); e.Handled = true; } };
+        foreach (var el in new FrameworkElement[] { hintSecsLabel, hintSecs, hintSecsUnit })
+            el.SetBinding(IsEnabledProperty, Bind(nameof(AppSettings.HintPopupsEnabled), BindingMode.OneWay));
+        hintRow.Children.Add(hintSecsLabel);
+        hintRow.Children.Add(hintSecs);
+        hintRow.Children.Add(hintSecsUnit);
         var hintPreview = new Button { Content = "Preview", Margin = new Thickness(8, 0, 0, 0), ToolTip = "Show A Sample Hint With The Current Setting" };
         hintPreview.Click += (_, _) => NoticePopup.Show("Sample Hint", "This is how a \"do this first\" hint looks. Click it to dismiss early; hover to keep it up.", this);
         hintRow.Children.Add(hintPreview);
@@ -336,7 +357,7 @@ public class SettingsDialog : Window
         root.Children.Add(Wrap("Data", data));
 
         // ── Footer ──────────────────────────────────────────────────────
-        var footer = new Grid { Margin = new Thickness(0, 12, 0, 0) };
+        var footer = new Grid();
         string version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "dev";
         var versionText = Note($"OnTop {version} — WPF Rebuild");
         versionText.VerticalAlignment = VerticalAlignment.Center;
@@ -359,17 +380,30 @@ public class SettingsDialog : Window
         btns.Children.Add(revert); btns.Children.Add(close);
         footer.Children.Add(btns);
         Helpers.EditorFooter.HideCloseButton(this);
-        root.Children.Add(footer);
-
         // S28 UI LAYOUT REVIEW: the dialog grew past a 1080p work area with the
         // Features section — size to content but cap at the work area and scroll.
-        Content = new ScrollViewer
+        // 0.45.3: the footer sits OUTSIDE the scroll area, docked to the bottom,
+        // so Save & Close / Cancel (Revert) are always visible; at the end of
+        // the scroll the last section lands right above it.
+        MaxHeight = Math.Max(400, SystemParameters.WorkArea.Height - 40);
+        root.Margin = new Thickness(20, 14, 20, 10);
+        var footerBar = new Border
+        {
+            Child = footer,
+            Padding = new Thickness(20, 10, 20, 14),
+            BorderThickness = new Thickness(0, 1, 0, 0),
+            BorderBrush = new SolidColorBrush(Color.FromArgb(0x40, 0x80, 0x80, 0x90)),
+        };
+        var shell = new DockPanel();
+        DockPanel.SetDock(footerBar, Dock.Bottom);
+        shell.Children.Add(footerBar);
+        shell.Children.Add(new ScrollViewer
         {
             Content = root,
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
             HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
-            MaxHeight = Math.Max(400, SystemParameters.WorkArea.Height - 60),
-        };
+        });
+        Content = shell;
     }
 
     private void Restore_Click(object sender, RoutedEventArgs e)

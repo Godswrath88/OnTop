@@ -368,9 +368,12 @@ public class AppSettings : ObservableObject
     /// <summary>S28 K: optional — show/hide the macro status strip.</summary>
     public string HotkeyMacroStatus { get => _hotkeyMacroStatus; set => Set(ref _hotkeyMacroStatus, value ?? ""); }
     private int _noticeSeconds = 4;
-    /// <summary>0.45.3: seconds a "do this first" hint popup stays up (0 = off:
-    /// the hint shows as a toast instead; 1–15). No schema bump: a config
-    /// without it gets the default, and older builds ignore it.</summary>
+    private bool _hintPopupsEnabled = true;
+    /// <summary>0.45.3: "do this first" hints fade in as a popup (on) or show as
+    /// a toast (off). No schema bump: a config without these fields gets the
+    /// defaults, and older builds ignore them.</summary>
+    public bool HintPopupsEnabled { get => _hintPopupsEnabled; set => Set(ref _hintPopupsEnabled, value); }
+    /// <summary>0.45.3: seconds a hint popup stays up (1–60, default 4).</summary>
     public int NoticeSeconds { get => _noticeSeconds; set => Set(ref _noticeSeconds, value); }
     /// <summary>On display-configuration changes (dock/undock), automatically
     /// disable zones whose anchor no longer sits on any monitor.</summary>
