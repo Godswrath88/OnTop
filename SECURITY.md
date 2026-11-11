@@ -357,7 +357,7 @@ script executes on load, on import, or on startup unless the user explicitly
 configured that specific script to a specific trigger.
 
 **When multi-process WOULD become justified.** Single-process was chosen
-deliberately (see PROJECT_SCOPE: same-user/same-integrity processes are not
+deliberately (see docs/dev/PROJECT_SCOPE.md: same-user/same-integrity processes are not
 isolated, OnTop holds no OS-level privilege to compartmentalize, and a separate
 input-synthesis helper resembles cheat-tool architecture — worse for anti-cheat).
 That reasoning survives a scripting future ONLY while rules 1–6 hold. Revisit if

@@ -2,7 +2,7 @@
 ;  OnTop — Inno Setup installer script (Inno Setup 6.2+)
 ;  Roadmap: "Installer / Uninstaller (high priority)"
 ;
-;  Build steps are in installer\BUILD.md. Short version:
+;  Build steps are in docs\BUILD.md. Short version:
 ;    1) dotnet publish ..\OnTop\OnTop.csproj -c Release -r win-x64 --self-contained false -o publish
 ;    2) Open this file in Inno Setup Compiler → Compile
 ;    → Output\OnTopSetup-<version>.exe

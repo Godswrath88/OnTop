@@ -157,7 +157,7 @@ public class HelpWindow : Window
 
         H(sp, "Updates (Check & Notify)");
         W(sp, "This is the only feature that ever touches the network, and only when you have entered an https manifest URL. It downloads a tiny text manifest, compares versions, and at most opens your browser — it never downloads or runs a program. Off by default because the URL is empty.");
-        P(sp, "Settings > Updates can check a release manifest you host (HTTPS) and tell you when a newer version exists — Open Download Page (your browser), Ignore This Version (quiet until the next release), or Cancel (asks again next startup). The app itself never downloads or runs anything, the feature is fully dormant until you enter a URL, and failures never nag. See installer\\UPDATES.md for the manifest format.");
+        P(sp, "Settings > Updates can check a release manifest you host (HTTPS) and tell you when a newer version exists — Open Download Page (your browser), Ignore This Version (quiet until the next release), or Cancel (asks again next startup). The app itself never downloads or runs anything, the feature is fully dormant until you enter a URL, and failures never nag. See docs\\UPDATES.md for the manifest format.");
 
         H(sp, "Crash Reports");
         P(sp, "If OnTop hits an unexpected error, it offers (once per session) to save a diagnostics bundle with your description of what happened — written to Config\\Crashes, never transmitted anywhere. Fatal crashes auto-save a bundle on the way down.");

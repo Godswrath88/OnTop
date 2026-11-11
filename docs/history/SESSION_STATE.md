@@ -1,3 +1,8 @@
+> **Archive, frozen 2026-11-10.** Kept from the zip era for the record. From v0.45.4 on,
+> the story of each change is in its PR description and GitHub Release notes, and
+> the version index is CHANGELOG.md. Paths in here are the old ones (e.g. PROJECT_SCOPE.md
+> and ROADMAP.md now live in docs/dev/).
+
 # OnTop — Session State (checkpoint ledger — READ THIS FIRST IN A NEW SESSION)
 
 > **Purpose:** this is the resume-OR-rollback contract for a multi-stage session

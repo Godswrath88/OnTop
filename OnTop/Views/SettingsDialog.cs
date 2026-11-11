@@ -239,7 +239,7 @@ public class SettingsDialog : Window
         DockPanel.SetDock(urlLabel, Dock.Left);
         var urlBox = new TextBox
         {
-            ToolTip = "HTTPS Address Of The Tiny JSON Release Manifest (See installer\\UPDATES.md). Leave EMPTY To Keep The Update Feature Fully Dormant — No Network Access Ever Happens.",
+            ToolTip = "HTTPS Address Of The Tiny JSON Release Manifest (See docs\\UPDATES.md In The Source Repo). Leave EMPTY To Keep The Update Feature Fully Dormant — No Network Access Ever Happens.",
         };
         urlBox.SetBinding(TextBox.TextProperty, Bind(nameof(AppSettings.UpdateManifestUrl), BindingMode.TwoWay));
         urlRow.Children.Add(urlLabel);

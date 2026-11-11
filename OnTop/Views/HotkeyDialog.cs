@@ -17,7 +17,7 @@ namespace OnTop.Views;
 /// rebindable, never unbindable; Pause is fixed and noted), OPTIONAL — ACTIONS,
 /// and OPTIONAL — TOGGLES (default unbound). The list is scrollable, labels wrap
 /// rather than clip, and every new feature must decide its section (see
-/// PROJECT_SCOPE standing requirements).
+/// docs/dev/PROJECT_SCOPE.md standing requirements).
 /// </summary>
 public class HotkeyDialog : Window
 {

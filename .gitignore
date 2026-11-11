@@ -14,7 +14,7 @@ out/
 *.log
 TestResults/
 
-# Inno Setup / portable publish outputs (see installer/BUILD.md, portable/PORTABLE.md)
+# Inno Setup / portable publish outputs (see docs/BUILD.md, docs/PORTABLE.md)
 installer/Output/
 portable/out/
 *.exe

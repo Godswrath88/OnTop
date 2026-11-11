@@ -1,16 +1,15 @@
 # Changelog
 
-Terse, versioned index of every OnTop (WPF) build — the fast-scan companion to
-`WHATS_NEW.md`. **This file is the headline; `WHATS_NEW.md` is the full story.**
-Read this to see *what* shipped and *when* in ten seconds; read `WHATS_NEW.md`
-for the *why*, the gotchas, and the hotfix details. Keep both current every
-session (see `PROJECT_SCOPE.md`); this one gets one line per change, grouped by
-Added / Changed / Fixed, newest version on top.
+Every OnTop (WPF) version, newest first: what shipped, grouped by Added /
+Changed / Fixed. Each entry is short; the full story of a change (what was
+reported, the root cause, what's still unverified) is in its pull request and
+its [GitHub Release](https://github.com/Godswrath88/OnTop/releases). Versions
+up to 0.45.3 have a long-form narrative in
+[`docs/history/WHATS_NEW.md`](docs/history/WHATS_NEW.md).
 
-Versions follow the WPF rewrite's own line (`OnTop.csproj` `<Version>`), which is
+Versions follow the WPF rewrite's own line (`Directory.Build.props`), which is
 distinct from the lost AutoHotkey **v9.5**. 1.0.0 is reserved for when the
-shippable installer lands and v9.5 parity is complete (Draw zones done;
-profiles / window-rules still pending). Format loosely follows
+shippable installer lands and v9.5 parity is complete. Format follows
 [Keep a Changelog](https://keepachangelog.com).
 
 ---
@@ -1191,64 +1190,65 @@ profiles / window-rules still pending). Format loosely follows
 
 ---
 
-[0.45.2]: WHATS_NEW.md
-[0.45.1]: WHATS_NEW.md
-[0.45.0]: WHATS_NEW.md
-[0.44.2]: WHATS_NEW.md
-[0.44.1]: WHATS_NEW.md
-[0.44.0]: WHATS_NEW.md
-[0.43.0]: WHATS_NEW.md
-[0.42.1]: WHATS_NEW.md
-[0.42.0]: WHATS_NEW.md
-[0.41.0]: WHATS_NEW.md
-[0.40.0]: WHATS_NEW.md
-[0.39.0]: WHATS_NEW.md
-[0.38.0]: WHATS_NEW.md
-[0.37.0]: WHATS_NEW.md
-[0.36.1]: WHATS_NEW.md
-[0.36.0]: WHATS_NEW.md
-[0.35.0]: WHATS_NEW.md
-[0.34.0]: WHATS_NEW.md
-[0.33.8]: WHATS_NEW.md
-[0.33.7]: WHATS_NEW.md
-[0.33.6]: WHATS_NEW.md
-[0.33.5]: WHATS_NEW.md
-[0.33.4]: WHATS_NEW.md
-[0.33.3]: WHATS_NEW.md
-[0.33.2]: WHATS_NEW.md
-[0.33.1]: WHATS_NEW.md
-[0.33.0]: WHATS_NEW.md
-[0.32.0]: WHATS_NEW.md
-[0.31.0]: WHATS_NEW.md
-[0.30.0]: WHATS_NEW.md
-[0.29.0]: WHATS_NEW.md
-[0.28.0]: WHATS_NEW.md
-[0.27.0]: WHATS_NEW.md
-[0.26.0]: WHATS_NEW.md
-[0.25.0]: WHATS_NEW.md
-[0.24.0]: WHATS_NEW.md
-[0.23.0]: WHATS_NEW.md
-[0.22.0]: WHATS_NEW.md
-[0.21.0]: WHATS_NEW.md
-[0.20.0]: WHATS_NEW.md
-[0.19.0]: WHATS_NEW.md
-[0.18.0]: WHATS_NEW.md
-[0.17.3]: WHATS_NEW.md
-[0.17.2]: WHATS_NEW.md
-[0.17.1]: WHATS_NEW.md
-[0.17.0]: WHATS_NEW.md
-[0.16.0]: WHATS_NEW.md
-[0.15.0]: WHATS_NEW.md
-[0.14.0]: WHATS_NEW.md
-[0.13.2]: WHATS_NEW.md
-[0.13.1]: WHATS_NEW.md
-[0.13.0]: WHATS_NEW.md
-[0.12.0]: WHATS_NEW.md
-[0.11.0]: WHATS_NEW.md
-[0.10.0]: WHATS_NEW.md
-[0.9.0]: WHATS_NEW.md
-[0.8.0]: WHATS_NEW.md
-[0.7.0]: WHATS_NEW.md
-[0.6.0]: WHATS_NEW.md
-[0.5.0]: WHATS_NEW.md
-[0.4.0]: WHATS_NEW.md
+[0.45.3]: https://github.com/Godswrath88/OnTop/releases/tag/v0.45.3
+[0.45.2]: docs/history/WHATS_NEW.md
+[0.45.1]: docs/history/WHATS_NEW.md
+[0.45.0]: docs/history/WHATS_NEW.md
+[0.44.2]: docs/history/WHATS_NEW.md
+[0.44.1]: docs/history/WHATS_NEW.md
+[0.44.0]: docs/history/WHATS_NEW.md
+[0.43.0]: docs/history/WHATS_NEW.md
+[0.42.1]: docs/history/WHATS_NEW.md
+[0.42.0]: docs/history/WHATS_NEW.md
+[0.41.0]: docs/history/WHATS_NEW.md
+[0.40.0]: docs/history/WHATS_NEW.md
+[0.39.0]: docs/history/WHATS_NEW.md
+[0.38.0]: docs/history/WHATS_NEW.md
+[0.37.0]: docs/history/WHATS_NEW.md
+[0.36.1]: docs/history/WHATS_NEW.md
+[0.36.0]: docs/history/WHATS_NEW.md
+[0.35.0]: docs/history/WHATS_NEW.md
+[0.34.0]: docs/history/WHATS_NEW.md
+[0.33.8]: docs/history/WHATS_NEW.md
+[0.33.7]: docs/history/WHATS_NEW.md
+[0.33.6]: docs/history/WHATS_NEW.md
+[0.33.5]: docs/history/WHATS_NEW.md
+[0.33.4]: docs/history/WHATS_NEW.md
+[0.33.3]: docs/history/WHATS_NEW.md
+[0.33.2]: docs/history/WHATS_NEW.md
+[0.33.1]: docs/history/WHATS_NEW.md
+[0.33.0]: docs/history/WHATS_NEW.md
+[0.32.0]: docs/history/WHATS_NEW.md
+[0.31.0]: docs/history/WHATS_NEW.md
+[0.30.0]: docs/history/WHATS_NEW.md
+[0.29.0]: docs/history/WHATS_NEW.md
+[0.28.0]: docs/history/WHATS_NEW.md
+[0.27.0]: docs/history/WHATS_NEW.md
+[0.26.0]: docs/history/WHATS_NEW.md
+[0.25.0]: docs/history/WHATS_NEW.md
+[0.24.0]: docs/history/WHATS_NEW.md
+[0.23.0]: docs/history/WHATS_NEW.md
+[0.22.0]: docs/history/WHATS_NEW.md
+[0.21.0]: docs/history/WHATS_NEW.md
+[0.20.0]: docs/history/WHATS_NEW.md
+[0.19.0]: docs/history/WHATS_NEW.md
+[0.18.0]: docs/history/WHATS_NEW.md
+[0.17.3]: docs/history/WHATS_NEW.md
+[0.17.2]: docs/history/WHATS_NEW.md
+[0.17.1]: docs/history/WHATS_NEW.md
+[0.17.0]: docs/history/WHATS_NEW.md
+[0.16.0]: docs/history/WHATS_NEW.md
+[0.15.0]: docs/history/WHATS_NEW.md
+[0.14.0]: docs/history/WHATS_NEW.md
+[0.13.2]: docs/history/WHATS_NEW.md
+[0.13.1]: docs/history/WHATS_NEW.md
+[0.13.0]: docs/history/WHATS_NEW.md
+[0.12.0]: docs/history/WHATS_NEW.md
+[0.11.0]: docs/history/WHATS_NEW.md
+[0.10.0]: docs/history/WHATS_NEW.md
+[0.9.0]: docs/history/WHATS_NEW.md
+[0.8.0]: docs/history/WHATS_NEW.md
+[0.7.0]: docs/history/WHATS_NEW.md
+[0.6.0]: docs/history/WHATS_NEW.md
+[0.5.0]: docs/history/WHATS_NEW.md
+[0.4.0]: docs/history/WHATS_NEW.md
