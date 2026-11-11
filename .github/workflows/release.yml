@@ -1,0 +1,95 @@
+name: Release
+
+# Pushing a version tag (v1.2.3) builds the downloads and attaches them to the
+# tag's GitHub Release:
+#   - OnTopSetup-<version>.exe   installer (needs the .NET 8 Desktop Runtime; offers to fetch it)
+#   - OnTop-<version>-portable.zip   single self-contained OnTop.exe
+#   - SHA256SUMS.txt
+# If the release doesn't exist yet it is created as "🧪 Untested" (pre-release),
+# never Latest. Only I promote a release to Stable / Restore point (CLAUDE.md).
+on:
+  push:
+    tags: ['v*.*.*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing tag to (re)build assets for, e.g. v0.45.4
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    env:
+      TAG: ${{ github.event.inputs.tag || github.ref_name }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Tag matches version
+        shell: pwsh
+        run: ./tools/check-version.ps1 -Tag $env:TAG
+
+      - name: Build and test
+        run: |
+          dotnet build OnTop.sln -c Release -p:TreatWarningsAsErrors=true
+          dotnet test OnTop.sln -c Release --no-build
+
+      - name: Build installer
+        shell: pwsh
+        run: ./tools/build-installer.ps1 -OutDir dist
+
+      - name: Build portable zip
+        shell: pwsh
+        run: |
+          $v = $env:TAG.TrimStart('v')
+          dotnet publish OnTop/OnTop.csproj -c Release -r win-x64 --self-contained true `
+            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o portable/out
+          if ($LASTEXITCODE -ne 0) { throw 'portable publish failed' }
+          Copy-Item LICENSE portable/out/LICENSE.txt
+          Compress-Archive -Path portable/out/OnTop.exe, portable/out/LICENSE.txt -DestinationPath "dist/OnTop-$v-portable.zip"
+
+      - name: Checksums
+        shell: pwsh
+        run: |
+          Get-ChildItem dist -File | Where-Object Name -ne 'SHA256SUMS.txt' | ForEach-Object {
+            "{0}  {1}" -f (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower(), $_.Name
+          } | Set-Content -Encoding ascii dist/SHA256SUMS.txt
+          Get-Content dist/SHA256SUMS.txt
+
+      - name: Create or update the release
+        shell: pwsh
+        run: |
+          $v = $env:TAG.TrimStart('v')
+          gh release view $env:TAG *> $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $env:TAG (Get-ChildItem dist -File).FullName --clobber
+          } else {
+            # Notes: status line + this version's CHANGELOG entry.
+            $lines = Get-Content CHANGELOG.md
+            $start = ($lines | Select-String -Pattern "^## \[$([regex]::Escape($v))\]").LineNumber
+            $body = @()
+            if ($start) {
+              $rest = $lines[$start..($lines.Count - 1)]
+              $end = ($rest | Select-String -Pattern '^## \[' | Select-Object -First 1).LineNumber
+              $body = if ($end) { $rest[0..($end - 2)] } else { $rest }
+            }
+            $notes = @(
+              '**🧪 Untested — pre-release.** Not yet run through the smoke test and full checklist in [`docs/testing/CHECKLIST.md`](https://github.com/Godswrath88/OnTop/blob/main/docs/testing/CHECKLIST.md). For a rollback target, use the [latest release](https://github.com/Godswrath88/OnTop/releases/latest).',
+              '',
+              '**Downloads:** `OnTopSetup-' + $v + '.exe` (installer; needs the .NET 8 Desktop Runtime and offers to install it) or `OnTop-' + $v + '-portable.zip` (one self-contained exe, nothing to install). Neither is code-signed, so Windows SmartScreen may warn. Check the file against `SHA256SUMS.txt`.',
+              ''
+            ) + ($body | ForEach-Object { $_ -replace '^### ', '#### ' })
+            $notes | Set-Content -Encoding utf8 "$env:RUNNER_TEMP/notes.md"
+            gh release create $env:TAG (Get-ChildItem dist -File).FullName --prerelease --latest=false `
+              --title "$env:TAG (untested)" --notes-file "$env:RUNNER_TEMP/notes.md"
+          }

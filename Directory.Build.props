@@ -5,7 +5,7 @@
        WPF-rewrite line, distinct from the lost AutoHotkey "v9.5"; 1.0.0 when
        the installer ships and v9.5 parity is complete. -->
   <PropertyGroup>
-    <OnTopVersion>0.45.3</OnTopVersion>
+    <OnTopVersion>0.45.4</OnTopVersion>
     <Version>$(OnTopVersion)</Version>
     <AssemblyVersion>$(OnTopVersion).0</AssemblyVersion>
     <FileVersion>$(OnTopVersion).0</FileVersion>

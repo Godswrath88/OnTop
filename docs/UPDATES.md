@@ -22,8 +22,8 @@ Both URLs must be **https**. Version must parse as `major.minor.patch`.
 2. Commit the manifest as e.g. `update.json` on the default branch.
 3. In OnTop: Settings → Updates → Release Manifest URL =
    `https://raw.githubusercontent.com/<you>/<repo>/main/update.json`
-4. Each release: upload `OnTopSetup-x.y.z.exe` (and/or the portable exe) to a
-   GitHub Release, then edit `update.json`'s version/url. Done — running copies
+4. Each release: the Release workflow attaches `OnTopSetup-x.y.z.exe` and the portable zip to the
+   GitHub Release when the tag is pushed; then edit `update.json`'s version/url. Done — running copies
    see it on their next startup check.
 
 Leave the URL field EMPTY in the app to keep the feature fully dormant.

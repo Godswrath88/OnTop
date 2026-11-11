@@ -70,6 +70,7 @@ Run these first; if any fail, stop and report.
 - [ ] **B10** **Verbose logging** shows: `Gesture … at (x,y)`, gating reasons, `no enabled zone … contains it`, `Placement … candidate:` lines, `Overlays re-asserted`, `Global hotkeys SUSPENDED/RESUMED`.
 - [ ] **B11** Icon (0.45.3): the red thumbtack shows on the exe in Explorer, the taskbar, Alt+Tab and the tray, and looks crisp (not blurry) in the tray.
 - [ ] **B12** Log Viewer → **Export Diagnostics…** to a file that already exists → confirm Replace → the zip is written (no error) and opens with settings.json, the log, diag.txt and log-tail.txt. Type a bare name (no extension) → saved as .zip.
+- [ ] **B13** Build behavior (0.45.4): with OnTop running, `dotnet build` from a terminal leaves it running; starting a build in Visual Studio still closes it first (exe not locked).
 
 ## E. Emergency stop & exit
 
@@ -220,8 +221,8 @@ Default combos: **Exit = F10**, **Kill = Ctrl+Alt+Q** (Hotkeys… to change).
 
 ## X. Environment-gated (I say explicitly when I test these)
 
-- [n] **X1** Installer (`installer/OnTop.iss`).
-- [n] **X2** Portable publish (`portable/publish-portable.cmd`).
+- [n] **X1** Installer (`installer/OnTop.iss`). From v0.45.4 the installer on each GitHub Release is built by CI; test that file.
+- [n] **X2** Portable: the `OnTop-x.y.z-portable.zip` on the release (or `portable/publish-portable.cmd`). Its SHA-256 matches `SHA256SUMS.txt`.
 - [n] **X3** Updater (dormant with empty URL; test manifest → notify → browser only).
 
 ---

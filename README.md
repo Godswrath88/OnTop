@@ -24,7 +24,7 @@ Every version tag has a GitHub Release whose first line states its status:
 
 Only Stable and Restore-point releases can be GitHub's **Latest** release, so [releases/latest](https://github.com/Godswrath88/OnTop/releases/latest) never points at an untested build. `main` is usually ahead of it and untested.
 
-**Right now no version is Stable** (pre-1.0, testing in progress). The latest release is **v0.43.0**, a restore point with known issues. **v0.45.3** is the newest version, and it is untested. Releases ship source only; see Build below.
+**Right now no version is Stable** (pre-1.0, testing in progress). The latest release is **v0.43.0**, a restore point with known issues. **v0.45.4** is the newest version, and it is untested. From v0.45.4 on, each release includes an installer (`OnTopSetup-x.y.z.exe`) and a portable zip, built automatically by GitHub Actions, plus `SHA256SUMS.txt`. They are not code-signed, so Windows SmartScreen may warn.
 
 ## Build
 

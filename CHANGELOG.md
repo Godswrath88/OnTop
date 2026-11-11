@@ -14,6 +14,31 @@ shippable installer lands and v9.5 parity is complete. Format follows
 
 ---
 
+## [0.45.4] — Repo restructure, CI, tests, release downloads
+### Added
+- **GitHub Actions:** every PR and push to `main` builds Release (warnings
+  are errors), runs the tests, checks the version and compiles the installer
+  (`.github/workflows/build.yml`). Pushing a version tag builds
+  `OnTopSetup-x.y.z.exe`, a portable zip and `SHA256SUMS.txt` and attaches
+  them to the release, creating it as 🧪 Untested if needed
+  (`.github/workflows/release.yml`).
+- **Unit tests** (`OnTop.Tests`, xUnit, 19 tests): settings defaults and
+  round-trip, PlacementRule.Clone completeness, tamper-stamp scope, clamps,
+  migration, hotkey parsing and id allocation, zone hit-test, export guard.
+- `tools/check-version.ps1`, `tools/build-installer.ps1`; a PR template.
+### Changed
+- **One version source:** `Directory.Build.props`. The csproj no longer sets
+  a version, and the installer reads it from the published exe.
+- **Docs reorganized:** `CLAUDE.md` replaces HANDOFF.md and MASTER_PROMPT.md;
+  PROJECT_SCOPE and ROADMAP moved to `docs/dev/` (zip-era workflow removed,
+  learned rules collected); BUILD/UPDATES/PORTABLE moved to `docs/`; the zip-era
+  WHATS_NEW, SESSION_STATE and session history are archived in
+  `docs/history/`. Per change: a CHANGELOG entry, the PR description (release
+  notes) and the checklist.
+### Fixed
+- **A command-line build force-closed a running OnTop** (the pre-build
+  `taskkill OnTop.exe`). It now runs only for Visual Studio builds.
+
 ## [0.45.3] — Session 28 — HOTFIX: footer sub-windows crashed on open (+ test-round fixes)
 ### Fixed
 - **Every footer window crashed when opened** (Placement, Pinned Windows,
@@ -1190,6 +1215,7 @@ shippable installer lands and v9.5 parity is complete. Format follows
 
 ---
 
+[0.45.4]: https://github.com/Godswrath88/OnTop/releases/tag/v0.45.4
 [0.45.3]: https://github.com/Godswrath88/OnTop/releases/tag/v0.45.3
 [0.45.2]: docs/history/WHATS_NEW.md
 [0.45.1]: docs/history/WHATS_NEW.md
