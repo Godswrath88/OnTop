@@ -14,6 +14,12 @@ shippable installer lands and v9.5 parity is complete. Format follows
 
 ---
 
+## [Unreleased]
+### Fixed
+- Release `SHA256SUMS.txt` used Windows line endings, so `sha256sum -c`
+  couldn't read it on Linux/macOS. Now LF. (v0.45.4's file was replaced by
+  hand with the same hashes.)
+
 ## [0.45.4] — Repo restructure, CI, tests, release downloads
 ### Added
 - **GitHub Actions:** every PR and push to `main` builds Release (warnings
