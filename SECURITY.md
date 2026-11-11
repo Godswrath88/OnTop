@@ -574,6 +574,11 @@ above are now code, not just doctrine:
   a strictly smaller footprint during capture.
 - Placement failure on elevated targets is reported, never worked around: OnTop
   stays `asInvoker`. The "access denied" toast is the security posture speaking.
+  0.45.3: the report became a once-per-session Turn Off / Keep question
+  (non-activating, toast under DND) with per-rule "don't ask again"; still
+  no workaround. An elevated helper was evaluated and shelved (ROADMAP,
+  Security / Distribution): with a per-user install, its exe would be
+  swappable by any program before the next accepted admin prompt.
 - After Action (then Stealth / then Exit) is an internal state change; the
   global override narrowing (Exit→Stealth only) removes a surprise, not a guard.
 - Footers/revert operate on in-memory config snapshots (JSON) — no new file I/O

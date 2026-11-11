@@ -182,6 +182,7 @@ Default combos: **Exit = F10**, **Kill = Ctrl+Alt+Q** (Hotkeys… to change).
 - [ ] **L9 ⟳ retest** — **Reopen Placement… after closing it** (edit a cell first, then close while the cell is still in edit mode) → no crash. (#10)
 - [ ] **L10** **Placement window footer**: change something → Cancel (Revert) → change is gone. Change → Save & Close → kept. No ✕ in the title bar.
 - [ ] **L11** Placement has no "Allow Launching" switch; per-rule Launch alone gates.
+- [ ] **L12** Admin window (0.45.3; GPU Tweak III works): rule with On Start → restart OnTop with GPU Tweak running → one window "can't move its window … runs as administrator", focus stays where it was. **Keep Rule** with the box unticked → asked again next launch (not again in the same session: Apply Selected → toast only). Tick **Don't ask again** + Keep → next launch only a WARN log line, no window, no toast. Rule editor → **Ask if it runs as admin** on → asks again. **Turn This Rule Off** → the rule's On box clears.
 
 ## AL. Action Library
 

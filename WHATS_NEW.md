@@ -63,6 +63,20 @@ with the `KILL —` line. With the fix, every sub-window opens.
   this, the only note came once every conflict had cleared, and it didn't
   say which one. Retry ticks also stop writing an ERROR line each time; a
   still-blocked combo logs at DEBUG.
+- **Placement asks what to do about administrator windows.** OnTop can't
+  move a window that belongs to a program running as administrator (GPU
+  Tweak III here), and it won't run as administrator to get around that.
+  Before, a startup rule like that failed with an error every launch. Now the
+  first failure in a session opens a small window explaining why, with
+  **Turn This Rule Off** or **Keep Rule**, plus **Don't ask again for this
+  placement**, so keeping the rule doesn't mean a question every launch. It
+  doesn't take focus, and while a game is running (Do Not Disturb) it's just
+  a toast. A rule set to "don't ask" only notes the failure in the log. The
+  rule editor has a matching switch, **Ask if it runs as admin**, to turn the
+  question back on. I also looked hard at a separate administrator "window
+  mover" helper and shelved it: with a per-user install, any program could
+  swap that helper and get full admin the next time the prompt is accepted.
+  The full reasoning is in ROADMAP under Security / Distribution.
 - **OnTop has its own icon.** A generic red push-pin, drawn from basic shapes
   by a script in `tools/make_icon.ps1`, so it's original and ships under
   OnTop's own license; no icon pack or third-party art. It has every size

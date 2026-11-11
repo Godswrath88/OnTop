@@ -13,7 +13,7 @@ public class PlacementRuleDialog : Window
 {
     private readonly PlacementRule _r;
     private readonly TextBox _name = new(), _proc = new(), _title = new(), _mon = new(), _x = new(), _y = new(), _w = new(), _h = new(), _delay = new(), _launch = new(), _wait = new();
-    private readonly CheckBox _max = new(), _start = new(), _launchOn = new();
+    private readonly CheckBox _max = new(), _start = new(), _launchOn = new(), _askAdmin = new();
 
     private PlacementRuleDialog(PlacementRule r)
     {
@@ -44,7 +44,8 @@ public class PlacementRuleDialog : Window
         _x.Text = r.X.ToString(); _y.Text = r.Y.ToString(); _w.Text = r.W.ToString(); _h.Text = r.H.ToString();
         _max.IsChecked = r.Maximize; _start.IsChecked = r.ApplyOnStartup; _delay.Text = r.DelaySec.ToString();
         _launch.Text = r.LaunchPath; _launchOn.IsChecked = r.LaunchEnabled; _wait.Text = r.LaunchWaitSec.ToString();
-        foreach (var cb in new[] { _max, _start, _launchOn }) cb.Style = (Style)Application.Current.FindResource("ToggleSwitch");
+        _askAdmin.IsChecked = !r.ElevatedNoticeOff;
+        foreach (var cb in new[] { _max, _start, _launchOn, _askAdmin }) cb.Style = (Style)Application.Current.FindResource("ToggleSwitch");
         Row("Name", "A Label For This Rule (Shown In Menus And Toasts)", _name);
         Row("Process (no .exe)", "The Program's Process Name, e.g. spotify. Pick From Running Programs Or Browse To The .exe.", WithPicker(_proc, "Pick…", "Choose From Running Programs Or Browse To An .exe", () => { var p = ProcessPickerDialog.Pick(this); if (p is not null) _proc.Text = p; }));
         Row("Title contains", "Optional: Only Match A Window Whose Title Contains This Text (Narrows Programs With Several Windows)", _title);
@@ -57,6 +58,7 @@ public class PlacementRuleDialog : Window
         Row("Launch path (optional)", "Program To START If No Matching Window Exists. Shown Verbatim; Does Nothing Unless 'Launch' Below Is Ticked.", WithPicker(_launch, "Browse…", "Pick The Program's .exe", () => { var dlg = new Microsoft.Win32.OpenFileDialog { Filter = "Programs (*.exe)|*.exe|All Files (*.*)|*.*" }; if (dlg.ShowDialog(this) == true) _launch.Text = dlg.FileName; }));
         Row("Launch when not running", "Tick To Allow This Rule To Start The Program Above. Off = Move Only.", _launchOn);
         Row("Wait for window after launch (s)", "How Long To Keep Looking For The Window After Launching Before Giving Up (1–120)", _wait);
+        Row("Ask if it runs as admin", "When The Window Belongs To A Program Running As Administrator (Which OnTop Can't Move), Ask Whether To Turn This Rule Off. Off = Just Note It In The Log.", _askAdmin);
         g.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         var warn = new TextBlock { Text = "⚠ OnTop runs non-elevated by design and cannot move windows of programs running as administrator (the log will say 'access denied').", TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 8, 0, 0), Foreground = (System.Windows.Media.Brush)Application.Current.FindResource("WarnAmberBrush"), FontSize = 11.5 };
         Grid.SetRow(warn, row); Grid.SetColumnSpan(warn, 2); g.Children.Add(warn); row++;
@@ -84,6 +86,7 @@ public class PlacementRuleDialog : Window
         _r.DelaySec = I(_delay, 0, 120, 0);
         _r.LaunchPath = _launch.Text.Trim(); _r.LaunchEnabled = _launchOn.IsChecked == true && _r.LaunchPath.Length > 0;
         _r.LaunchWaitSec = I(_wait, 1, 120, 10);
+        _r.ElevatedNoticeOff = _askAdmin.IsChecked != true;
         return true;
     }
     /// <summary>Edit in place; returns true if saved.</summary>

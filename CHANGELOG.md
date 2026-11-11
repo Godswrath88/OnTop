@@ -45,6 +45,13 @@ profiles / window-rules still pending). Format loosely follows
   stays a few seconds, and fades out. Nothing to click; it never takes focus.
   Click dismisses it early, hover keeps it up.
 ### Added
+- **Placement on an administrator window asks once** (`Views/ElevatedPlacementDialog`):
+  "Turn This Rule Off" / "Keep Rule" + "Don't ask again for this placement".
+  Once per rule per session, never takes focus, toast only while DND is
+  active. Don't-ask rules log a WARN and stay silent; re-enable with the rule
+  editor's new "Ask if it runs as admin" switch. `PlacementRule.ElevatedNoticeOff`
+  (no schema bump). Still never elevates (SECURITY.md); the elevated helper
+  idea is shelved with reasons in ROADMAP.
 - **Settings → Appearance → Hint Popups:** an on/off switch (off = hints show
   as a toast) and a typed "Stay Up For N Seconds" box (digits only, 1–60,
   default 4; 0, blank or out-of-range snaps back), with a Preview button.
