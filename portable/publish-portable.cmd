@@ -4,7 +4,7 @@ rem  OnTop — portable single-exe build (no installer, no install step)
 rem  Produces portable\out\OnTop.exe: runs from ANY folder, writes config to
 rem  %%APPDATA%%\OnTop exactly like the installed version. Self-contained =
 rem  .NET 8 is baked in (~150-180 MB; nothing to install, works offline).
-rem  See PORTABLE.md for the trade-offs vs the installer.
+rem  See docs\PORTABLE.md for the trade-offs vs the installer.
 rem ============================================================================
 pushd "%~dp0"
 dotnet publish ..\OnTop\OnTop.csproj -c Release -r win-x64 ^

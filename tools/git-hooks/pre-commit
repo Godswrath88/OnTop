@@ -1,0 +1,20 @@
+#!/bin/sh
+# Local only (.git/hooks is never uploaded). Blocks a commit whose added lines
+# or author identity contain a private identifier. Patterns (one ERE per line)
+# live in .git/info/identity-patterns, also never uploaded.
+pat=.git/info/identity-patterns
+email=$(git config user.email)
+case "$email" in
+  *@users.noreply.github.com) ;;
+  *) echo "BLOCKED: git user.email is '$email', not the GitHub noreply address." >&2; exit 1 ;;
+esac
+[ -s "$pat" ] || exit 0
+hits=$(git diff --cached -U0 --no-color | grep '^+' | grep -v '^+++' | grep -i -E -f "$pat")
+if [ -n "$hits" ]; then
+  echo "BLOCKED: staged changes contain a private identifier (see .git/info/identity-patterns)." >&2
+  git diff --cached --name-only | while read f; do
+    git diff --cached -U0 -- "$f" | grep '^+' | grep -q -i -E -f "$pat" && echo "  in: $f" >&2
+  done
+  exit 1
+fi
+exit 0

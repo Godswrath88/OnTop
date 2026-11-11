@@ -1,8 +1,8 @@
 # OnTop — Roadmap
 
 Everything approved and outstanding, in one place. Shipped work is tracked in
-`WHATS_NEW.md`; conventions and the continuity contract live in `PROJECT_SCOPE.md`
-— update all three every session.
+`CHANGELOG.md`; conventions and the architecture live in `PROJECT_SCOPE.md` (this folder)
+— tick items here in the same PR that ships them.
 
 **North star:** the long-term **end goal** is a modular **Macro Subsystem**
 (full-fidelity record / playback with a hard anti-cheat guard) folded into OnTop —

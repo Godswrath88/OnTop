@@ -23,7 +23,7 @@ namespace OnTop.Services;
 ///  • Downgrade/equal versions are never offered (rollback refusal).
 ///  • Every event logs under "Updates": check start/result, prompt choice,
 ///    ignored-version set/cleared, and every error.
-/// Manifest format (see installer/UPDATES.md):
+/// Manifest format (see docs/UPDATES.md):
 ///   { "version": "0.28.0", "url": "https://.../releases/tag/v0.28.0", "notes": "..." }
 /// </summary>
 public static class UpdateService

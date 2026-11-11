@@ -2,7 +2,7 @@
 ;  OnTop — Inno Setup installer script (Inno Setup 6.2+)
 ;  Roadmap: "Installer / Uninstaller (high priority)"
 ;
-;  Build steps are in installer\BUILD.md. Short version:
+;  Build steps are in docs\BUILD.md. Short version:
 ;    1) dotnet publish ..\OnTop\OnTop.csproj -c Release -r win-x64 --self-contained false -o publish
 ;    2) Open this file in Inno Setup Compiler → Compile
 ;    → Output\OnTopSetup-<version>.exe
@@ -18,11 +18,24 @@
 ; ============================================================================
 
 #define MyAppName "OnTop"
-#define MyAppVersion "0.45.3"
 #define MyAppPublisher "Godswrath88"
 #define MyAppExeName "OnTop.exe"
 ; The publish folder produced by `dotnet publish` (relative to this .iss):
 #define PublishDir "publish"
+; Version: read from the published exe, which got it from Directory.Build.props
+; (the single version source), so this script never needs a version edit.
+; CI may still pass /DMyAppVersion=x.y.z explicitly.
+#ifndef MyAppVersion
+  #define VerMajor
+  #define VerMinor
+  #define VerRev
+  #define VerBuild
+  #if !FileExists(AddBackslash(SourcePath) + PublishDir + "\" + MyAppExeName)
+    #error Publish OnTop first (see docs\BUILD.md): publish\OnTop.exe not found
+  #endif
+  #expr GetVersionComponents(AddBackslash(SourcePath) + PublishDir + "\" + MyAppExeName, VerMajor, VerMinor, VerRev, VerBuild)
+  #define MyAppVersion Str(VerMajor) + "." + Str(VerMinor) + "." + Str(VerRev)
+#endif
 
 [Setup]
 AppId={{6F2A9C41-8B7D-4E5A-9C13-0NTOP0250001}

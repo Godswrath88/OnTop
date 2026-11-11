@@ -24,7 +24,7 @@ Every version tag has a GitHub Release whose first line states its status:
 
 Only Stable and Restore-point releases can be GitHub's **Latest** release, so [releases/latest](https://github.com/Godswrath88/OnTop/releases/latest) never points at an untested build. `main` is usually ahead of it and untested.
 
-**Right now no version is Stable** (pre-1.0, testing in progress). The latest release is **v0.43.0**, a restore point with known issues. **v0.45.3** is the newest version, and it is untested. Releases ship source only; see Build below.
+**Right now no version is Stable** (pre-1.0, testing in progress). The latest release is **v0.43.0**, a restore point with known issues. **v0.45.4** is the newest version, and it is untested. From v0.45.4 on, each release includes an installer (`OnTopSetup-x.y.z.exe`) and a portable zip, built automatically by GitHub Actions, plus `SHA256SUMS.txt`. They are not code-signed, so Windows SmartScreen may warn.
 
 ## Build
 
@@ -36,10 +36,10 @@ dotnet build
 dotnet run
 ```
 
-The first build restores one NuGet package (`System.Security.Cryptography.ProtectedData`, Microsoft's DPAPI wrapper, used to encrypt macro recordings at rest). Put your own `thumbtack.ico` in `OnTop/Assets/` if you want a custom tray icon (the build works without it).
+The first build restores one NuGet package (`System.Security.Cryptography.ProtectedData`, Microsoft's DPAPI wrapper, used to encrypt macro recordings at rest). OnTop ships its own icon (`OnTop/Assets/thumbtack.ico`, drawn by `tools/make_icon.ps1`); to use a different tray icon, put your own `thumbtack.ico` in the `assets` folder of your data directory.
 
-- **Installer:** `installer/OnTop.iss` (Inno Setup 6) — see `installer/BUILD.md`.
-- **Portable:** `portable/publish-portable.cmd` — single self-contained exe, data beside it. See `portable/PORTABLE.md`.
+- **Installer:** `installer/OnTop.iss` (Inno Setup 6) — see `docs/BUILD.md`.
+- **Portable:** `portable/publish-portable.cmd` — single self-contained exe, data beside it. See `docs/PORTABLE.md`.
 
 ## Data
 
@@ -63,15 +63,15 @@ Every other hotkey is optional and unbound until you set it. Hotkeys are recorde
 
 | File | What it is |
 |---|---|
-| `PROJECT_SCOPE.md` | Continuity contract: standing requirements, hard-won build rules, architecture map, session history. **Start here.** |
-| `ROADMAP.md` | Everything approved and outstanding. |
-| `WHATS_NEW.md` | Per-version narrative, newest first. |
-| `CHANGELOG.md` | Terse versioned index. |
-| `SECURITY.md` | Threat model, standing security rules, per-session checklist. |
+| `CHANGELOG.md` | What changed in each version. |
+| `SECURITY.md` | Threat model, standing security rules, how to report a vulnerability. |
 | `docs/TROUBLESHOOTING.md` | Frozen app, logs, resetting settings, common problems, reporting a bug. |
+| `docs/BUILD.md`, `docs/PORTABLE.md`, `docs/UPDATES.md` | Building the installer, the portable exe, and the update manifest. |
 | `docs/testing/CHECKLIST.md` | The standing test checklist, by feature (legend inside). Failures are tracked as GitHub issues. |
-| `SESSION_STATE.md` / `HANDOFF.md` | Stage ledger and bootstrap notes for continuing development in a new session. |
-| `MASTER_PROMPT.md` | The prompt used to start a new development session. |
+| `docs/dev/PROJECT_SCOPE.md` | For contributors: standing requirements, build rules, architecture map. |
+| `docs/dev/ROADMAP.md` | Everything approved and outstanding. |
+| `CLAUDE.md` | Working notes for the AI assistant that develops OnTop (workflow, hard rules). |
+| `docs/history/` | Archived long-form notes from before the project moved to GitHub. |
 
 ## Status
 
@@ -79,7 +79,7 @@ Pre-1.0, no Stable release yet (see Download above). Every feature is built; the
 
 ## An AI-developed project
 
-OnTop is a **completely AI-developed project**. Every line of code, every document in this repository and the design decisions behind them were produced by Anthropic's Claude across a long series of development sessions. I (Godswrath88) direct the project: I decide what it does, set the security rules, build each version on Windows, test it, and feed the results back into the next session. The project documents above are the memory that carries the work from one session to the next, which is why they are so verbose — they are written so that a fresh session (or a person) can rebuild the full context from the repository alone.
+OnTop is a **completely AI-developed project**. Every line of code, every document in this repository and the design decisions behind them were produced by Anthropic's Claude across a long series of development sessions. I (Godswrath88) direct the project: I decide what it does, set the security rules, build each version on Windows, test it, and feed the results back into the next session. Development happens with Claude Code in this repository: every change goes through a branch, a pull request and an automated build-and-test run on GitHub before I merge it. `CLAUDE.md` holds the working notes that carry the context from one session to the next.
 
 The docs and code comments are written in first person as the author's notes. Treat this repository as what it is: a working program built by an AI under human direction, reviewed and tested by a human, and shared so that anyone can use, study, and improve it.
 
