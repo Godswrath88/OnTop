@@ -88,8 +88,11 @@ Default combos: **Exit = F10**, **Kill = Ctrl+Alt+Q** (Hotkeys… to change).
 - [ ] **A1 [!] ⟳ retest — Accent**: Settings → Appearance → pick an accent → whole app re-tints **immediately**. Also try Theme (High Contrast / Light / Dark), which uses the same mechanism. (#1)
   > 09-24: "accent doesn't change colors of anything".
 - [ ] **A2** Theme: High Contrast / Light / Dark switch live. List what looks wrong in Light.
-- [ ] **A3 [!] ⟳ retest** **Every sub-GUI** (Macros, Actions, Placement, Auto-Pin, Profile Rules, Schedules, Known Anti-Cheat, Pinned, Stats, Profiles, Help, Config History, Toast History, step editor) opens, has a footer button and **no title-bar ✕**. Editors: Cancel (Revert) undoes what you changed since opening; Save & Close keeps. Settings: Cancel (Revert) restores every setting to what it was when opened (try flipping Low Impact and a theme, then Revert).
+- [~] **A3 [!] ⟳ retest** **Every sub-GUI** (Macros, Actions, Placement, Auto-Pin, Profile Rules, Schedules, Known Anti-Cheat, Pinned, Stats, Profiles, Help, Config History, Toast History, step editor) opens, has a footer button and **no title-bar ✕**. Editors: Cancel (Revert) undoes what you changed since opening; Save & Close keeps. Settings: Cancel (Revert) restores every setting to what it was when opened (try flipping Low Impact and a theme, then Revert).
   > 11-10: v0.45.2, Placement, Action Library, Auto-Pin and Pinned crashed on open (`already the logical child of another element`). Every footer window was affected since 0.44.0; fixed in 0.45.3. Open each one once.
+  > 11-10: 0.45.3 fix, every sub-window opens. Footer buttons, missing ✕ and Cancel (Revert) not tested yet.
+- [ ] **A11** "Do this first" popups (0.45.3): with no zone selected, press **Set Group**, **Remove** and **Duplicate** → each shows a small popup with OK, centered on the main window (no status-bar-only message, no silent no-op). With macros off, **Record** → popup. Action Library → edit an action whose picker has nothing to pick → popup. Enter and Esc both close it.
+- [ ] **A12** Tray → **Show Overlay Legend** with no overlays on → toast says "Overlay Column", not "Dot".
 - [ ] **A4** Action row = three cards; nothing clipped; Zones row ≥ 300 px.
 - [ ] **A5** Every former button still exists (Macros card / App card).
 - [ ] **A6** Help CONTENTS chips; one "Zone Map" section mentioning middle-mouse scroll.

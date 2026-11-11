@@ -28,6 +28,14 @@ profiles / window-rules still pending). Format loosely follows
 - **Crash-report bundle failed** (`Entries cannot be created while previously
   created entries are still open`): `diag.txt`'s writer stayed open while the
   `log-tail.txt` entry was created. Each entry is now closed before the next.
+- "No Overlays Active" toast said "Dot Column"; it now names the Overlay column.
+### Changed
+- **"Do this first" messages are popups now** (`ConfirmDialog.Notice`, OK
+  only) instead of easy-to-miss status-bar text or toasts: Set Group /
+  Remove / Duplicate with no zone selected (Remove and Duplicate used to do
+  nothing silently), Record Macro with macros off, and the Action Library
+  picker with nothing to pick. Only for clicks in OnTop's own windows;
+  hotkey and background messages stay toasts so they never steal focus.
 
 ## [0.45.2] — Session 28 — Testing rework (docs + GitHub templates only)
 ### Added

@@ -29,7 +29,20 @@ fourth one crashed OnTop.
   bug: Pinned Windows throws the same exception. A retest will confirm it.
 
 **Confirmed in the same session:** Kill while healthy (E1) works; the log ends
-with the `KILL —` line.
+with the `KILL —` line. With the fix, every sub-window opens.
+
+**Also in this build, from the same test:**
+- "You need to do X first" messages were easy to miss: small grey text in the
+  main window's status bar (Set Group with no zone selected) or a toast in the
+  corner. They're now a small popup with an OK button, centered on the
+  window you clicked in. Remove and Duplicate with no zone selected used to do
+  nothing at all; they now say why. Same for Record Macro while macros are
+  off, and the Action Library picker when there's nothing to pick. Popups only
+  come from clicks in OnTop's own windows. Anything a hotkey or a background
+  check triggers stays a toast, so it can't steal focus from a game.
+- The "No Overlays Active" toast still called the Overlay column "Dot". Fixed.
+  "Drag dots to move" (map hint, overlay legend) is left alone: it describes
+  the dot you actually drag, not the option.
 
 **Still open:** a real UI freeze with the e-stop thread alive (E3/E4) hasn't
 been tested; this "freeze" was the debugger.

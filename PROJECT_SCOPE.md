@@ -1090,3 +1090,7 @@ section — read it before starting any macro work.
   before re-parenting it (every footer window crashed on open since 0.44.0);
   the diagnostics zip closes each entry before creating the next. Schema
   stays 29. RULE: a helper that re-parents an element must detach it first.
+  "Do this first" messages from clicks in OnTop's own windows use
+  `ConfirmDialog.Notice` (OK-only popup). RULE: never show a modal popup
+  from a hotkey or background path (it steals focus from games); those
+  stay toasts. The user-facing name of `Zone.ShowDot` is "Overlay".
