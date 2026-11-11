@@ -431,8 +431,10 @@ public partial class App : Application
         // Try to load custom icon, fall back to app icon
         try
         {
+            // Ask for the tray's own size so Windows uses the matching 16/20/24 px
+            // frame instead of shrinking a large one.
             if (System.IO.File.Exists(_vm.Settings.IconPath))
-                _trayIcon.Icon = new Drawing.Icon(_vm.Settings.IconPath);
+                _trayIcon.Icon = new Drawing.Icon(_vm.Settings.IconPath, Forms.SystemInformation.SmallIconSize);
             else
                 _trayIcon.Icon = Drawing.SystemIcons.Application;
         }

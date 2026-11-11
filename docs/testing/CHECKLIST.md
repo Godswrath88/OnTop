@@ -68,6 +68,7 @@ Run these first; if any fail, stop and report.
 - [ ] **B8** Help → last TOC chip "About & License" jumps to its section; text shows the version, `Godswrath88`, the GPL notice and the no-warranty line.
 - [ ] **B9** Exe → Properties → Details shows Company/Copyright as `Godswrath88` / GPL-3.0-or-later.
 - [ ] **B10** **Verbose logging** shows: `Gesture … at (x,y)`, gating reasons, `no enabled zone … contains it`, `Placement … candidate:` lines, `Overlays re-asserted`, `Global hotkeys SUSPENDED/RESUMED`.
+- [ ] **B11** Icon (0.45.3): the red thumbtack shows on the exe in Explorer, the taskbar, Alt+Tab and the tray, and looks crisp (not blurry) in the tray.
 
 ## E. Emergency stop & exit
 

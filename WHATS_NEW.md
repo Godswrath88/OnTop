@@ -47,6 +47,14 @@ with the `KILL —` line. With the fix, every sub-window opens.
 - The "No Overlays Active" toast still called the Overlay column "Dot". Fixed.
   "Drag dots to move" (map hint, overlay legend) is left alone: it describes
   the dot you actually drag, not the option.
+- **OnTop has its own icon.** A generic red push-pin, drawn from basic shapes
+  by a script in `tools/make_icon.ps1`, so it's original and ships under
+  OnTop's own license; no icon pack or third-party art. It has every size
+  Windows asks for (16 px in the tray up to 256 px in Explorer), so it stays
+  crisp everywhere. The old `thumbtack.ico` had no recorded source, a single
+  256 px image and no small sizes, and it was stored in a format older
+  loaders couldn't read. Users can still drop their own `thumbtack.ico` into
+  the `assets` folder to change the tray icon.
 
 **Still open:** a real UI freeze with the e-stop thread alive (E3/E4) hasn't
 been tested; this "freeze" was the debugger.

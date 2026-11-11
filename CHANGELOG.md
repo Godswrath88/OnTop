@@ -41,6 +41,12 @@ profiles / window-rules still pending). Format loosely follows
 - **Settings → Appearance → Hint Popups:** 2–15 seconds (default 4) or Off
   (hints show as a toast), with a Preview button. `AppSettings.NoticeSeconds`
   (0–15); no schema bump: older builds ignore it.
+- **OnTop's own thumbtack icon** (`OnTop/Assets/thumbtack.ico`): a generic red
+  push-pin drawn from simple shapes by `tools/make_icon.ps1`, original artwork
+  under the project license. Frames 16–64 px (32-bit BMP) + 256 px (PNG).
+  Replaces an unattributed single-frame 256 px PNG icon that older loaders
+  couldn't read and that had no small sizes for the tray. The tray now asks
+  for the small-icon size so it uses the matching frame.
 
 ## [0.45.2] — Session 28 — Testing rework (docs + GitHub templates only)
 ### Added
