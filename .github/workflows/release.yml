@@ -61,9 +61,12 @@ jobs:
       - name: Checksums
         shell: pwsh
         run: |
-          Get-ChildItem dist -File | Where-Object Name -ne 'SHA256SUMS.txt' | ForEach-Object {
+          # LF line endings, so `sha256sum -c SHA256SUMS.txt` works on Linux/macOS too
+          # (PowerShell's Get-FileHash and CertUtil don't care either way).
+          $lines = Get-ChildItem dist -File | Where-Object Name -ne 'SHA256SUMS.txt' | ForEach-Object {
             "{0}  {1}" -f (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower(), $_.Name
-          } | Set-Content -Encoding ascii dist/SHA256SUMS.txt
+          }
+          [IO.File]::WriteAllText("$PWD/dist/SHA256SUMS.txt", (($lines -join "`n") + "`n"))
           Get-Content dist/SHA256SUMS.txt
 
       - name: Create or update the release
