@@ -155,7 +155,9 @@ in zone list order. All zone coordinates are physical pixels.
   Style referencing it is sealed (first use), so "mutate the shared brush" is a
   no-op and replacing the resource reaches only DynamicResource consumers.
   Rule: every `*Brush` reference in XAML is `{DynamicResource …}` (Freezable
-  children — Pen, GradientStop, Storyboard… — excepted); live theme/accent
+  children — Pen, GradientStop, Storyboard… — excepted; a value converter is
+  not a brush even when its key ends in `Brush`: use `Converter={StaticResource …}`,
+  a DynamicResource there throws when the template loads); live theme/accent
   changes REPLACE the Application-level resource (`ThemeOptions.SetToken`).
 - **DataGrid over a SHARED collection must commit before the window closes
   (S28 K).** Otherwise the collection's default view stays in an EditItem

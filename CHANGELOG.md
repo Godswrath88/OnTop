@@ -14,8 +14,13 @@ shippable installer lands and v9.5 parity is complete. Format follows
 
 ---
 
-## [Unreleased]
+## [0.45.5] — Log Viewer crash fix
 ### Fixed
+- **View Logs crashed the app** as soon as the Log Viewer drew a log line:
+  the level badge's value converter was referenced with `DynamicResource`,
+  which WPF rejects on a binding's `Converter` (`XamlParseException`). It is
+  a `StaticResource` now. Seen on 0.45.3; a unit test now fails the build if
+  a XAML binding takes its converter from a `DynamicResource`.
 - Release `SHA256SUMS.txt` used Windows line endings, so `sha256sum -c`
   couldn't read it on Linux/macOS. Now LF. (v0.45.4's file was replaced by
   hand with the same hashes.)
@@ -1229,6 +1234,7 @@ shippable installer lands and v9.5 parity is complete. Format follows
 
 ---
 
+[0.45.5]: https://github.com/Godswrath88/OnTop/releases/tag/v0.45.5
 [0.45.4]: https://github.com/Godswrath88/OnTop/releases/tag/v0.45.4
 [0.45.3]: https://github.com/Godswrath88/OnTop/releases/tag/v0.45.3
 [0.45.2]: docs/history/WHATS_NEW.md
