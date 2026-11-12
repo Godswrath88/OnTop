@@ -70,6 +70,8 @@ Run these first; if any fail, stop and report.
 - [ ] **B10** **Verbose logging** shows: `Gesture … at (x,y)`, gating reasons, `no enabled zone … contains it`, `Placement … candidate:` lines, `Overlays re-asserted`, `Global hotkeys SUSPENDED/RESUMED`.
 - [ ] **B11** Icon (0.45.3): the red thumbtack shows on the exe in Explorer, the taskbar, Alt+Tab and the tray, and looks crisp (not blurry) in the tray.
 - [ ] **B12** Log Viewer → **Export Diagnostics…** to a file that already exists → confirm Replace → the zip is written (no error) and opens with settings.json, the log, diag.txt and log-tail.txt. Type a bare name (no extension) → saved as .zip.
+- [ ] **B14 [!]** View Logs (0.45.5): open the Log Viewer from the main window → it opens and lists log lines with a colored level badge on each row; no crash. Tick a category and Verbose Logging → still fine.
+  > 11-10: v0.45.3, crashed on open (`'DynamicResourceExtension' cannot be set on the 'Converter' property`). Found in the crash bundle on 11-12; fixed in 0.45.5.
 - [ ] **B13** Build behavior (0.45.4): with OnTop running, `dotnet build` from a terminal leaves it running; starting a build in Visual Studio still closes it first (exe not locked).
 
 ## E. Emergency stop & exit
