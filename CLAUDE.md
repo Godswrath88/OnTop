@@ -18,7 +18,7 @@ outranks everything else.
 | `installer/`, `portable/` | Inno Setup script; portable publish script. |
 | `tools/` | Helper scripts: version/privacy checks, installer build, icon, git hooks. |
 | `.github/` | CI workflows, issue templates, PR template. |
-| `.claude/skills/` | Project skills (session start, feedback intake, reviews, delivery gate). |
+| `.claude/skills/` | Project skills (session start, guided test round, feedback intake, reviews, delivery gate). |
 | `CHANGELOG.md` | One entry per version (Keep a Changelog). |
 | `SECURITY.md` | Threat model, standing rules, per-change checklist. |
 | `docs/dev/PROJECT_SCOPE.md` | Standing requirements, build rules, architecture map, rules learned. Read before changing code. |
@@ -64,6 +64,10 @@ outranks everything else.
   PC), so for a crash or freeze ask me to run with Ctrl+F5 (no debugger).
   Logs: `%APPDATA%\OnTop\logs\`; crash bundles: `%APPDATA%\OnTop\config\crashes\`.
   Read them yourself rather than asking me to paste.
+- **Test rounds:** when I say "let's test", run the `ontop-test-round` skill:
+  one item at a time in chat, I answer in plain words, you read the logs and
+  write the marks, notes and issue drafts. If I tested alone, my answers are in
+  the Round sheet at the top of the checklist.
 - **Test results:** failures and retests are GitHub issues (labels `bug`,
   `retest`, `needs-log`, `blocker`, `test-pass`); checklist items link `#N`.
   Never paste a whole log into a public issue (window titles are private).

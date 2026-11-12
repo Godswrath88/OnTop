@@ -12,6 +12,65 @@
 > **A test round** = a **Test pass** issue (template) for one build. It holds
 > the smoke test below plus any items you choose. Marks for the full list can
 > also be typed here and committed.
+>
+> **The easy way: a guided round.** In a Claude Code session, say "let's test".
+> It hands over one item at a time as a few short steps; answer `p` or say what
+> happened in plain words. It reads the logs, writes the marks and dated notes
+> here, and drafts the issues (the `ontop-test-round` skill). Testing alone:
+> fill in the **Round sheet** below and it gets transcribed next session.
+
+## Round sheet (the inbox; rewritten for each build)
+
+Type after the dash: `p` for a pass, `s` to skip, or what happened in your own
+words. No brackets, no dates, no log lines: those get filled in from the logs
+when the sheet is transcribed onto the items below, which stay the record.
+An ID with lettered parts (A3a, A3b, …) can take one answer for the lot
+(`p`) or one per letter (`a p, b p, c revert didn't undo the theme`).
+
+**Build: 0.45.5** · run with Ctrl+F5 (no debugger) · Verbose Logging on
+
+Smoke (stop and report if one fails):
+- B1 builds clean —
+- B2 launches, settings intact —
+- B14 View Logs opens —
+- E1 Kill hotkey —
+- E2 Exit hotkey —
+- Z1 a zone fires on the desktop (#2) —
+- P1 pin, opacity, unpin —
+- E5 Pinned Windows opens, no freeze (#14) —
+- S1 Stealth removes the hooks, and back —
+- A1 accent re-tints the app (#1) —
+
+Retests (fixed in code, waiting on you):
+- A3 every sub-window: opens, footer, no ✕, Revert —
+- Z3 Exit and Stealth zones fire (#2) —
+- Z6 overlays stay above OnTop windows (#5) —
+- P2 orange frame on click-through (#13) —
+- H2 duplicate hotkey refused (#12) —
+- M1 macro status strip lifecycle (#3) —
+- M2 recording has no Ctrl+Alt+M in it (#4) —
+- L2 placement moves the window back (#6) —
+- L3 edit a placement rule by hand (#7) —
+- L4 placement On Start + Delay (#8) —
+- L6 placement zone doesn't enter Stealth (#9) —
+- L9 reopen Placement after closing mid-edit (#10) —
+- AL1 library Run Command runs (#11) —
+- AL2 library hotkey capture, duplicates refused (#12) —
+- E3 Kill while frozen, only if something freezes (#14) —
+
+Newer items, never tested:
+- A11 "do this first" hint popups —
+- A13 hint popup settings —
+- A14 Settings footer stays visible —
+- A12 overlay legend toast wording —
+- B11 thumbtack icon everywhere —
+- B12 Export Diagnostics over an existing file —
+- B13 terminal build leaves OnTop running —
+- H9 freed hotkey re-binds with a toast —
+- H10 Stealth hotkey binds once —
+- H11 panic key survives the Hotkeys dialog —
+- L12 administrator window question —
+- L13 administrator question vs Cancel (Revert) —
 
 ## Legend (type one character inside the brackets)
 
@@ -29,6 +88,9 @@
   here cascades into many other items. Test and report those first.
 - **`⟳ retest`** (and the `retest` label) = reported failing, fixed in code,
   waiting for a confirming test.
+- **Lettered sub-checks** (`A3a`, `A3b`, …) split an item that makes several
+  claims: mark the letters. The parent's mark is the summary (all pass → `[.]`,
+  any fail → `[x]`, otherwise `[~]`).
 - **"How:"** lines give the steps for items that aren't obvious.
 - **Log filtering:** View Logs → tick the category shown in brackets (e.g.
   `[Detection]`). Turn on **Verbose Logging** (Settings → Logging) for a test
@@ -45,12 +107,13 @@ Run these first; if any fail, stop and report.
 
 1. **B1**: builds clean.
 2. **B2**: launches; settings, zones and hotkeys are intact.
-3. **E1**, **E2**: Kill and Exit hotkeys work.
-4. **Z1**: a zone fires on the desktop.
-5. **P1**: pin a window, change its opacity, unpin.
-6. **E5**: Pinned Windows opens without freezing.
-7. **S1**: Stealth on → hooks removed in the log; off → back.
-8. **A1**: an accent change re-tints the app.
+3. **B14**: View Logs opens (the rest of the list leans on it).
+4. **E1**, **E2**: Kill and Exit hotkeys work.
+5. **Z1**: a zone fires on the desktop.
+6. **P1**: pin a window, change its opacity, unpin.
+7. **E5**: Pinned Windows opens without freezing.
+8. **S1**: Stealth on → hooks removed in the log; off → back.
+9. **A1**: an accent change re-tints the app.
 
 ---
 
@@ -93,11 +156,23 @@ Default combos: **Exit = F10**, **Kill = Ctrl+Alt+Q** (Hotkeys… to change).
 - [ ] **A1 [!] ⟳ retest — Accent**: Settings → Appearance → pick an accent → whole app re-tints **immediately**. Also try Theme (High Contrast / Light / Dark), which uses the same mechanism. (#1)
   > 09-24: "accent doesn't change colors of anything".
 - [ ] **A2** Theme: High Contrast / Light / Dark switch live. List what looks wrong in Light.
-- [~] **A3 [!] ⟳ retest** **Every sub-GUI** (Macros, Actions, Placement, Auto-Pin, Profile Rules, Schedules, Known Anti-Cheat, Pinned, Stats, Profiles, Help, Config History, Toast History, step editor) opens, has a footer button and **no title-bar ✕**. Editors: Cancel (Revert) undoes what you changed since opening; Save & Close keeps. Settings: Cancel (Revert) restores every setting to what it was when opened (try flipping Low Impact and a theme, then Revert).
+- [~] **A3 [!] ⟳ retest** **Every sub-GUI** (Macros, Actions, Placement, Auto-Pin, Profile Rules, Schedules, Known Anti-Cheat, Pinned, Stats, Profiles, Help, Config History, Toast History, step editor):
+  - [ ] **A3a** each one opens.
+  - [ ] **A3b** each has a footer button and **no title-bar ✕**.
+  - [ ] **A3c** Editors: Cancel (Revert) undoes what you changed since opening; Save & Close keeps.
+  - [ ] **A3d** Settings: Cancel (Revert) restores every setting to what it was when opened (try flipping Low Impact and a theme, then Revert).
   > 11-10: v0.45.2, Placement, Action Library, Auto-Pin and Pinned crashed on open (`already the logical child of another element`). Every footer window was affected since 0.44.0; fixed in 0.45.3. Open each one once.
   > 11-10: 0.45.3 fix, every sub-window opens. Footer buttons, missing ✕ and Cancel (Revert) not tested yet.
-- [ ] **A11** "Do this first" hint popups (0.45.3): with no zone selected, press **Set Group**, **Remove** and **Duplicate** → each fades in a hint centered on the main window, then fades out by itself (no status-bar-only message, no silent no-op, nothing to click). You can keep typing while it's up. Click dismisses it early; hovering keeps it up. With macros off, **Record** → hint. Action Library → edit an action whose picker has nothing to pick → hint. Does it look professional? Note anything that feels off.
-- [ ] **A13** Settings → Appearance → **Hint Popups**: Preview shows a sample; typing 2 vs 10 in **Stay Up For** visibly changes how long it stays. Letters can't be typed; 0, blank or 99 snaps back with a "1–60" toast. Switch **off** → the seconds box greys out and the same hints appear as a toast instead. Both survive a restart.
+- [ ] **A11** "Do this first" hint popups (0.45.3):
+  - [ ] **A11a** with no zone selected, press **Set Group**, **Remove** and **Duplicate** → each fades in a hint centered on the main window, then fades out by itself (no status-bar-only message, no silent no-op, nothing to click).
+  - [ ] **A11b** You can keep typing while it's up. Click dismisses it early; hovering keeps it up.
+  - [ ] **A11c** With macros off, **Record** → hint. Action Library → edit an action whose picker has nothing to pick → hint.
+  - [ ] **A11d** Does it look professional? Note anything that feels off.
+- [ ] **A13** Settings → Appearance → **Hint Popups**:
+  - [ ] **A13a** Preview shows a sample; typing 2 vs 10 in **Stay Up For** visibly changes how long it stays.
+  - [ ] **A13b** Letters can't be typed; 0, blank or 99 snaps back with a "1–60" toast.
+  - [ ] **A13c** Switch **off** → the seconds box greys out and the same hints appear as a toast instead.
+  - [ ] **A13d** Both settings survive a restart.
 - [ ] **A14** Settings: shrink nothing, just scroll. **Save & Close** and **Cancel (Revert)** stay visible at the bottom the whole time; scrolled to the end, the Data section sits right above them.
 - [ ] **A12** Tray → **Show Overlay Legend** with no overlays on → toast says "Overlay Column", not "Dot".
 - [ ] **A4** Action row = three cards; nothing clipped; Zones row ≥ 300 px.
@@ -110,7 +185,10 @@ Default combos: **Exit = F10**, **Kill = Ctrl+Alt+Q** (Hotkeys… to change).
 
 ## Z. Zones & overlays
 
-- [ ] **Z1 [!] ⟳ retest — Zone detection at all**: with Desktop Only ON and overlays visible (any zone with its dot on), double-click inside a zone on the DESKTOP → fires. Double-click inside the zone with a program window under it → does NOT fire; verbose log says `gated by Desktop Only — under cursor: '<title>'`. In Test Mode the miss toasts "Not On Desktop (<process>)". (#2)
+- [ ] **Z1 [!] ⟳ retest — Zone detection at all**: with Desktop Only ON and overlays visible (any zone with its dot on). (#2)
+  - [ ] **Z1a** double-click inside a zone on the DESKTOP → fires.
+  - [ ] **Z1b** double-click inside the zone with a program window under it → does NOT fire; verbose log says `gated by Desktop Only — under cursor: '<title>'`.
+  - [ ] **Z1c** In Test Mode the miss toasts "Not On Desktop (<process>)".
   > 09-24: "double clicks aren't detecting".
 - [ ] **Z2** **Gestures**: Middle Click zone fires only on middle; Triple Left on the third click; Ctrl+double only with Ctrl; Double Right on right; Shift+double / Alt+double. A classic zone ignores those.
   How: right-click a zone → Trigger Gesture. Verbose log line `Gesture <name> at (x,y)` appears for every dispatch.
@@ -155,7 +233,12 @@ Default combos: **Exit = F10**, **Kill = Ctrl+Alt+Q** (Hotkeys… to change).
 
 ## M. Macros
 
-- [ ] **M1 ⟳ retest — Status strip lifecycle**: turn Macros on with the Macros window CLOSED → NO strip. Open the Macros window → strip appears. Close it → strip gone. Press Ctrl+Alt+M with the window closed → strip appears (RECORDING), stays ~4 s after stop, hides. Press × on the strip → hidden until the next recording. Bind "Show / Hide Macro Status Strip" in Hotkeys… → toggles it; the strip shows that hotkey. (#3)
+- [ ] **M1 ⟳ retest — Status strip lifecycle**: (#3)
+  - [ ] **M1a** turn Macros on with the Macros window CLOSED → NO strip.
+  - [ ] **M1b** Open the Macros window → strip appears. Close it → strip gone.
+  - [ ] **M1c** Press Ctrl+Alt+M with the window closed → strip appears (RECORDING), stays ~4 s after stop, hides.
+  - [ ] **M1d** Press × on the strip → hidden until the next recording.
+  - [ ] **M1e** Bind "Show / Hide Macro Status Strip" in Hotkeys… → toggles it; the strip shows that hotkey.
   > 09-24: strip shouldn't be up permanently; needs a close keybind; should close with the sub-GUI; popped on script start.
 - [ ] **M2 ⟳ retest — Ctrl+Alt+M** → red marquee + elapsed + step count; again → SAVED → READY. Open the step editor: the recording must NOT start with Ctrl/Alt/M key-ups or end with their key-downs. (#4)
 - [.] **M3** Main window MACROS card (Macros…, ● Record, ■ Stop); ■ Panic Stop in the Macros window.
@@ -176,7 +259,10 @@ Default combos: **Exit = F10**, **Kill = Ctrl+Alt+Q** (Hotkeys… to change).
 ## L. Window placement & launcher
 
 - [.] **L1** Features → Window Placement on; APP → Placement… opens.
-- [ ] **L2 ⟳ retest** — **Capture From Focused Window** (3 s) → rule appears. **Move the window, then Apply Selected → it returns.** Tick Max → maximizes there. (#6)
+- [ ] **L2 ⟳ retest** — Placement capture and apply: (#6)
+  - [ ] **L2a** **Capture From Focused Window** (3 s) → rule appears.
+  - [ ] **L2b** **Move the window, then Apply Selected → it returns.**
+  - [ ] **L2c** Tick Max → maximizes there.
   How: use a NORMAL program (Notepad, Explorer). Hardware tools such as GPU tuning utilities run as administrator, and a non-elevated OnTop **cannot** move them (Windows forbids it); the log/toast says "access denied — runs as administrator".
   > 09-24: placement didn't move the window; the log claimed "applied".
 - [ ] **L3 ⟳ retest** — **Edit a rule by hand**: double-click a row (or Edit Selected… / right-click → Edit Rule…) → full editor with Pick… (running processes / Browse .exe), monitor, X/Y/W/H, Maximize, On Start, **Delay**, Launch path, Launch, wait. Save → grid updates. Hover a column header → description. (#7)
@@ -188,7 +274,12 @@ Default combos: **Exit = F10**, **Kill = Ctrl+Alt+Q** (Hotkeys… to change).
 - [ ] **L9 ⟳ retest** — **Reopen Placement… after closing it** (edit a cell first, then close while the cell is still in edit mode) → no crash. (#10)
 - [ ] **L10** **Placement window footer**: change something → Cancel (Revert) → change is gone. Change → Save & Close → kept. No ✕ in the title bar.
 - [ ] **L11** Placement has no "Allow Launching" switch; per-rule Launch alone gates.
-- [ ] **L12** Admin window (0.45.3; GPU Tweak III works): rule with On Start → restart OnTop with GPU Tweak running → one window "can't move its window … runs as administrator", focus stays where it was. **Keep Rule** with the box unticked → asked again next launch (not again in the same session: Apply Selected → toast only). Tick **Don't ask again** + Keep → next launch only a WARN log line, no window, no toast. Rule editor → **Ask if it runs as admin** on → asks again. **Turn This Rule Off** → the rule's On box clears.
+- [ ] **L12** Admin window (0.45.3; GPU Tweak III works):
+  - [ ] **L12a** rule with On Start → restart OnTop with GPU Tweak running → one window "can't move its window … runs as administrator", focus stays where it was.
+  - [ ] **L12b** **Keep Rule** with the box unticked → asked again next launch (not again in the same session: Apply Selected → toast only).
+  - [ ] **L12c** Tick **Don't ask again** + Keep → next launch only a WARN log line, no window, no toast.
+  - [ ] **L12d** Rule editor → **Ask if it runs as admin** on → asks again.
+  - [ ] **L12e** **Turn This Rule Off** → the rule's On box clears.
 - [ ] **L13** Admin window: with the question open, press **Cancel (Revert)** in the Placement window, then answer **Turn This Rule Off** → the rule really ends up off (grid + after restart). Close the question with ✕ instead → nothing changes and it asks again next launch.
 
 ## AL. Action Library
@@ -229,8 +320,8 @@ Default combos: **Exit = F10**, **Kill = Ctrl+Alt+Q** (Hotkeys… to change).
 
 ---
 
-**Report format:** an issue per failure (Bug report template), or in chat: item
-ID, the mark, one line, log lines with the category in brackets. Batch cosmetic
-notes at the end. Logs live in `%APPDATA%\OnTop\logs` (portable:
+**Report format:** a guided round or the Round sheet at the top (plain words;
+the logs get read for you), or an issue per failure (Bug report template).
+Batch cosmetic notes at the end. Logs live in `%APPDATA%\OnTop\logs` (portable:
 `<exe folder>\Data\logs`). Attaching whole logs to a chat session is fine; on
 GitHub, paste only the relevant lines.

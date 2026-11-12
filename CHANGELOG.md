@@ -14,6 +14,15 @@ shippable installer lands and v9.5 parity is complete. Format follows
 
 ---
 
+## [Unreleased]
+### Changed
+- **Testing is easier to report:** a guided test round in a Claude Code
+  session (`ontop-test-round` skill) hands over one checklist item at a time
+  and records the result from a plain-words answer. The checklist gained a
+  **Round sheet** at the top for testing alone, and lettered sub-checks on
+  items that made several claims (A3, A11, A13, Z1, M1, L2, L12). **B14**
+  (View Logs opens) joined the smoke test.
+
 ## [0.45.5] — Log Viewer crash fix
 ### Fixed
 - **View Logs crashed the app** as soon as the Log Viewer drew a log line:
