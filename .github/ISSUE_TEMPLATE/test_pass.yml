@@ -18,6 +18,7 @@ body:
       options:
         - label: "B1: builds clean"
         - label: "B2: launches; settings, zones and hotkeys intact"
+        - label: "B14: View Logs opens"
         - label: "E1 / E2: Kill and Exit hotkeys work"
         - label: "Z1: a zone fires on the desktop"
         - label: "P1: pin a window, change its opacity, unpin"
