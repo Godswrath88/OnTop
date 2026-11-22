@@ -22,6 +22,9 @@ shippable installer lands and v9.5 parity is complete. Format follows
   **Round sheet** at the top for testing alone, and lettered sub-checks on
   items that made several claims (A3, A11, A13, Z1, M1, L2, L12). **B14**
   (View Logs opens) joined the smoke test.
+- **Release builds are harder to tamper with:** the GitHub Actions that build
+  and publish the downloads are pinned to exact commits instead of movable
+  version tags, and Dependabot proposes updates to them monthly.
 
 ## [0.45.5] — Log Viewer crash fix
 ### Fixed
