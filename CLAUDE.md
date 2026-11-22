@@ -25,7 +25,7 @@ outranks everything else.
 | `docs/dev/ROADMAP.md` | Approved and pending work (Round 3 at the top). |
 | `docs/testing/CHECKLIST.md` | The test checklist ("the testing doc"), by feature, stable IDs, my marks. |
 | `docs/TROUBLESHOOTING.md`, `docs/BUILD.md`, `docs/UPDATES.md`, `docs/PORTABLE.md` | User and build docs. |
-| `docs/history/` | Frozen records from the zip era (WHATS_NEW, SESSION_STATE, SESSION_HISTORY). Read-only. |
+| (archived) | Zip-era records (WHATS_NEW, SESSION_STATE, SESSION_HISTORY) live only at tag `v0.45.4` under `docs/history/`. |
 
 ## Starting a session
 1. `git fetch --prune`, switch to `main`, pull, and `git branch -d` any local
