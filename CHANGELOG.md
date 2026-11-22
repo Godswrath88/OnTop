@@ -24,7 +24,7 @@ shippable installer lands and v9.5 parity is complete. Format follows
   (View Logs opens) joined the smoke test.
 - **Release builds are harder to tamper with:** the GitHub Actions that build
   and publish the downloads are pinned to exact commits instead of movable
-  version tags, and Dependabot proposes updates to them monthly.
+  version tags, and Dependabot proposes updates to them in one PR a month.
 - **Leaner docs:** the zip-era archive (`docs/history/`) is removed from the
   current tree; links point to the copy kept at tag `v0.45.4`. The roadmap
   lists only outstanding work.

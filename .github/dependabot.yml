@@ -1,8 +1,12 @@
-# Keeps the SHA-pinned GitHub Actions in .github/workflows current: Dependabot
-# opens a PR (new SHA + version comment) when an action releases an update.
+# Keeps the SHA-pinned GitHub Actions in .github/workflows current. All action
+# updates arrive together in ONE pull request a month (new SHA + version
+# comment), not one PR per action.
 version: 2
 updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: monthly
+    groups:
+      github-actions:
+        patterns: ["*"]
