@@ -5,7 +5,7 @@ rules, and the architecture map. The development workflow (branches, PRs,
 versions, releases, testing) is in [`CLAUDE.md`](../../CLAUDE.md) at the repo
 root. Security rules are in [`SECURITY.md`](../../SECURITY.md) and outrank
 everything here. The per-session history up to v0.45.3 is archived in
-[`docs/history/SESSION_HISTORY.md`](../history/SESSION_HISTORY.md).
+[`SESSION_HISTORY.md`](https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/SESSION_HISTORY.md) (archived at tag v0.45.4).
 
 Update this file in the same PR whenever a requirement, convention or the
 architecture changes. It is a description of how things ARE, not a log.
@@ -267,7 +267,7 @@ in zone list order. All zone coordinates are physical pixels.
 - `Themes/DarkTheme.xaml` — ALL shared styles. New colors belong here as
   named resources (token pass in progress).
 
-## Feature Inventory (shipped — details in CHANGELOG.md and docs/history/WHATS_NEW.md)
+## Feature Inventory (shipped — details in CHANGELOG.md and the archived WHATS_NEW.md)
 
 Hardening (mutex, crash handlers, watchdog, schema migrations, backup
 fallback, hotkey retry, atomic writes, grace period) · custom dark chrome ·
@@ -317,12 +317,10 @@ bundle export** · **elevated-launch warning** · **hardened JSON import**.
 
 ## Not Yet Built
 
-See `ROADMAP.md` (kept current every session). Headline pending: Pinned Windows
-viewer (+ its hotkey), profiles, window rules, design-token pass, the **AHK
-importer**, and the shippable installer. Already shipped (do NOT list these as
-pending): Draw/Drag-Box zones, all per-toggle + action hotkeys, the Quick Record /
-View Logs / Soft Restart / Re-Enable-Hook hotkeys, window size/position memory, and
-the `%APPDATA%` config relocation + one-time legacy migration.
+See `ROADMAP.md`, which lists only outstanding work. Headline pending: the
+Round 3 list, code signing, updater stage two (in-app download + verify, after
+signing), and the remaining macro polish. The installer, updater stage one and
+portable build exist but are untested until I say otherwise.
 
 **End-goal capstone:** the roadmap's north star is a modular, optional **Macro
 Subsystem** (full-fidelity record/playback + a three-layer anti-cheat guard: optional

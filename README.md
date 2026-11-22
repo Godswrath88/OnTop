@@ -71,7 +71,6 @@ Every other hotkey is optional and unbound until you set it. Hotkeys are recorde
 | `docs/dev/PROJECT_SCOPE.md` | For contributors: standing requirements, build rules, architecture map. |
 | `docs/dev/ROADMAP.md` | Everything approved and outstanding. |
 | `CLAUDE.md` | Working notes for the AI assistant that develops OnTop (workflow, hard rules). |
-| `docs/history/` | Archived long-form notes from before the project moved to GitHub. |
 
 ## Status
 

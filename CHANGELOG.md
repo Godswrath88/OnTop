@@ -5,7 +5,7 @@ Changed / Fixed. Each entry is short; the full story of a change (what was
 reported, the root cause, what's still unverified) is in its pull request and
 its [GitHub Release](https://github.com/Godswrath88/OnTop/releases). Versions
 up to 0.45.3 have a long-form narrative in
-[`docs/history/WHATS_NEW.md`](docs/history/WHATS_NEW.md).
+[`WHATS_NEW.md`](https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md) (archived at tag v0.45.4).
 
 Versions follow the WPF rewrite's own line (`Directory.Build.props`), which is
 distinct from the lost AutoHotkey **v9.5**. 1.0.0 is reserved for when the
@@ -25,6 +25,9 @@ shippable installer lands and v9.5 parity is complete. Format follows
 - **Release builds are harder to tamper with:** the GitHub Actions that build
   and publish the downloads are pinned to exact commits instead of movable
   version tags, and Dependabot proposes updates to them monthly.
+- **Leaner docs:** the zip-era archive (`docs/history/`) is removed from the
+  current tree; links point to the copy kept at tag `v0.45.4`. The roadmap
+  lists only outstanding work.
 
 ## [0.45.5] — Log Viewer crash fix
 ### Fixed
@@ -1249,64 +1252,64 @@ shippable installer lands and v9.5 parity is complete. Format follows
 [0.45.5]: https://github.com/Godswrath88/OnTop/releases/tag/v0.45.5
 [0.45.4]: https://github.com/Godswrath88/OnTop/releases/tag/v0.45.4
 [0.45.3]: https://github.com/Godswrath88/OnTop/releases/tag/v0.45.3
-[0.45.2]: docs/history/WHATS_NEW.md
-[0.45.1]: docs/history/WHATS_NEW.md
-[0.45.0]: docs/history/WHATS_NEW.md
-[0.44.2]: docs/history/WHATS_NEW.md
-[0.44.1]: docs/history/WHATS_NEW.md
-[0.44.0]: docs/history/WHATS_NEW.md
-[0.43.0]: docs/history/WHATS_NEW.md
-[0.42.1]: docs/history/WHATS_NEW.md
-[0.42.0]: docs/history/WHATS_NEW.md
-[0.41.0]: docs/history/WHATS_NEW.md
-[0.40.0]: docs/history/WHATS_NEW.md
-[0.39.0]: docs/history/WHATS_NEW.md
-[0.38.0]: docs/history/WHATS_NEW.md
-[0.37.0]: docs/history/WHATS_NEW.md
-[0.36.1]: docs/history/WHATS_NEW.md
-[0.36.0]: docs/history/WHATS_NEW.md
-[0.35.0]: docs/history/WHATS_NEW.md
-[0.34.0]: docs/history/WHATS_NEW.md
-[0.33.8]: docs/history/WHATS_NEW.md
-[0.33.7]: docs/history/WHATS_NEW.md
-[0.33.6]: docs/history/WHATS_NEW.md
-[0.33.5]: docs/history/WHATS_NEW.md
-[0.33.4]: docs/history/WHATS_NEW.md
-[0.33.3]: docs/history/WHATS_NEW.md
-[0.33.2]: docs/history/WHATS_NEW.md
-[0.33.1]: docs/history/WHATS_NEW.md
-[0.33.0]: docs/history/WHATS_NEW.md
-[0.32.0]: docs/history/WHATS_NEW.md
-[0.31.0]: docs/history/WHATS_NEW.md
-[0.30.0]: docs/history/WHATS_NEW.md
-[0.29.0]: docs/history/WHATS_NEW.md
-[0.28.0]: docs/history/WHATS_NEW.md
-[0.27.0]: docs/history/WHATS_NEW.md
-[0.26.0]: docs/history/WHATS_NEW.md
-[0.25.0]: docs/history/WHATS_NEW.md
-[0.24.0]: docs/history/WHATS_NEW.md
-[0.23.0]: docs/history/WHATS_NEW.md
-[0.22.0]: docs/history/WHATS_NEW.md
-[0.21.0]: docs/history/WHATS_NEW.md
-[0.20.0]: docs/history/WHATS_NEW.md
-[0.19.0]: docs/history/WHATS_NEW.md
-[0.18.0]: docs/history/WHATS_NEW.md
-[0.17.3]: docs/history/WHATS_NEW.md
-[0.17.2]: docs/history/WHATS_NEW.md
-[0.17.1]: docs/history/WHATS_NEW.md
-[0.17.0]: docs/history/WHATS_NEW.md
-[0.16.0]: docs/history/WHATS_NEW.md
-[0.15.0]: docs/history/WHATS_NEW.md
-[0.14.0]: docs/history/WHATS_NEW.md
-[0.13.2]: docs/history/WHATS_NEW.md
-[0.13.1]: docs/history/WHATS_NEW.md
-[0.13.0]: docs/history/WHATS_NEW.md
-[0.12.0]: docs/history/WHATS_NEW.md
-[0.11.0]: docs/history/WHATS_NEW.md
-[0.10.0]: docs/history/WHATS_NEW.md
-[0.9.0]: docs/history/WHATS_NEW.md
-[0.8.0]: docs/history/WHATS_NEW.md
-[0.7.0]: docs/history/WHATS_NEW.md
-[0.6.0]: docs/history/WHATS_NEW.md
-[0.5.0]: docs/history/WHATS_NEW.md
-[0.4.0]: docs/history/WHATS_NEW.md
+[0.45.2]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.45.1]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.45.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.44.2]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.44.1]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.44.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.43.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.42.1]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.42.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.41.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.40.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.39.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.38.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.37.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.36.1]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.36.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.35.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.34.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.33.8]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.33.7]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.33.6]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.33.5]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.33.4]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.33.3]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.33.2]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.33.1]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.33.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.32.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.31.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.30.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.29.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.28.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.27.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.26.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.25.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.24.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.23.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.22.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.21.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.20.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.19.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.18.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.17.3]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.17.2]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.17.1]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.17.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.16.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.15.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.14.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.13.2]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.13.1]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.13.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.12.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.11.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.10.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.9.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.8.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.7.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.6.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.5.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
+[0.4.0]: https://github.com/Godswrath88/OnTop/blob/v0.45.4/docs/history/WHATS_NEW.md
